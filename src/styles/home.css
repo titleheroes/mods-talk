@@ -12,6 +12,12 @@
     font-size: 1rem;
   }
   
+  .button {
+    padding: 1.25% 2% 1.25% 2%;
+    font-size: 0.8rem;
+    color: white;
+  }
+  
   thePath {
     font-size: "3rem";
     color: #f04e22;

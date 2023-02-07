@@ -20,7 +20,7 @@ const Home = () => {
             </div>
 
             <div style={{paddingTop: '24px'}}>
-              <button type="button" class="btn btn-primary btn-lg" style={{backgroundColor: "#f04e22", outlineColor: "transparent"}}>Large button</button>
+              <button type="button" class="btn btn-primary btn-lg shadow-none" className="button" style={{backgroundColor: "#f04e22"}}>เริ่มต้นการรีวิวตอนนี้เลย</button>
             </div>
           </div>
 
