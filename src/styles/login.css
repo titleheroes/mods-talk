@@ -3,5 +3,23 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    
 }
+
+.line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2px;
+    width: 100%;
+    background-color: #E0E0E0;
+    margin: 20px 0;
+  }
+
+  .text-inside-line {
+    background-color: white;
+    padding: 0 10px;
+    font-size: 20px;
+    color: #7A7A7A;
+    position: relative;
+    z-index: 1;
+  }
