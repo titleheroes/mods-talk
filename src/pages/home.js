@@ -56,6 +56,12 @@ const Home = () => {
                   className="button"
                   variant="contained"
                   onClick=""
+                  style={{
+                    paddingTop: "1.25%",
+                    paddingBottom: "1.25%",
+                    paddingLeft: "2.25%",
+                    paddingRight: "2.25%",
+                  }}
                 >
                   เริ่มต้นการรีวิวตอนนี้เลย
                 </button>
@@ -63,7 +69,7 @@ const Home = () => {
 
               <div
                 className="row"
-                style={{ paddingTop: "10%", paddingBottom: "3rem" }}
+                style={{ paddingTop: "7%", paddingBottom: "3rem" }}
               >
                 <div class="col">
                   <div className="count">{visitor}+</div>
