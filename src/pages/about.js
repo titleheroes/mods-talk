@@ -5,7 +5,7 @@ import "../styles/about.css";
 
 const About = () => {
   return (
-    <div className="layout">
+    <div className="page">
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -20,24 +20,24 @@ const About = () => {
 
 
 
-      <div className="">
+      {/* <div className=""> */}
         <div className="container">
           <div className="row">
             <div className="col-md">
-              <span className="aboutTitle">เป้าหมายของเรา</span>
+              <div className="aboutTitle">เป้าหมายของเรา</div>
             </div>
 
-            <div className="col-md aboutContent">
-              <text className="aboutContent">
-                เป้าหมายในการพัฒนาเว็บไซต์ของเรา คือ <br />
-                การมุ่งเน้นเพื่อพัฒนาชุมชนภายในมหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี <br />
-                ให้มีการพูดคุย แบ่งปัน ข้อมูล ไม่ว่าจะเป็นทางด้านการเรียน หรือไลฟ์สไตล์ <br />
+            <div className="col-md">
+              <div className="aboutContent" >
+                เป้าหมายในการพัฒนาเว็บไซต์ของเรา คือ 
+                การมุ่งเน้นเพื่อพัฒนาชุมชนภายในมหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี 
+                ให้มีการพูดคุย แบ่งปัน ข้อมูล ไม่ว่าจะเป็นทางด้านการเรียน หรือไลฟ์สไตล์ 
                 โดยตั้งใจให้เป็นพื้นที่หรือแพลืทฟอร์มหลักที่นักศึกษาจะเลือกใช้เพื่อหาคำตอบต่างๆ                
-              </text>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      {/* </div> */}
 
             <div className="row aboutImg">
               <div className="col-md" style={{paddingBottom: "10%"}}>

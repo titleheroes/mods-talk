@@ -1,4 +1,9 @@
-.layout {
+*{
+    
+    word-wrap: break-word;
+}
+
+.page{
     padding-left: 7%;
     padding-right: 7%;
     padding-top: 4rem;
@@ -30,7 +35,8 @@ ol > li.active {
     font-size: 1em;
     padding-top: 1.5%;
     color: #333333;
-    white-space: nowrap;
+    /* white-space: nowrap; */
+    width: 100%;
 
 }
 
