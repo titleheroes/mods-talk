@@ -25,9 +25,9 @@ ol > li.active {
 }
 
 .aboutTitle{
-    font-size: 3.5em;
+    font-size: 3rem;
     font-weight: bold;
-    white-space: nowrap;
+    /* white-space: nowrap; */
 
 }
 
