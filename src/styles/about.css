@@ -9,9 +9,9 @@
     padding-top: 4rem;
   }
 
-ol.breadcrumb{
+/* ol.breadcrumb{
     padding-left: 1%;
-}  
+}   */
 
 ol > li.breadcrumb-item > a {
     
@@ -25,7 +25,7 @@ ol > li.active {
 }
 
 .aboutTitle{
-    font-size: 3rem;
+    font-size: 43px;
     font-weight: bold;
     /* white-space: nowrap; */
 

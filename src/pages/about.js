@@ -20,11 +20,11 @@ const About = () => {
 
 
 
-      {/* <div className=""> */}
-        <div className="container">
+      
+        
           <div className="row">
             <div className="col-md">
-              <div className="aboutTitle">เป้าหมายของเรา</div>
+              <span className="aboutTitle">เป้าหมายของเรา</span>
             </div>
 
             <div className="col-md">
@@ -36,8 +36,8 @@ const About = () => {
               </div>
             </div>
           </div>
-        </div>
-      {/* </div> */}
+        
+      
 
             <div className="row aboutImg">
               <div className="col-md" style={{paddingBottom: "10%"}}>
