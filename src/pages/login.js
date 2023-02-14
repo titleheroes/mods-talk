@@ -18,6 +18,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import "../styles/login.css";
 import picLogin from "../images/login/pic-login.png";
 import icon from "../images/icon.svg";
+import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 
 function Copyright(props) {
   return (
@@ -25,11 +26,12 @@ function Copyright(props) {
       variant="body2"
       color="text.secondary"
       align="center"
-      style={{ fontFamily: "Kanit" }}
+      className="css-og50xi-MuiTypography-root"
+      style={{ fontFamily: "Kanit", color: "#132238" }}
       {...props}
     >
       ยังไม่ได้ลงทะเบียนใช่หรือไม่? &nbsp;
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://mui.com/" sx={{ fontWeight: "600" }}>
         ลงทะเบียนที่นี่
       </Link>
     </Typography>
@@ -71,7 +73,7 @@ export default function SignInSide() {
           <Grid
             item
             xs={false}
-            sm={4}
+            sm={false}
             md={7}
             sx={{
               backgroundImage: `url(${picLogin})`,
@@ -87,169 +89,186 @@ export default function SignInSide() {
           <Grid
             item
             xs={12}
-            sm={8}
+            sm={12}
             md={5}
             component={Paper}
             elevation={6}
             square
           >
-            <Box
-              sx={{
-                my: 8,
-                mx: 4,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <Typography
-                  component="h6"
-                  variant="h6"
-                  sx={{ fontWeight: "bold" }}
-                >
-                  <img
-                    className=""
-                    src={icon}
-                    alt="icon svg"
-                    style={{ width: "30%" }}
-                  ></img>{" "}
-                  ยินดีต้อนรับกลับ,
-                </Typography>
-              </div>
-
-              <Typography component="body1" variant="body1">
-                ยินดีต้อนรับกลับ! นักศึกษาและบุคลากร มจธ.
-              </Typography>
+            <div className="boxCenter">
+              <div className="container">
               <Box
-                component="form"
-                noValidate
-                onSubmit={handleSubmit}
                 sx={{
-                  mt: 1,
-                  // backgroundColor: "pink",
-                  width: "100%",
+                  my: 8,
+                  mx: 4,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextField
-                    margin="normal"
-                    // required
-                    id="email"
-                    label="อีเมลมหาวิทยาลัย"
-                    name="email"
-                    autoComplete="email"
-                    // autoFocus
-                    sx={{
-                      width,
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <TextField
-                    margin="normal"
-                    // required
-                    name="password"
-                    label="พาสเวิร์ด"
-                    // type="password"
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    autoComplete="current-password"
-                    sx={{
-                      width,
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={() => setShowPassword(!showPassword)}
-                          >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                <div>
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    sx={{ fontWeight: "600" }}
+                  >
+                    <img
+                      className=""
+                      src={icon}
+                      alt="icon svg"
+                      style={{ width: "25%" }}
+                    ></img>{" "}
+                    ยินดีต้อนรับกลับ,
+                  </Typography>
                 </div>
 
-                {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                <Typography
+                  component="subtitle1"
+                  variant="subtitle1"
+                  sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
                 >
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    style={{ backgroundColor: "#F04E22", width }}
-                  >
-                    เข้าสู่ระบบ
-                  </Button>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    // backgroundColor: "green",
+                  ยินดีต้อนรับกลับ! นักศึกษาและบุคลากร มจธ.
+                </Typography>
+                <Box
+                  component="form"
+                  noValidate
+                  onSubmit={handleSubmit}
+                  sx={{
+                    mt: 1,
+                    // backgroundColor: "pink",
+                    width: "100%",
                   }}
                 >
                   <div
-                    className="container"
                     style={{
-                      width,
-                      // backgroundColor: "orange",
-                      textAlign: "right",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <Link
-                      href="#"
-                      variant="body2"
-                      style={{ color: "#132238", width }}
-                    >
-                      {"ลืมรหัสผ่าน"}
-                    </Link>
+                    <TextField
+                      margin="normal"
+                      // required
+                      id="email"
+                      label="อีเมลมหาวิทยาลัย"
+                      name="email"
+                      autoComplete="email"
+                      autoFocus
+                      sx={{
+                        width,
+                      }}
+                    />
                   </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    // backgroundColor: "green",
-                  }}
-                >
-                  <div class="line" style={{ width }}>
-                    <span class="text-inside-line">
-                      <Typography component="body1" variant="body1">
-                        or
-                      </Typography>
-                    </span>
-                  </div>
-                </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <TextField
+                      margin="normal"
+                      // required
 
-                <Copyright sx={{ mt: 5 }} />
+                      name="password"
+                      label="พาสเวิร์ด"
+                      // type="password"
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      autoComplete="current-password"
+                      sx={{
+                        width,
+                      }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibilityoutlined"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <VisibilityOutlined />
+                              ) : (
+                                <VisibilityOffOutlined />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                      style={{
+                        backgroundColor: "#F04E22",
+                        width,
+                        height: "3em",
+                      }}
+                    >
+                      เข้าสู่ระบบ
+                    </Button>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      // backgroundColor: "green",
+                    }}
+                  >
+                    <div
+                      className="element.style"
+                      style={{
+                        width,
+                        // backgroundColor: "orange",
+                        textAlign: "right",
+                      }}
+                    >
+                      <Link
+                        href="#"
+                        variant="body2"
+                        color="#132238"
+                        className="hover-forget"
+                        // underline="hover"
+                        style={{ width }}
+                      >
+                        {"ลืมรหัสผ่าน"}
+                      </Link>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      // backgroundColor: "green",
+                    }}
+                  >
+                    <div class="line" style={{ width }}>
+                      <span class="text-inside-line">
+                        <Typography component="body3" variant="body3">
+                          or
+                        </Typography>
+                      </span>
+                    </div>
+                  </div>
+
+                  <Copyright sx={{ mt: 5 }} />
+                </Box>
               </Box>
-            </Box>
+              </div>
+              
+            </div>
           </Grid>
         </Grid>
       </ThemeProvider>
