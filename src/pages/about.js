@@ -1,4 +1,3 @@
-import { padding } from "@mui/system";
 import React from "react";
 
 import "../styles/about.css";
