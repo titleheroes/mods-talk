@@ -61,6 +61,15 @@ const Review = ({ onSearch }) => {
                 <div className="row">
                   <div className="col-10">
                     <Tabs
+                      sx={{
+                        "& .MuiTab-root": {
+                          fontFamily: "Kanit, sans-serif",
+                        },
+                        "& .Mui-selected": {
+                          color: "#F04E22",
+                        },
+                      }}
+                      TabIndicatorProps={{ style: { background: "#F04E22" } }}
                       value={value}
                       onChange={handleChange}
                       aria-label="simple tabs example"
@@ -110,15 +119,15 @@ const Review = ({ onSearch }) => {
                             ว่ามันดีไม่ดีอย่าง ไร มันดึงเกรดเยอะมั้ยครับ
                             พอดีไม่อยากให้เกรดตกครับผม
                           </div>
-                          <div className="row" style={{ paddingTop: "1rem" }}>
-                            <div className="col-2">
+                          <div style={{ paddingTop: "1rem", width: "100%" }}>
+                            <div className="box">
                               <div className="rectangle-container">
                                 <div className="rectangle-border">
                                   <div className="rectangle-text">GEN231</div>
                                 </div>
                               </div>
                             </div>
-                            <div className="col-10">
+                            <div className="box">
                               <div className="float-end">
                                 <div
                                   style={{
@@ -186,7 +195,7 @@ const Review = ({ onSearch }) => {
                         </div>
                       </div>
 
-                      <div className="col">
+                      <div className="col-3">
                         <img
                           src={require("../images/example/1x1.png")}
                           alt="ex_1x1"
@@ -228,32 +237,61 @@ const Review = ({ onSearch }) => {
               >
                 เริ่มต้นการเขียนโพสต์
               </button>
-              <div style={{ paddingTop: "3rem" }}>
+              <div className="searchBar">
                 <div className="search-container">
                   <input
                     type="text"
                     value={query}
                     onChange={handleInputChange}
+                    style={{
+                      height: "2.5rem",
+                      width: "100%",
+                      borderColor: "#E6E6E6",
+                    }}
                   />
-                  <div className="search-icon">
+                  <div className="search-inside">
                     <div>
                       <span>
                         <img
-                          src={require("../images/icon/like.svg").default}
-                          alt="like svg"
+                          src={require("../images/icon/search.svg").default}
+                          alt="search svg"
                         />
                       </span>
-                      <span>hello</span>
+                      <span style={{ paddingLeft: "1rem", fontSize: "14px" }}>
+                        Search Mod's Talk
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <img
-                src={require("../images/home/main.png")}
-                alt="main page png"
-                className="img-fluid"
-              />
+              <div style={{ paddingTop: "1rem", color: "#4F4F4F" }}>
+                <span>คลิก</span>{" "}
+                <span>
+                  <img
+                    src={require("../images/icon/search.svg").default}
+                    alt="search svg"
+                    style={{ color: "#4F4F4F" }}
+                  />
+                </span>{" "}
+                <span>
+                  และพิมพ์เกี่ยวกับสิ่งที่คุณอยากรู้เพื่อค้นหาสิ่งที่คุณต้องการอ่าน
+                  เริ่มต้นเพลิดเพลินไปกับการรีวิวด้านบน
+                </span>
+              </div>
+              <div style={{ paddingTop: "1rem" }}>
+                <hr />
+              </div>
+              <div
+                className="body"
+                style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
+              >
+                เป็นทิ่นิยมใน Mod's Talk
+              </div>
+              <div className="box">
+                <div className="rectangle-border">
+                  <div className="rectangle-text">Programming</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
