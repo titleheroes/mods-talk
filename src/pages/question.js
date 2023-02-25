@@ -34,8 +34,8 @@ const Question = () => {
                     กับคณะวิทย์ต่างกันยังไงครับ
                   </p>
                   <div className="post-detail row">
-                    <div className="col-9">
-                      <p className="post-date">10 มกราคม 2565</p>
+                    <div className="col-6">
+                      <span className="post-date">10 มกราคม 2565</span>
                     </div>
 
                     <div className="col menu-group">
@@ -48,7 +48,7 @@ const Question = () => {
                               }
                               alt=""
                             />
-                            <text>10</text>
+                            <text id="comment-count">10</text>
                             
 
                           </a>

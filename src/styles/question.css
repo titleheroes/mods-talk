@@ -83,21 +83,26 @@ ul.Qtabs.nav.nav-tabs{
     /* min-width: 300px; */
     padding-left: 0%;
     text-align: right;
+    vertical-align: center;
   }
 
-  .sub-menu{
+  .sub-menu.menu-dropdown{
     min-width: 33px;
     
-    ;
+   
+    
   }
 
   .menu-pic{
-    padding-top: 4%;
+    padding-top: 1%;
+    
   }
 
-  .comment-count{
-    padding-top: 4%;
-    font-size: 18px;
+  #comment-count{
+    padding-left: 2%;
+    
+    align-items: center;
+    
     
   }
 
@@ -184,7 +189,8 @@ ul.Qtabs.nav.nav-tabs{
 
 
  #question-dropdown{
-  padding-right: 2rem;
+ 
   color: transparent;
   border: none;
  }
+
