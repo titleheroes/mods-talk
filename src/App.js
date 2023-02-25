@@ -6,11 +6,14 @@ import './App.css';
 // import Home from './pages/home';
 // import About from './pages/about';
 // import Question from './pages/question';
-import Login from './pages/login';
+// import Login from './pages/registration/login';
+// import SignUp from './pages/registration/signup';
+// import Authenticate from './pages/registration/authenticate';
+import DataUser from './pages/registration/datauser';
 
 function App() {
   return (
-    <Login/>
+    <DataUser/>
     // <Router>
     //   <Navbar />
     //   <Routes>

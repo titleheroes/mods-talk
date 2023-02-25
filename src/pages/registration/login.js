@@ -12,12 +12,10 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-import "../styles/login.css";
-import picLogin from "../images/login/pic-login.png";
-import icon from "../images/icon.svg";
+import "../../styles/login.css";
+import picLogin from "../../images/login/pic-login.png";
+import icon from "../../images/icon.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 
 function Copyright(props) {
