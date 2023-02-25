@@ -60,3 +60,31 @@
       font-size: 18px;
     }
   }
+
+  .button {
+    padding: 2.5% 3% 2.5% 3%;
+    font-size: 14px;
+    color: white;
+    background-color: #f04e22;
+    border: 0;
+    border-radius: 5px;
+  }
+
+  .vertical-line {
+    height: 100%;
+    border-right: 1px solid #E6E6E6;
+    margin: 0 20px;
+  }
+
+  .search-container {
+    position: relative;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    pointer-events: none;
+  }

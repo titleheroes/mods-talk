@@ -29,7 +29,8 @@ function TabPanel(props) {
   );
 }
 
-const Review = () => {
+const Review = ({ onSearch }) => {
+  //Tab and Sorting
   const [value, setValue] = useState(0);
   const [sorting, setSorting] = useState("none");
 
@@ -40,6 +41,15 @@ const Review = () => {
   const handleSortChange = (event) => {
     setSorting(event.target.value);
   };
+  //-----------
+
+  //Search Bar
+  const [query, setQuery] = useState("");
+
+  const handleInputChange = (event) => {
+    setQuery(event.target.value);
+  };
+  //-----------
 
   return (
     <div>
@@ -49,7 +59,7 @@ const Review = () => {
             <div className="col-md-8">
               <div>
                 <div className="row">
-                  <div className="col-9">
+                  <div className="col-10">
                     <Tabs
                       value={value}
                       onChange={handleChange}
@@ -63,7 +73,7 @@ const Review = () => {
                       <Tab label="สถานที่ฝึกงาน" id="tab-5" />
                     </Tabs>
                   </div>
-                  <div className="col">
+                  <div className="col-2">
                     <Select
                       className="float-end"
                       value={sorting}
@@ -206,8 +216,39 @@ const Review = () => {
                 </TabPanel>
               </div>
             </div>
+            <div className="col-md-1">
+              <div className="vertical-line"></div>
+            </div>
+            <div className="col-md-3">
+              <button
+                type="button"
+                className="button"
+                onClick=""
+                style={{ width: "100%" }}
+              >
+                เริ่มต้นการเขียนโพสต์
+              </button>
+              <div style={{ paddingTop: "3rem" }}>
+                <div className="search-container">
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={handleInputChange}
+                  />
+                  <div className="search-icon">
+                    <div>
+                      <span>
+                        <img
+                          src={require("../images/icon/like.svg").default}
+                          alt="like svg"
+                        />
+                      </span>
+                      <span>hello</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <div className="col-md">
               <img
                 src={require("../images/home/main.png")}
                 alt="main page png"
