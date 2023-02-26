@@ -41,7 +41,7 @@
   .homeHeader2 {
     font-size: 20px;
     font-weight: bold;
-    line-height: 3.5rem;
+    line-height: 1.75rem;
   }
 
   @media (min-width: 1024px) {
@@ -97,4 +97,30 @@
   .box {
     display: inline-block;
     padding-right: 1rem;
+  }
+
+  .nav-tabs .nav-link {
+    background-color: transparent !important;
+    color: #333 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  @media (max-width: 330px) {
+    .nav-tabs .nav-link{
+        font-size: 14px;     
+      }
+  }
+
+  .nav-tabs .nav-link.active {
+    background-color: transparent !important;
+    color: #f04e22 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .nav-tabs .nav-link.active {
+    border-bottom: solid 3px #f04e22 !important;
   }
