@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "../styles/review.css";
-// import { Box, Select, MenuItem } from "@mui/material";
 import { Tabs, Tab, Dropdown } from "react-bootstrap";
 
 const Review = () => {
@@ -9,6 +8,14 @@ const Review = () => {
 
   const handleInputChange = (event) => {
     setQuery(event.target.value);
+  };
+  //-----------
+
+  //Sorting
+  const [selectedOption, setSelectedOption] = useState("ทั้งหมด");
+
+  const handleOptionSelect = (optionName) => {
+    setSelectedOption(optionName);
   };
   //-----------
 
@@ -27,12 +34,34 @@ const Review = () => {
                   >
                     <div className="row">
                       <div className="col-9">
-                        <div className="body">
-                          <span style={{ paddingRight: "1rem" }}>Prof</span>
-                          วรรณดา แม็กซิมอฟ
-                          <span style={{ paddingLeft: "1rem" }}>
-                            4 วันที่ผ่านมา
-                          </span>
+                        <div
+                          className="body"
+                          style={{
+                            display: "flex",
+                          }}
+                        >
+                          <div className="box">
+                            <div className="profile-image">
+                              <img
+                                src={require("../images/home/main.png")}
+                                alt="main page png"
+                                className="img-fluid"
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="box"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            วรรณดา แม็กซิมอฟ
+                            <span style={{ paddingLeft: "1rem" }}>
+                              4 วันที่ผ่านมา
+                            </span>
+                          </div>
+
                           <div style={{ paddingLeft: "1rem" }}></div>
                         </div>
                         <div>
@@ -155,16 +184,24 @@ const Review = () => {
                         backgroundColor: "transparent",
                         color: "BLACK",
                         borderColor: "black",
+                        width: "100px",
                       }}
                       id="dropdown-basic"
                     >
-                      ทั้งหมด
+                      {selectedOption}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                      <Dropdown.Item href="#/action-1">ยอดนิยม</Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">Option 2</Dropdown.Item>
-                      <Dropdown.Item href="#/action-3">Option 3</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleOptionSelect("ทั้งหมด")}
+                      >
+                        ทั้งหมด
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleOptionSelect("ยอดนิยม")}
+                      >
+                        ยอดนิยม
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 </div>

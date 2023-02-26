@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 // import Home from './pages/home';
 import About from "./pages/about";
 import Question from "./pages/question";
-import Review from "./pages/review copy";
+import Review from "./pages/review/post";
 
 function App() {
   return (
