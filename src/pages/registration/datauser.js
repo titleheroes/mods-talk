@@ -14,6 +14,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+
 import "../../styles/login.css";
 import picSignup from "../../images/login/pic-signup.png";
 import icon from "../../images/icon.svg";
@@ -47,8 +50,6 @@ export default function DataUser() {
   const handleChange = (event) => {
     setFaculty(event.target.value);
   };
-
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="all">
@@ -106,134 +107,173 @@ export default function DataUser() {
                       ลงทะเบียนผู้ใช้งาน
                     </Typography>
                   </div>
-
-                  <Box
-                    component="form"
-                    noValidate
-                    onSubmit={handleSubmit}
-                    sx={{
-                      mt: 1,
-                      // backgroundColor: "pink",
-                      width: "100%",
-                    }}
-                  >
-                    <div
+                  <div style={{ width: "100%" }}>
+                    <Tabs
+                      defaultActiveKey="student"
+                      className="pt-4"
                       style={{
-                        display: "flex",
-                        alignItems: "center",
                         justifyContent: "center",
                       }}
                     >
-                      <TextField
-                        margin="normal"
-                        // required
-                        id="firstname"
-                        label="ชื่อ"
-                        name="firstname"
-                        autoComplete="firstname"
-                        autoFocus
-                        sx={{
-                          width,
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <TextField
-                        margin="normal"
-                        // required
-                        id="lastname"
-                        label="นามสกุล"
-                        name="lastname"
-                        autoComplete="lastname"
-                        autoFocus
-                        sx={{
-                          width,
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <TextField
-                        margin="normal"
-                        // required
-                        id="idstudent"
-                        label="รหัสนักศึกษา"
-                        name="idstudent"
-                        autoComplete="idstudent"
-                        autoFocus
-                        sx={{
-                          width,
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Box>
-
-                        <FormControl sx={{ display: "flex", justifyContent: "space-around", flexDirection: "row"}}>
-                          <InputLabel id="demo-simple-select-label">
-                            คณะ
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={faculty}
-                            label="Faculty"
-                            onChange={handleChange}
-                          >
-                            <MenuItem value={10}>คณะวิศวกรรมศาสตร์</MenuItem>
-                            <MenuItem value={20}>
-                              คณะครุศาสตร์อุตสาหกรรมและเทคโนโลยี
-                            </MenuItem>
-                            <MenuItem value={30}>คณะวิทยศาสตร์</MenuItem>
-                            <MenuItem value={40}>
-                              สถาบันวิทยาการหุ่นยนต์ภาคสนาม
-                            </MenuItem>
-                            <MenuItem value={50}>
-                              คณะสถาปัตยกรรมศาสตร์และการออกแบบ
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Box>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        style={{
-                          backgroundColor: "#F04E22",
-                          width,
-                          height: "3em",
-                        }}
+                      <Tab
+                        className="pt-4"
+                        eventKey="student"
+                        title="นักศึกษา"
+                        style={{ width: "100%" }}
                       >
-                        ลงทะเบียน
-                      </Button>
-                    </div>
-                  </Box>
+                        <Box
+                          component="form"
+                          noValidate
+                          onSubmit={handleSubmit}
+                          sx={{
+                            mt: 1,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="firstname"
+                              label="ชื่อ"
+                              name="firstname"
+                              autoComplete="firstname"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="lastname"
+                              label="นามสกุล"
+                              name="lastname"
+                              autoComplete="lastname"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="idstudent"
+                              label="รหัสนักศึกษา"
+                              name="idstudent"
+                              autoComplete="idstudent"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                mt: 2,
+                                width,
+                              }}
+                            >
+                              <FormControl
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  flexDirection: "row",
+                                }}
+                              >
+                                <InputLabel
+                                  id="demo-simple-select-label float-end"
+                                  sx={{}}
+                                >
+                                  คณะ
+                                </InputLabel>
+                                <Select
+                                  sx={{
+                                    width: "100%",
+                                  }}
+                                  labelId="demo-simple-select-label"
+                                  id="demo-simple-select"
+                                  value={faculty}
+                                  label="Faculty"
+                                  onChange={handleChange}
+                                >
+                                  <MenuItem value={10}>
+                                    คณะวิศวกรรมศาสตร์
+                                  </MenuItem>
+                                  <MenuItem value={20}>
+                                    คณะครุศาสตร์อุตสาหกรรมและเทคโนโลยี
+                                  </MenuItem>
+                                  <MenuItem value={30}>คณะวิทยาศาสตร์</MenuItem>
+                                  <MenuItem value={40}>
+                                    สถาบันวิทยาการหุ่นยนต์ภาคสนาม
+                                  </MenuItem>
+                                  <MenuItem value={50}>
+                                    คณะสถาปัตยกรรมศาสตร์และการออกแบบ
+                                  </MenuItem>
+                                </Select>
+                              </FormControl>
+                            </Box>
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              sx={{ mt: 3, mb: 2 }}
+                              style={{
+                                backgroundColor: "#F04E22",
+                                width,
+                                height: "3em",
+                              }}
+                            >
+                              ลงทะเบียน
+                            </Button>
+                          </div>
+                        </Box>
+                      </Tab>
+                      <Tab
+                        className="pt-5"
+                        eventKey="teacher"
+                        title="บุคลากรภายใน"
+                      >
+                        ่าาาาาา
+                      </Tab>
+                    </Tabs>
+                  </div>
                 </Box>
               </div>
             </div>
