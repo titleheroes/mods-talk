@@ -2,17 +2,18 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/navbar";
 import { BrowserRouter as Router } from "react-router-dom";
-// import Home from './pages/home';
+import Home from "./pages/home";
 import About from "./pages/about";
 import Question from "./pages/question";
-import Review from "./pages/review/post";
+import Review from "./pages/review/review copy";
+import Post from "./pages/review/post";
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" exact element={<Review />}>
+        <Route path="/" exact element={<Post />}>
           {" "}
         </Route>
         <Route path="/about" exact element={<About />}>

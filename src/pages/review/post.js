@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../../styles/review.css";
+import { Dropdown, Form, Button } from "react-bootstrap";
 
 const Review = () => {
   //Search Bar
@@ -66,6 +67,204 @@ const Review = () => {
                     className="img-fluid"
                   />
                 </div>
+                <div className="mt-3">
+                  <p>
+                    ร้านที่นี่จะเน้นอาหารแนว twist จากแม็กซิกกันแท้ๆ
+                    ที่ดัดแปลงให้เข้ากับวัตถุดิบและรสชาติของคน ไทย
+                    ทุกเมนูคิดค้นโดยเชฟแม็กซิกันแท้ 100% บรรยากาศในร้านคือดีมากๆ
+                    เรามารอบ dinner ก็จะเห็นวิวเมือง กรุงเทพแบบสุดลูกตา
+                    สวยมากเป็นลม พนักงานที่นี่ก็ดีมาก เป็นกันเองสุดๆ
+                    เซอร์วิสดีสุดๆ ทางร้านมี 2 โซน คือ indoor กับ outdoor
+                    บรรยาศดีทั้งคู่เลยค่ะ
+                  </p>
+                </div>
+                <div className="box" style={{ width: "100%" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <span style={{ paddingRight: "0.5rem" }}>
+                        <img
+                          src={require("../../images/icon/chat.svg").default}
+                          alt="chat svg"
+                        />
+                      </span>
+                      <span style={{ paddingRight: "1rem" }}>12</span>
+                      <span style={{ paddingRight: "0.5rem" }}>
+                        <img
+                          src={require("../../images/icon/like.svg").default}
+                          alt="like svg"
+                        />
+                      </span>
+                      <span style={{ paddingRight: "1rem" }}>512</span>
+                    </div>
+                    <div className="float-end">
+                      <Dropdown drop="down">
+                        <Dropdown.Toggle
+                          variant="link"
+                          id="dropdown-basic"
+                          style={{
+                            border: "none",
+                            boxShadow: "none",
+                            color: "transparent",
+                          }}
+                        >
+                          <span style={{ color: "black" }}>
+                            &bull;&bull;&bull;
+                          </span>
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item href="#">Option 1</Dropdown.Item>
+                          <Dropdown.Item href="#">Option 2</Dropdown.Item>
+                          <Dropdown.Item href="#">Option 3</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                  </div>
+                </div>
+                <hr className="my-4"></hr>
+                <div>
+                  <div
+                    className="body"
+                    style={{
+                      display: "flex",
+                    }}
+                  >
+                    <div
+                      className="box"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div className="profile-image">
+                        <img
+                          src={require("../../images/home/main.png")}
+                          alt="main page png"
+                          className="img-fluid"
+                        />
+                      </div>
+                    </div>
+                    <Form style={{ width: "100%" }}>
+                      <div className="row">
+                        <div className="col-11">
+                          <div className="form-size">
+                            <Form.Control
+                              type="text"
+                              placeholder="เขียนความคิดเห็น..."
+                            />
+                          </div>
+                        </div>
+                        <div className="col-1">
+                          <div className="float-end">
+                            <Button
+                              type="submit"
+                              style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                              }}
+                            >
+                              <img
+                                src={
+                                  require("../../images/icon/sent.svg").default
+                                }
+                                alt="sent svg"
+                              />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Form>
+                  </div>
+                </div>
+                <hr className="my-4"></hr>
+                <div
+                  className="body"
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <div
+                    className="box"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <div className="profile-image">
+                      <img
+                        src={require("../../images/home/main.png")}
+                        alt="main page png"
+                        className="img-fluid"
+                      />
+                    </div>
+                    <span className="mx-3">วรรณดา แม็กซิมอฟ</span>
+                  </div>
+                  <div className="float-end">
+                    <Dropdown drop="down">
+                      <Dropdown.Toggle
+                        variant="link"
+                        id="dropdown-basic"
+                        style={{
+                          border: "none",
+                          boxShadow: "none",
+                          color: "transparent",
+                        }}
+                      >
+                        <span style={{ color: "black" }}>
+                          &bull;&bull;&bull;
+                        </span>
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item href="#">Option 1</Dropdown.Item>
+                        <Dropdown.Item href="#">Option 2</Dropdown.Item>
+                        <Dropdown.Item href="#">Option 3</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p>
+                    ร้านที่นี่จะเน้นอาหารแนว twist จากแม็กซิกกันแท้ๆ
+                    ที่ดัดแปลงให้เข้ากับวัตถุดิบและรสชาติของคน ไทย
+                    ทุกเมนูคิดค้นโดยเชฟแม็กซิกันแท้ 100% บรรยากาศในร้านคือดีมากๆ
+                    เรามารอบ dinner ก็จะเห็นวิวเมือง กรุงเทพแบบสุดลูกตา
+                    สวยมากเป็นลม พนักงานที่นี่ก็ดีมาก เป็นกันเองสุดๆ
+                    เซอร์วิสดีสุดๆ ทางร้านมี 2 โซน คือ indoor กับ outdoor
+                    บรรยาศดีทั้งคู่เลยค่ะ
+                  </p>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <span style={{ paddingRight: "0.5rem" }}>
+                      10 มกราคม 2565
+                    </span>
+                    <span style={{ paddingRight: "0.5rem" }}>·</span>
+                    <span>ตอบกลับ</span>
+                  </div>
+                  <div className="float-end">
+                    <span style={{ paddingRight: "0.5rem" }}>
+                      <img
+                        src={require("../../images/icon/like.svg").default}
+                        alt="like svg"
+                      />
+                    </span>
+                    <span>10</span>
+                  </div>
+                </div>
+                <hr className="my-4"></hr>
               </div>
             </div>
             <div className="col-md-1">
