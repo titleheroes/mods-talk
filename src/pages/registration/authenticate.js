@@ -20,6 +20,8 @@ import picSignup from "../../images/login/pic-signup.png";
 import mailrun from "../../images/mail.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 
+import { useLocation } from "react-router-dom";
+
 function Copyright(props) {
   return (
     <Typography
@@ -47,6 +49,8 @@ const theme = createTheme({
 });
 
 export default function Authenticate() {
+  let location = useLocation();
+
   const matches = useMediaQuery("(min-width:1024px)");
 
   let width;
@@ -69,6 +73,7 @@ export default function Authenticate() {
 
   return (
     <div className="all">
+      {location.state}
       <ThemeProvider theme={theme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
@@ -99,79 +104,76 @@ export default function Authenticate() {
           >
             <div className="boxCenter">
               <div className="container">
-              <Box
-                sx={{
-                  my: 8,
-                  mx: 4,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                      className="mailWidth"
-                      src={mailrun}
-                      alt="icon svg"
-                      // style={{ width: "25%" }}
-                    ></img>
-                    <br></br>
-                <div>
-                  <Typography
-                    component="h5"
-                    variant="h5"
-                    sx={{ fontWeight: "600"}}
-                  >
-                    
-                    ขั้นตอนการยืนยันตัวตน
-                  </Typography>
-                </div>
-
-                <Typography
-                  component="subtitle1"
-                  variant="subtitle1"
-                  className="descWidth"
-                  sx={{ mt: 2, color: "#556070", fontWeight: "400"}}
-                >
-                  ระบบได้ส่งลิงก์ยืนยันตัวตนไปยังอีเมลของท่านแล้ว กรุณากดยืนยันที่อีเมล
-                </Typography>
-
                 <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleSubmit}
                   sx={{
-                    mt: 1,
-                    // backgroundColor: "pink",
-                    width: "100%",
+                    my: 8,
+                    mx: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                   <div>
-                  <Typography
-                    component="h6"
-                    variant="h6"
-                    className="testmail"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    <br></br>
-                    apichaya.pleng@mail.kmutt.ac.th
-
-                  </Typography>
-                </div> 
-                    
+                  <img
+                    className="mailWidth"
+                    src={mailrun}
+                    alt="icon svg"
+                    // style={{ width: "25%" }}
+                  ></img>
+                  <br></br>
+                  <div>
+                    <Typography
+                      component="h5"
+                      variant="h5"
+                      sx={{ fontWeight: "600" }}
+                    >
+                      ขั้นตอนการยืนยันตัวตน
+                    </Typography>
                   </div>
 
-                  <Copyright sx={{ mt: 5 }} />
+                  <Typography
+                    component="subtitle1"
+                    variant="subtitle1"
+                    className="descWidth"
+                    sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
+                  >
+                    ระบบได้ส่งลิงก์ยืนยันตัวตนไปยังอีเมลของท่านแล้ว
+                    กรุณากดยืนยันที่อีเมล
+                  </Typography>
+
+                  <Box
+                    component="form"
+                    noValidate
+                    onSubmit={handleSubmit}
+                    sx={{
+                      mt: 1,
+                      // backgroundColor: "pink",
+                      width: "100%",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <div>
+                        <Typography
+                          component="h6"
+                          variant="h6"
+                          className="testmail"
+                          sx={{ fontWeight: "bold" }}
+                        >
+                          <br></br>
+                          apichaya.pleng@mail.kmutt.ac.th
+                        </Typography>
+                      </div>
+                    </div>
+
+                    <Copyright sx={{ mt: 5 }} />
+                  </Box>
                 </Box>
-              </Box>
               </div>
-              
             </div>
           </Grid>
         </Grid>
