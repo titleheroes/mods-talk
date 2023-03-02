@@ -224,7 +224,16 @@ border: none;
     display: "flex" !important;
     align-items: "center" !important;
     width: "100%" !important;
-    background-color: #f04e22;
+}
+
+.notiTime{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 400 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0.00938em !important;
+  color: #979797 !important;
 }
 
 

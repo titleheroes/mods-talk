@@ -11,6 +11,7 @@ import {
 import { classes } from "istanbul-lib-coverage";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
+import { pink } from "@mui/material/colors";
 
 const Review = () => {
   //Search Bar
@@ -70,6 +71,65 @@ const Review = () => {
                               variant="body2"
                               color="text.primary"
                             >
+                              ได้ถูกใจต่อโพสต์
+                            </Typography>
+                            &nbsp; &nbsp;
+                            <Typography
+                              className="notiPost"
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              วิชานี้ GEN231 ดีมั้ยครับ อยากฟังรีวิจากพี่ๆ ครับ
+                            </Typography>
+                          </React.Fragment>
+                        }
+                        secondary= {
+                          <Typography className="notiTime">
+                             5 นาทีที่ผ่านมา
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  </List>
+                </div>
+              </Tab>
+
+              <Tab className="pt-4" eventKey="no-ans" title="การตอบกลับ">
+               
+               <div>
+                  <List
+                    sx={{
+                      width: "100%",
+                      maxWidth: "100%",
+                      bgcolor: "background.paper",
+                    }}
+                  >
+                    <ListItem alignItems="flex-start center">
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="Remy Sharp"
+                          src="/static/images/avatar/1.jpg"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <React.Fragment>
+                            <Typography
+                              className="notiName"
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              วรรณดา แม็กซิมอฟ
+                            </Typography>
+                            &nbsp; &nbsp;
+                            <Typography
+                              className="notiText"
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
                               ได้แสดงความคิดเห็นต่อโพสต์
                             </Typography>
                             &nbsp; &nbsp;
@@ -83,67 +143,15 @@ const Review = () => {
                             </Typography>
                           </React.Fragment>
                         }
+                        secondary= {
+                          <Typography className="notiTime">
+                             10 นาทีที่ผ่านมา
+                          </Typography>
+                        }
                       />
                     </ListItem>
                   </List>
-                  {/* <p className="poster-name pb-3">ผู้ไม่ประสงค์ออกนาม</p>
-                  <p className="pb-2">
-                    ผมสงสัยครับ รบกวนผู้รู้ตอบผมทีว่า วิทยคอมของคณะ IT
-                    กับคณะวิทย์ต่างกันยังไงครับ
-                  </p>
-                  <div className="post-detail row">
-                    <div className="col-6">
-                      <span className="post-date">10 มกราคม 2565</span>
-                    </div>
-
-                    <div className="col menu-group">
-                      <div className="row">
-                        <div className="col sub-menu">
-                          <a href="" className="post-comment">
-                            <img className="menu-pic"
-                              src={
-                                require("../images/question/chat_1.svg").default
-                              }
-                              alt=""
-                            />
-                            <text id="comment-count">10</text>
-                            
-
-                          </a>
-
-                        </div>
-
-                        <div className="col-2 sub-menu menu-dropdown">
-
-                        <Dropdown>
-      <Dropdown.Toggle variant="link" id="question-dropdown">
-      <img
-                            className="menu-dropdown"
-                            src={
-                              require("../images/question/three_dots.svg")
-                                .default
-                            }
-                            alt=""
-                          />
-                        
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu >
-        <Dropdown.Item href="#/action-1">Report Post</Dropdown.Item>
-        <Dropdown.Item href="#/action-2">Delete Post</Dropdown.Item>
-        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-      </Dropdown.Menu >
-    </Dropdown>    
-                          
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
                 </div>
-              </Tab>
-
-              <Tab className="pt-5" eventKey="no-ans" title="การตอบกลับ">
-                ่าาาาาา
               </Tab>
             </Tabs>
           </div>

@@ -10,7 +10,8 @@ import Login from './pages/registration/login';
 import SignUp from './pages/registration/signup';
 import Authenticate from './pages/registration/authenticate';
 import DataUser from './pages/registration/datauser';
-import Notification from './pages/notification';
+// import Notification from './pages/notification';
+import Profile from './pages/profile';
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" exact element={<Notification/>}> </Route>
+        <Route path="/" exact element={<Profile/>}> </Route>
         <Route path="/about" exact element={<About/>}> </Route>
         {/* <Route path="/question" exact element={<Question/>}> </Route> */}
       </Routes>
