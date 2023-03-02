@@ -1,0 +1,77 @@
+*{
+    
+    word-wrap: break-word;
+}
+
+.page{
+    padding-left: 7%;
+    padding-right: 7%;
+    padding-top: 4rem;
+  }
+
+/* ol.breadcrumb{
+    padding-left: 1%;
+}   */
+
+ol > li.breadcrumb-item > a {
+    
+    color:#f04e22;
+    font-weight: bold;
+}
+
+ol > li.active {
+    color:black;
+    font-weight: bold;
+}
+
+.aboutTitle{
+    font-size: 43px;
+    font-weight: bold;
+    /* white-space: nowrap; */
+
+}
+
+.aboutContent{
+    font-size: 1em;
+    padding-top: 1.5%;
+    color: #333333;
+    /* white-space: nowrap; */
+    width: 100%;
+
+}
+
+.aboutImg{
+    padding-top: 3%;
+}
+
+.aboutQuote{
+    font-size: 1.5em;
+    font-weight: medium;
+    
+}
+
+.quoteBox{
+    padding-left: 2%;
+    padding-right: 2%;
+    border-left: 3px solid black;
+}
+
+.quoteName{
+    font-size: 1.2em;
+    color: #333333;
+    font-weight: medium;
+    text-align: right;
+}
+
+.objectiveList{
+    font-size: 1em;
+    font-weight: normal;
+    padding-top: 8%;
+
+    padding-bottom: 12%;
+}
+
+.objectiveList > li{
+    margin: 20px 0;
+    color: #333333;
+}
