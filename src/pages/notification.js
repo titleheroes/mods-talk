@@ -45,16 +45,14 @@ const Review = () => {
                       bgcolor: "background.paper",
                     }}
                   >
-                    <ListItem alignItems="flex-start">
-                      
+                    <ListItem alignItems="flex-start center">
                       <ListItemAvatar>
                         <Avatar
                           alt="Remy Sharp"
                           src="/static/images/avatar/1.jpg"
                         />
                       </ListItemAvatar>
-                      <ListItemText 
-                      
+                      <ListItemText
                         primary={
                           <React.Fragment>
                             <Typography
@@ -65,8 +63,7 @@ const Review = () => {
                             >
                               วรรณดา แม็กซิมอฟ
                             </Typography>
-                            &nbsp;
-                            &nbsp;
+                            &nbsp; &nbsp;
                             <Typography
                               className="notiText"
                               component="span"
@@ -75,8 +72,7 @@ const Review = () => {
                             >
                               ได้แสดงความคิดเห็นต่อโพสต์
                             </Typography>
-                            &nbsp;
-                            &nbsp;
+                            &nbsp; &nbsp;
                             <Typography
                               className="notiPost"
                               component="span"
