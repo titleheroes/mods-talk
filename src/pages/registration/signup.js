@@ -3,7 +3,6 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -19,8 +18,12 @@ import picSignup from "../../images/login/pic-signup.png";
 import icon from "../../images/icon.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { auth } from "../../config.js";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+} from "firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -33,7 +36,14 @@ function Copyright(props) {
       {...props}
     >
       มีบัญชีผู้ใช้งานแล้วใช่หรือไม่? &nbsp;
-      <Link color="inherit" href="https://mui.com/" sx={{ fontWeight: "600" }}>
+      <Link
+        to="/login"
+        style={{
+          fontWeight: "600",
+          color: "#132238",
+          textDecorationLine: "underline",
+        }}
+      >
         เข้าสู่ระบบที่นี่
       </Link>
     </Typography>
@@ -47,19 +57,14 @@ const theme = createTheme({
 });
 
 export default function SignUp() {
+  // signOut(auth);
+
   const matches = useMediaQuery("(min-width:1024px)");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
-  const signUp = async () => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const navigate = useNavigate();
 
   let width;
   if (matches) {
@@ -69,23 +74,33 @@ export default function SignUp() {
   }
 
   const handleSubmit = (event) => {
-    const authPage = {
-      pathname: "/authenticate",
-      search: "?foo=bar",
-      state: { email },
-    };
-
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
     console.log({
       email,
       password,
     });
 
     let domain = email.substring(email.lastIndexOf("@"));
-    if (domain == "@mail.kmutt.ac.th" || domain == "@kmutt.ac.th") {
-      console.log("Right Format");
-      navigate(authPage);
+    console.log("Right Format");
+    if (domain === "@mail.kmutt.ac.th" || domain === "@kmutt.ac.th") {
+      try {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            sendEmailVerification(userCredential.user)
+              .then(() => {
+                console.log("emai-sent");
+                navigate("/authenticate", { state: { email: email } });
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       console.error("Bruh");
     }

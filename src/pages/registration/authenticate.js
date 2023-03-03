@@ -3,7 +3,6 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -20,7 +19,7 @@ import picSignup from "../../images/login/pic-signup.png";
 import mailrun from "../../images/mail.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -34,9 +33,15 @@ function Copyright(props) {
     >
       <br></br>
       <br></br>
-      หากยังไม่ได้รับอีเมล กรุณากด &nbsp;
-      <Link color="inherit" href="https://mui.com/" sx={{ fontWeight: "600" }}>
-        ส่งใหม่อีกครั้ง
+      <Link
+        to="/login"
+        style={{
+          fontWeight: "600",
+          color: "#132238",
+          textDecorationLine: "underline",
+        }}
+      >
+        กลับสู่หน้าล็อคอิน
       </Link>
     </Typography>
   );
@@ -49,7 +54,10 @@ const theme = createTheme({
 });
 
 export default function Authenticate() {
-  let location = useLocation();
+  const location = useLocation();
+  const email = location.state?.email;
+
+  console.log(email);
 
   const matches = useMediaQuery("(min-width:1024px)");
 
@@ -60,20 +68,8 @@ export default function Authenticate() {
     width = "100%";
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
-
-  const [showPassword, setShowPassword] = useState(false);
-
   return (
     <div className="all">
-      {location.state}
       <ThemeProvider theme={theme}>
         <Grid container component="main" sx={{ height: "100vh" }}>
           <CssBaseline />
@@ -143,7 +139,6 @@ export default function Authenticate() {
                   <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmit}
                     sx={{
                       mt: 1,
                       // backgroundColor: "pink",
@@ -165,7 +160,8 @@ export default function Authenticate() {
                           sx={{ fontWeight: "bold" }}
                         >
                           <br></br>
-                          apichaya.pleng@mail.kmutt.ac.th
+                          {/* apichaya.pleng@mail.kmutt.ac.th */}
+                          {email}
                         </Typography>
                       </div>
                     </div>

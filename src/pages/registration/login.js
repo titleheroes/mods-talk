@@ -3,7 +3,6 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -17,6 +16,9 @@ import "../../styles/login.css";
 import picLogin from "../../images/login/pic-login.png";
 import icon from "../../images/icon.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth } from "../../config.js";
 
 function Copyright(props) {
   return (
@@ -29,7 +31,14 @@ function Copyright(props) {
       {...props}
     >
       ยังไม่ได้ลงทะเบียนใช่หรือไม่? &nbsp;
-      <Link color="inherit" href="https://mui.com/" sx={{ fontWeight: "600" }}>
+      <Link
+        to="/login"
+        style={{
+          fontWeight: "600",
+          color: "#132238",
+          textDecorationLine: "underline",
+        }}
+      >
         ลงทะเบียนที่นี่
       </Link>
     </Typography>
@@ -45,6 +54,11 @@ const theme = createTheme({
 export default function SignInSide() {
   const matches = useMediaQuery("(min-width:1024px)");
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
   let width;
   if (matches) {
     width = "60%";
@@ -54,11 +68,38 @@ export default function SignInSide() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
     console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+      email,
+      password,
     });
+
+    let domain = email.substring(email.lastIndexOf("@"));
+    console.log("Right Format");
+    if (
+      domain === "@mail.kmutt.ac.th" ||
+      domain === "@kmutt.ac.th" ||
+      domain === "@gmail.com"
+    ) {
+      try {
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const isEmailVerified = userCredential.user.emailVerified;
+            if (isEmailVerified) {
+              navigate("/");
+            } else {
+              signOut(auth);
+              console.log("No Verified");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error("Bruh");
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -95,177 +136,178 @@ export default function SignInSide() {
           >
             <div className="boxCenter">
               <div className="container">
-              <Box
-                sx={{
-                  my: 8,
-                  mx: 4,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <Typography
-                    component="h5"
-                    variant="h5"
-                    sx={{ fontWeight: "600" }}
-                  >
-                    <img
-                      className=""
-                      src={icon}
-                      alt="icon svg"
-                      style={{ width: "25%" }}
-                    ></img>{" "}
-                    ยินดีต้อนรับกลับ,
-                  </Typography>
-                </div>
-
-                <Typography
-                  component="subtitle1"
-                  variant="subtitle1"
-                  sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
-                >
-                  ยินดีต้อนรับกลับ! นักศึกษาและบุคลากร มจธ.
-                </Typography>
                 <Box
-                  component="form"
-                  noValidate
-                  onSubmit={handleSubmit}
                   sx={{
-                    mt: 1,
-                    // backgroundColor: "pink",
-                    width: "100%",
+                    my: 8,
+                    mx: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <TextField
-                      margin="normal"
-                      // required
-                      id="email"
-                      label="อีเมลมหาวิทยาลัย"
-                      name="email"
-                      autoComplete="email"
-                      autoFocus
-                      sx={{
-                        width,
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <TextField
-                      margin="normal"
-                      // required
-
-                      name="password"
-                      label="พาสเวิร์ด"
-                      // type="password"
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      autoComplete="current-password"
-                      sx={{
-                        width,
-                      }}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibilityoutlined"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <VisibilityOutlined />
-                              ) : (
-                                <VisibilityOffOutlined />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      sx={{ mt: 3, mb: 2 }}
-                      style={{
-                        backgroundColor: "#F04E22",
-                        width,
-                        height: "3em",
-                      }}
+                  <div>
+                    <Typography
+                      component="h5"
+                      variant="h5"
+                      sx={{ fontWeight: "600" }}
                     >
-                      เข้าสู่ระบบ
-                    </Button>
+                      <img
+                        className=""
+                        src={icon}
+                        alt="icon svg"
+                        style={{ width: "25%" }}
+                      ></img>{" "}
+                      ยินดีต้อนรับกลับ,
+                    </Typography>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      // backgroundColor: "green",
+
+                  <Typography
+                    component="subtitle1"
+                    variant="subtitle1"
+                    sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
+                  >
+                    ยินดีต้อนรับกลับ! นักศึกษาและบุคลากร มจธ.
+                  </Typography>
+                  <Box
+                    component="form"
+                    noValidate
+                    onSubmit={handleSubmit}
+                    sx={{
+                      mt: 1,
+                      // backgroundColor: "pink",
+                      width: "100%",
                     }}
                   >
                     <div
-                      className="element.style"
                       style={{
-                        width,
-                        // backgroundColor: "orange",
-                        textAlign: "right",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      <Link
-                        href="#"
-                        variant="body2"
-                        color="#132238"
-                        className="hover-forget"
-                        // underline="hover"
-                        style={{ width }}
-                      >
-                        {"ลืมรหัสผ่าน"}
-                      </Link>
+                      <TextField
+                        margin="normal"
+                        // required
+                        id="email"
+                        label="อีเมลมหาวิทยาลัย"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                        sx={{
+                          width,
+                        }}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
                     </div>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      // backgroundColor: "green",
-                    }}
-                  >
-                    <div class="line" style={{ width }}>
-                      <span class="text-inside-line">
-                        <Typography component="body3" variant="body3">
-                          or
-                        </Typography>
-                      </span>
-                    </div>
-                  </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <TextField
+                        margin="normal"
+                        // required
 
-                  <Copyright sx={{ mt: 5 }} />
+                        name="password"
+                        label="พาสเวิร์ด"
+                        // type="password"
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        autoComplete="current-password"
+                        sx={{
+                          width,
+                        }}
+                        onChange={(e) => setPassword(e.target.value)}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibilityoutlined"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? (
+                                  <VisibilityOutlined />
+                                ) : (
+                                  <VisibilityOffOutlined />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        style={{
+                          backgroundColor: "#F04E22",
+                          width,
+                          height: "3em",
+                        }}
+                      >
+                        เข้าสู่ระบบ
+                      </Button>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // backgroundColor: "green",
+                      }}
+                    >
+                      <div
+                        className="element.style"
+                        style={{
+                          width,
+                          // backgroundColor: "orange",
+                          textAlign: "right",
+                        }}
+                      >
+                        <Link
+                          to="/"
+                          style={{
+                            fontWeight: "600",
+                            color: "#132238",
+                            textDecorationLine: "underline",
+                          }}
+                        >
+                          ลืมรหัสผ่าน
+                        </Link>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // backgroundColor: "green",
+                      }}
+                    >
+                      <div class="line" style={{ width }}>
+                        <span class="text-inside-line">
+                          <Typography component="body3" variant="body3">
+                            or
+                          </Typography>
+                        </span>
+                      </div>
+                    </div>
+
+                    <Copyright sx={{ mt: 5 }} />
+                  </Box>
                 </Box>
-              </Box>
               </div>
-              
             </div>
           </Grid>
         </Grid>
