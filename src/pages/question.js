@@ -7,7 +7,13 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
 import "../styles/question.css";
-import { color } from "@mui/system";
+import { color, display, style } from "@mui/system";
+
+
+
+
+
+
 
 function Qmodal() {
   const [show, setShow] = useState(false);
@@ -89,6 +95,18 @@ function Qmodal() {
 }
 
 const Question = () => {
+
+  const [active, setActive] = useState(true);
+
+  function closeItem() {
+    setActive(false);
+    
+  }
+  function openItem() {
+    setActive(true);
+    
+  }
+  
   return (
     <div className="page">
       <div className="row">
@@ -113,6 +131,7 @@ const Question = () => {
                   <p className="poster-name pb-3">ผู้ไม่ประสงค์ออกนาม</p>
                   <p className="pb-2 text">
                     ผมสงสัยครับ รบกวนผู้รู้ตอบผมทีว่า วิทยคอมของคณะ IT
+                    กับคณะวิทย์ต่างกันยังไงครับ รบกวนผู้รู้ตอบผมทีว่า วิทยคอมของคณะ IT
                     กับคณะวิทย์ต่างกันยังไงครับ
                   </p>
 
@@ -366,15 +385,17 @@ const Question = () => {
           <div className="d-grid mx-auto right-content ">
             <Qmodal />
 
-            <div className="tips ">
+            <div className={active ? "open tips" : "close tips"} >
               <div class="row tipsTitle">
                 <div class="col ">เคล็ดลับเครื่องมือ</div>
 
-                <div class="col-2 close-button">
+                <div class="col-2 close-button"  >
                   <img
-                    className=""
+                    className="close-icon"
                     src={require("../images/question/cross.svg").default}
                     alt=""
+
+                    onClick={closeItem}
                   />
                 </div>
               </div>
