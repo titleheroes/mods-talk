@@ -121,6 +121,21 @@ ul.Qtabs.nav.nav-tabs{
 
   }
 
+  @media (max-width: 1024px) {
+    .right-content{
+        padding-left: 5%;
+        padding-right: 0%;
+      }
+  }
+
+  @media (max-width: 768px) {
+    .right-content{
+        padding-top: 5%;
+        padding-left: 0%;
+        padding-right: 0%;
+      }
+  }
+
   .post-comment{
     text-decoration: none;
     color: #333;
@@ -144,6 +159,12 @@ ul.Qtabs.nav.nav-tabs{
     border: 1px solid #C1C1C1;
     margin-top: 5%;
     padding-top: 8%;
+  }
+
+  @media (max-width: 767px) {
+    .tips{
+        display: none;
+      }
   }
 
   .tipsTitle{
@@ -193,4 +214,106 @@ ul.Qtabs.nav.nav-tabs{
   color: transparent;
   border: none;
  }
+
+
+ .post-border{
+  padding-bottom: 1%;
+  margin-bottom: 3%;
+  border-radius: 4px ;
+  border-bottom: 1px solid #E6E6E6 !important;
+ }
+
+ /* .question-modal{
+  border: none !important;
+ } */
+
+ .question-modal-header{
+  border: none !important;
+ }
+
+
+ .question-modal-title{
+  font-weight: bold;
+ }
+
+ button#modal-close:focus{
+  box-shadow: none !important;
+  
+ }
+
+ .modal-topic{
+  color: #666666;
+ }
+
+ ::-webkit-input-placeholder {
+  font-size: 14px!important;
+  color: #4F4F4F!important;
+  opacity: 0.5 !important;
+  padding-left: 0%;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  font-size: 14px!important;
+  color: #4F4F4F!important;
+  opacity: 0.5 !important;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  font-size: 14px!important;
+  color: #4F4F4F!important;
+  opacity: 0.5 !important;
+}
+
+
+ .question-modal-body{
+  border: none !important;
+ }
+
+ textarea.question-modal-input {
+  resize:none !important;
+}
+
+.anon-tick{
+  border-radius: 3px ;
+  background-color: #F2F2F2;
+  font-size: 14px
+}
+
+ .question-modal-footer {
+  border: none !important;
+ }
+
+ .flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-switch .form-check-input#question-anon-tick {
+  width: 2.5em; height: 1.5em;
+  
+}
+
+.form-switch .form-check-input#question-anon-tick:checked {
+  background-color: #f04e22 !important;
+  border-color: #f04e22 ;
+  
+}
+
+.form-switch .form-check-input#question-anon-tick:focus {
+  box-shadow: none !important;
+  
+}
+
+.post-question-btn{
+  background-color: #f04e22 !important;
+  color: white !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  width: 66%;
+}
+
+.modal-footer.question-modal-footer{
+  display: flex!important;
+  align-content: center !important;
+}
 
