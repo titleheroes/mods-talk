@@ -49,13 +49,14 @@ function Qmodal() {
           <input
             type="text"
             className="form-control mt-2 mb-3"
+            id="modal-input-box"
             placeholder="ระบุชื่อและนามสกุลของท่าน"
           ></input>
 
           <text className="modal-topic ">คำถามที่ต้องการจะถาม</text>
           <textarea
             class="form-control mt-2 question-modal-input"
-            id="exampleFormControlTextarea1"
+            id="modal-input-box"
             placeholder="เขียนคำถามที่ต้องการถาม"
             rows="3"
           ></textarea>

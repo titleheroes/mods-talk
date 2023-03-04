@@ -6,8 +6,7 @@
   }
 
   
-
-
+ 
 
   .qTitle{
     font-size: 43px;
@@ -245,24 +244,24 @@ ul.Qtabs.nav.nav-tabs{
   color: #666666;
  }
 
- ::-webkit-input-placeholder {
+ #modal-input-box::-webkit-input-placeholder {
   font-size: 14px!important;
   color: #4F4F4F!important;
   opacity: 0.5 !important;
   padding-left: 0%;
-}
+  }
 
-:-moz-placeholder { /* Firefox 18- */
-  font-size: 14px!important;
-  color: #4F4F4F!important;
-  opacity: 0.5 !important;
-}
+  #modal-input-box:-moz-placeholder { /* Firefox 18- */
+    font-size: 14px!important;
+    color: #4F4F4F!important;
+    opacity: 0.5 !important;
+  }
 
-::-moz-placeholder {  /* Firefox 19+ */
-  font-size: 14px!important;
-  color: #4F4F4F!important;
-  opacity: 0.5 !important;
-}
+  #modal-input-box::-moz-placeholder {  /* Firefox 19+ */
+    font-size: 14px!important;
+    color: #4F4F4F!important;
+    opacity: 0.5 !important;
+  }
 
 
  .question-modal-body{
@@ -271,6 +270,29 @@ ul.Qtabs.nav.nav-tabs{
 
  textarea.question-modal-input {
   resize:none !important;
+  
+}
+
+ /*textarea scrollbar width */
+ textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+textarea::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+textarea::-webkit-scrollbar-thumb {
+  background: #BCC0C4; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
 .anon-tick{
