@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -57,14 +57,17 @@ const theme = createTheme({
 });
 
 export default function SignUp() {
-  // signOut(auth);
+  signOut(auth);
 
   const matches = useMediaQuery("(min-width:1024px)");
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   let width;
   if (matches) {
@@ -72,6 +75,20 @@ export default function SignUp() {
   } else {
     width = "100%";
   }
+
+  const validatePassword = () => {
+    if (password.length < 6) {
+      setConfirmPasswordError("Password must be at least 6 characters long");
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
+  useEffect(() => {
+    validatePassword();
+  }, [password, confirmPassword]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -105,9 +122,6 @@ export default function SignUp() {
       console.error("Bruh");
     }
   };
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <div className="all">
@@ -216,11 +230,11 @@ export default function SignUp() {
                       <TextField
                         margin="normal"
                         // required
-
                         name="password"
                         label="พาสเวิร์ด"
                         // type="password"
                         type={showPassword ? "text" : "password"}
+                        value={password}
                         id="password"
                         autoComplete="current-password"
                         sx={{
@@ -232,7 +246,10 @@ export default function SignUp() {
                             <InputAdornment position="end">
                               <IconButton
                                 aria-label="toggle password visibilityoutlined"
-                                onClick={() => setShowPassword(!showPassword)}
+                                onClick={() => {
+                                  setShowPassword(!showPassword);
+                                  validatePassword();
+                                }}
                               >
                                 {showPassword ? (
                                   <VisibilityOutlined />
@@ -255,15 +272,19 @@ export default function SignUp() {
                       <TextField
                         margin="normal"
                         // required
-
                         name="confirmpassword"
                         label="ยืนยันพาสเวิร์ด"
                         // type="password"
                         type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
                         id="confirmpassword"
                         autoComplete="current-password"
                         sx={{
                           width,
+                        }}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          validatePassword();
                         }}
                         InputProps={{
                           endAdornment: (
@@ -293,9 +314,20 @@ export default function SignUp() {
                         justifyContent: "center",
                       }}
                     >
+                      {confirmPasswordError && <p>{confirmPasswordError}</p>}
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <Button
                         type="submit"
                         variant="contained"
+                        disabled={confirmPasswordError}
                         sx={{ mt: 3, mb: 2 }}
                         style={{
                           backgroundColor: "#F04E22",

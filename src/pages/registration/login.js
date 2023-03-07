@@ -32,7 +32,7 @@ function Copyright(props) {
     >
       ยังไม่ได้ลงทะเบียนใช่หรือไม่? &nbsp;
       <Link
-        to="/login"
+        to="/signup"
         style={{
           fontWeight: "600",
           color: "#132238",
@@ -75,11 +75,7 @@ export default function SignInSide() {
 
     let domain = email.substring(email.lastIndexOf("@"));
     console.log("Right Format");
-    if (
-      domain === "@mail.kmutt.ac.th" ||
-      domain === "@kmutt.ac.th" ||
-      domain === "@gmail.com"
-    ) {
+    if (domain === "@mail.kmutt.ac.th" || domain === "@kmutt.ac.th") {
       try {
         signInWithEmailAndPassword(auth, email, password)
           .then((userCredential) => {

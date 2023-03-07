@@ -21,6 +21,10 @@ import "../../styles/login.css";
 import picSignup from "../../images/login/pic-signup.png";
 import icon from "../../images/icon.svg";
 
+import { auth, db } from "../../config.js";
+import { useNavigate } from "react-router-dom";
+import { doc, setDoc } from "firebase/firestore";
+
 const theme = createTheme({
   typography: {
     fontFamily: "Kanit",
@@ -29,7 +33,21 @@ const theme = createTheme({
 
 export default function DataUser() {
   const matches = useMediaQuery("(min-width:1024px)");
-  const [faculty, setFaculty] = React.useState("");
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser && currentUser.uid;
+  const navigate = useNavigate();
+
+  // if (!currentUser) {
+  //   return <Navigate to="/" />;
+  // }
+
+  const [fullname, setFname] = useState("");
+  const [lastname, setLname] = useState("");
+  const [studentid, setId] = useState("");
+  const [faculty, setFac] = useState("");
+  const [position, setPos] = useState("");
+  const [types, setType] = useState("");
+  const currentUserEmail = currentUser && currentUser.email;
 
   let width;
   if (matches) {
@@ -38,17 +56,39 @@ export default function DataUser() {
     width = "100%";
   }
 
+  async function createData(userID, userData) {
+    try {
+      const userRef = doc(db, "member", userID);
+      await setDoc(userRef, userData);
+      console.log("Member document with custom ID written with ID: ", userID);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const data = {
+      id: studentid,
+      email: currentUserEmail,
+      fname: fullname,
+      lname: lastname,
+      fac: faculty,
+      pos: position,
+      type: types,
+    };
+    createData(currentUserId, data)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    console.log(data);
   };
 
   const handleChange = (event) => {
-    setFaculty(event.target.value);
+    setFac(event.target.value);
   };
 
   return (
@@ -147,6 +187,7 @@ export default function DataUser() {
                               sx={{
                                 width,
                               }}
+                              onChange={(e) => setFname(e.target.value)}
                             />
                           </div>
                           <div
@@ -167,6 +208,7 @@ export default function DataUser() {
                               sx={{
                                 width,
                               }}
+                              onChange={(e) => setLname(e.target.value)}
                             />
                           </div>
                           <div
@@ -187,6 +229,7 @@ export default function DataUser() {
                               sx={{
                                 width,
                               }}
+                              onChange={(e) => setId(e.target.value)}
                             />
                           </div>
                           <div
@@ -225,22 +268,59 @@ export default function DataUser() {
                                   label="Faculty"
                                   onChange={handleChange}
                                 >
-                                  <MenuItem value={10}>
-                                    คณะวิศวกรรมศาสตร์
+                                  <MenuItem value={"วิศวกรรมศาสตร์"}>
+                                    วิศวกรรมศาสตร์
                                   </MenuItem>
-                                  <MenuItem value={20}>
-                                    คณะครุศาสตร์อุตสาหกรรมและเทคโนโลยี
+                                  <MenuItem
+                                    value={"ครุศาสตร์อุตสาหกรรมและเทคโนโลยี"}
+                                  >
+                                    ครุศาสตร์อุตสาหกรรมและเทคโนโลยี
                                   </MenuItem>
-                                  <MenuItem value={30}>คณะวิทยาศาสตร์</MenuItem>
-                                  <MenuItem value={40}>
+                                  <MenuItem value={"วิทยาศาสตร์"}>
+                                    วิทยาศาสตร์
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={"สถาบันวิทยาการหุ่นยนต์ภาคสนาม"}
+                                  >
                                     สถาบันวิทยาการหุ่นยนต์ภาคสนาม
                                   </MenuItem>
-                                  <MenuItem value={50}>
-                                    คณะสถาปัตยกรรมศาสตร์และการออกแบบ
+                                  <MenuItem
+                                    value={"สถาปัตยกรรมศาสตร์และการออกแบบ"}
+                                  >
+                                    สถาปัตยกรรมศาสตร์และการออกแบบ
                                   </MenuItem>
                                 </Select>
                               </FormControl>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              ></div>
                             </Box>
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="position"
+                              label="สาขา"
+                              name="position"
+                              autoComplete="position"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                              onChange={(e) => setPos(e.target.value)}
+                            />
                           </div>
 
                           <div
@@ -259,6 +339,7 @@ export default function DataUser() {
                                 width,
                                 height: "3em",
                               }}
+                              onClick={(e) => setType("0")}
                             >
                               ลงทะเบียน
                             </Button>

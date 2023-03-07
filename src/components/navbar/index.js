@@ -1,5 +1,5 @@
 import { logDOM } from "@testing-library/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Nav,
@@ -11,9 +11,11 @@ import {
   NavBtn0,
   NavBtnLink0,
 } from "./NavbarElement";
+import { auth } from "../../config.js";
 
 const Navbar = () => {
   const location = useLocation();
+  const currentUser = auth.currentUser;
 
   const hideNavbar = [
     "/signup",
@@ -53,11 +55,24 @@ const Navbar = () => {
           <NavBtnLink0 to="/signup">เข้าสู่ระบบ</NavBtnLink0>
         </NavBtn0> */}
 
-          <NavBtn>
-            <Link to="/signup" style={{ textDecoration: "none" }}>
-              <NavBtnLink>สมัครสมาชิก</NavBtnLink>
-            </Link>
-          </NavBtn>
+          {currentUser ? (
+            <div>
+              logged in
+              <div>
+                <NavBtn>
+                  <Link to="/signup" style={{ textDecoration: "none" }}>
+                    <NavBtnLink>สมัครสมาชิก</NavBtnLink>
+                  </Link>
+                </NavBtn>
+              </div>
+            </div>
+          ) : (
+            <NavBtn>
+              <Link to="/signup" style={{ textDecoration: "none" }}>
+                <NavBtnLink>สมัครสมาชิก</NavBtnLink>
+              </Link>
+            </NavBtn>
+          )}
         </Nav>
       </div>
     )
