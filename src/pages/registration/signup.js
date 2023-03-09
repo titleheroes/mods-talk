@@ -21,7 +21,6 @@ import { auth } from "../../config.js";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
-  signOut,
 } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -57,8 +56,6 @@ const theme = createTheme({
 });
 
 export default function SignUp() {
-  signOut(auth);
-
   const matches = useMediaQuery("(min-width:1024px)");
   const navigate = useNavigate();
 
@@ -78,9 +75,9 @@ export default function SignUp() {
 
   const validatePassword = () => {
     if (password.length < 6) {
-      setConfirmPasswordError("Password must be at least 6 characters long");
+      setConfirmPasswordError("พาสเวิร์ดจำเป็นต้องมีมากกว่า 6 ตัวอักษร");
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match");
+      setConfirmPasswordError("พาสเวิร์ดไม่ตรงกัน");
     } else {
       setConfirmPasswordError("");
     }
@@ -119,7 +116,9 @@ export default function SignUp() {
         console.error(error);
       }
     } else {
-      console.error("Bruh");
+      alert(
+        "จำกัดสิทธิ์อีเมลสกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th เท่านั้นที่ใช้ในการสมัคร"
+      );
     }
   };
 

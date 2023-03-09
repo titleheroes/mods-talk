@@ -7,6 +7,8 @@ import About from "./pages/about";
 import Question from "./pages/question";
 import Login from "./pages/registration/login";
 import SignUp from "./pages/registration/signup";
+import ForgetPass from "./pages/registration/forgetPass";
+import ForgetPassSent from "./pages/registration/forgetPassSent";
 import Authenticate from "./pages/registration/authenticate";
 import DataUser from "./pages/registration/datauser";
 
@@ -20,6 +22,12 @@ function App() {
         <Route path="/question" exact element={<Question />}></Route>
         <Route path="/login" exact element={<Login />}></Route>
         <Route path="/signup" exact element={<SignUp />}></Route>
+        <Route path="/forgetpassword" exact element={<ForgetPass />}></Route>
+        <Route
+          path="/forgetpassword/sent"
+          exact
+          element={<ForgetPassSent />}
+        ></Route>
         <Route path="/authenticate" exact element={<Authenticate />}></Route>
         <Route path="/datauser" exact element={<DataUser />}></Route>
       </Routes>

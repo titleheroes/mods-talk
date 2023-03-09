@@ -22,7 +22,7 @@ import picSignup from "../../images/login/pic-signup.png";
 import icon from "../../images/icon.svg";
 
 import { auth, db } from "../../config.js";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 
 const theme = createTheme({
@@ -36,10 +36,6 @@ export default function DataUser() {
   const currentUser = auth.currentUser;
   const currentUserId = currentUser && currentUser.uid;
   const navigate = useNavigate();
-
-  // if (!currentUser) {
-  //   return <Navigate to="/" />;
-  // }
 
   const [fullname, setFname] = useState("");
   const [lastname, setLname] = useState("");
@@ -90,6 +86,10 @@ export default function DataUser() {
   const handleChange = (event) => {
     setFac(event.target.value);
   };
+
+  if (!currentUser) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="all">
@@ -223,8 +223,8 @@ export default function DataUser() {
                               // required
                               id="idstudent"
                               label="รหัสนักศึกษา"
-                              name="idstudent"
-                              autoComplete="idstudent"
+                              name="id"
+                              autoComplete="id"
                               autoFocus
                               sx={{
                                 width,
@@ -347,11 +347,194 @@ export default function DataUser() {
                         </Box>
                       </Tab>
                       <Tab
-                        className="pt-5"
+                        className="pt-4"
                         eventKey="teacher"
                         title="บุคลากรภายใน"
                       >
-                        ่าาาาาา
+                        <Box
+                          component="form"
+                          noValidate
+                          onSubmit={handleSubmit}
+                          sx={{
+                            mt: 1,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="firstname"
+                              label="ชื่อ"
+                              name="firstname"
+                              autoComplete="firstname"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                              onChange={(e) => setFname(e.target.value)}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="lastname"
+                              label="นามสกุล"
+                              name="lastname"
+                              autoComplete="lastname"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                              onChange={(e) => setLname(e.target.value)}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="idstudent"
+                              label="รหัสประจำตัว"
+                              name="id"
+                              autoComplete="id"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                              onChange={(e) => setId(e.target.value)}
+                            />
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                mt: 2,
+                                width,
+                              }}
+                            >
+                              <FormControl
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  flexDirection: "row",
+                                }}
+                              >
+                                <InputLabel
+                                  id="demo-simple-select-label float-end"
+                                  sx={{}}
+                                >
+                                  คณะ
+                                </InputLabel>
+                                <Select
+                                  sx={{
+                                    width: "100%",
+                                  }}
+                                  labelId="demo-simple-select-label"
+                                  id="demo-simple-select"
+                                  value={faculty}
+                                  label="Faculty"
+                                  onChange={handleChange}
+                                >
+                                  <MenuItem value={"วิศวกรรมศาสตร์"}>
+                                    วิศวกรรมศาสตร์
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={"ครุศาสตร์อุตสาหกรรมและเทคโนโลยี"}
+                                  >
+                                    ครุศาสตร์อุตสาหกรรมและเทคโนโลยี
+                                  </MenuItem>
+                                  <MenuItem value={"วิทยาศาสตร์"}>
+                                    วิทยาศาสตร์
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={"สถาบันวิทยาการหุ่นยนต์ภาคสนาม"}
+                                  >
+                                    สถาบันวิทยาการหุ่นยนต์ภาคสนาม
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={"สถาปัตยกรรมศาสตร์และการออกแบบ"}
+                                  >
+                                    สถาปัตยกรรมศาสตร์และการออกแบบ
+                                  </MenuItem>
+                                </Select>
+                              </FormControl>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              ></div>
+                            </Box>
+                          </div>
+                          <div
+                            className="mt-2"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <TextField
+                              margin="normal"
+                              // required
+                              id="position"
+                              label="ตำแหน่ง"
+                              name="position"
+                              autoComplete="position"
+                              autoFocus
+                              sx={{
+                                width,
+                              }}
+                              onChange={(e) => setPos(e.target.value)}
+                            />
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Button
+                              type="submit"
+                              variant="contained"
+                              sx={{ mt: 3, mb: 2 }}
+                              style={{
+                                backgroundColor: "#F04E22",
+                                width,
+                                height: "3em",
+                              }}
+                              onClick={(e) => setType("1")}
+                            >
+                              ลงทะเบียน
+                            </Button>
+                          </div>
+                        </Box>
                       </Tab>
                     </Tabs>
                   </div>

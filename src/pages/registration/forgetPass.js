@@ -17,7 +17,7 @@ import picLogin from "../../images/login/pic-login.png";
 import icon from "../../images/icon.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../config.js";
 
 function Copyright(props) {
@@ -30,16 +30,16 @@ function Copyright(props) {
       style={{ fontFamily: "Kanit", color: "#132238" }}
       {...props}
     >
-      ยังไม่ได้ลงทะเบียนใช่หรือไม่? &nbsp;
+      ต้องการกลับไปเข้าสู่ระบบ &nbsp;
       <Link
-        to="/signup"
+        to="/login"
         style={{
           fontWeight: "600",
           color: "#132238",
           textDecorationLine: "underline",
         }}
       >
-        ลงทะเบียนที่นี่
+        คลิกที่นี่
       </Link>
     </Typography>
   );
@@ -51,11 +51,10 @@ const theme = createTheme({
   },
 });
 
-export default function SignInSide() {
+export default function ForgetPass() {
   const matches = useMediaQuery("(min-width:1024px)");
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
@@ -68,37 +67,14 @@ export default function SignInSide() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log({
-      email,
-      password,
-    });
-
-    let domain = email.substring(email.lastIndexOf("@"));
-    console.log("Right Format");
-    if (domain === "@mail.kmutt.ac.th" || domain === "@kmutt.ac.th") {
-      try {
-        signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            const isEmailVerified = userCredential.user.emailVerified;
-            if (isEmailVerified) {
-              navigate("/");
-            } else {
-              signOut(auth);
-              console.log("No Verified");
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      console.error("Bruh");
+    try {
+      sendPasswordResetEmail(auth, email).then(() => {
+        navigate("/forgetpassword/sent", { state: { email: email } });
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
-
-  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="all">
@@ -153,7 +129,7 @@ export default function SignInSide() {
                         alt="icon svg"
                         style={{ width: "25%" }}
                       ></img>{" "}
-                      ยินดีต้อนรับกลับ,
+                      กู้รหัสผ่าน
                     </Typography>
                   </div>
 
@@ -162,7 +138,7 @@ export default function SignInSide() {
                     variant="subtitle1"
                     sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
                   >
-                    ยินดีต้อนรับกลับ! นักศึกษาและบุคลากร มจธ.
+                    กรอกอีเมลมหาวิทยาลัย แล้วกด "ต่อไป" เพื่อกู้รหัสผ่าน
                   </Typography>
                   <Box
                     component="form"
@@ -195,45 +171,6 @@ export default function SignInSide() {
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <TextField
-                        margin="normal"
-                        // required
-
-                        name="password"
-                        label="พาสเวิร์ด"
-                        // type="password"
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        autoComplete="current-password"
-                        sx={{
-                          width,
-                        }}
-                        onChange={(e) => setPassword(e.target.value)}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibilityoutlined"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? (
-                                  <VisibilityOutlined />
-                                ) : (
-                                  <VisibilityOffOutlined />
-                                )}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
 
                     <div
                       style={{
@@ -252,36 +189,8 @@ export default function SignInSide() {
                           height: "3em",
                         }}
                       >
-                        เข้าสู่ระบบ
+                        ต่อไป
                       </Button>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        // backgroundColor: "green",
-                      }}
-                    >
-                      <div
-                        className="element.style"
-                        style={{
-                          width,
-                          // backgroundColor: "orange",
-                          textAlign: "right",
-                        }}
-                      >
-                        <Link
-                          to="/forgetpassword"
-                          style={{
-                            fontWeight: "600",
-                            color: "#132238",
-                            textDecorationLine: "underline",
-                          }}
-                        >
-                          ลืมรหัสผ่าน
-                        </Link>
-                      </div>
                     </div>
                     <div
                       style={{
