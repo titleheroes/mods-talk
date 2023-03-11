@@ -1,0 +1,131 @@
+.all{
+    font-family: 'Kanit', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2px;
+    width: 100%;
+    background-color: #E0E0E0;
+    margin: 20px 0;
+  }
+
+  .text-inside-line {
+    background-color: white;
+    padding: 0 10px;
+    font-size: 20px;
+    color: #7A7A7A;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hover-forget:hover {
+    color: #F04E22;
+
+  }
+
+  .css-og50xi-MuiTypography-root {
+    margin-top: 20px !important;
+  }
+
+  .element.style {
+    width: 60%;
+    text-align: right;
+    padding-right: 0px;
+}
+
+.boxCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.descWidth {
+  width: 100%;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .descWidth {
+    width: 60%;
+    text-align: center;
+  }
+}
+
+.testmail {
+  color: #F04E22;
+
+}
+
+.mailWidth {
+  width: 30%;
+  /* text-align: center; */
+}
+
+@media (min-width: 820px) {
+  .mailWidth {
+    width: 20%;
+    
+  }
+}
+
+@media (min-width: 1024px) {
+  .mailWidth {
+    width: 25%;
+    
+  }
+}
+
+.element.style{
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
+  padding: 16.5px 14px;
+}
+
+.nav-tabs .nav-link {
+  background-color: transparent !important;
+  color: #333 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+@media (max-width: 330px) {
+  .nav-tabs .nav-link{
+      font-size: 10px;     
+    }
+}
+
+.nav-tabs .nav-link.active {
+  background-color: transparent !important;
+  color: #f04e22 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.nav-tabs .nav-link.active {
+  border-bottom: solid 3px #f04e22 !important;
+}
