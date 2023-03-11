@@ -5,6 +5,7 @@ import "../styles/about.css";
 const About = () => {
   return (
     <div className="page">
+
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -78,6 +79,7 @@ const About = () => {
 
 
     </div>
+    
   );
 };
 
