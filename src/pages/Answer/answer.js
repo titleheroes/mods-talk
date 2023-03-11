@@ -250,7 +250,7 @@ const Answer = () => {
                   <img
                     src={require("../../images/home/main.png")}
                     alt="Review.png"
-                    className="img-fluid prof-pic me-2"
+                    className="img-fluid prof-pic rounded-circle shadow-4 me-2"
                   />
                 </div>
 

@@ -380,6 +380,18 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 }
 
+
+@media (max-width: 767px) {
+  .prof-pic{
+    width: 36px !important;
+    height: 36px !important;
+     
+    
+  
+  }
+}
+
+
 .prof-pic img{
   width: 100%;
   height: 100%;
