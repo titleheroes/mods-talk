@@ -162,14 +162,48 @@ const Answer = () => {
               </div>
             </div>
 
-            <div>
+            <div className="flex-container">
               
             <img
               
                   src={require("../../images/home/main.png")}
                   alt="Review.png"
-                  className="img-fluid prof-pic"
-                />
+                  className="img-fluid prof-pic me-2"
+            />
+
+<Form style={{ width: "100%" }}>
+                      <div className="row">
+                        <div className="col-11">
+                          <div className="form-size">
+                            <Form.Control
+                              type="text"
+                              placeholder="เขียนความคิดเห็น..."
+                            />
+                          </div>
+                        </div>
+                        <div className="col-1">
+                          <div className="float-end">
+                            <Button
+                              type="submit"
+                              style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                              }}
+                            >
+                              <img
+                                src={
+                                  require("../../images/question/three_dots.svg").default
+                                }
+                                alt="sent svg"
+                              />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Form>
+
+
+
 
             </div>
 
