@@ -6,6 +6,7 @@ import { BrowserRouter as Router} from 'react-router-dom';
 import Home from './pages/home';
 import About from './pages/about';
 import Question from './pages/question';
+import Answer from './pages/Answer/answer';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" exact element={<Home/>}> </Route>
         <Route path="/about" exact element={<About/>}> </Route>
         <Route path="/question" exact element={<Question/>}> </Route>
+        <Route path="/Answer" exact element={<Answer/>}> </Route>
       </Routes>
     </Router>
   );
