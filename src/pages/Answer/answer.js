@@ -111,15 +111,15 @@ const Answer = () => {
                 IT กับคณะวิทย์ต่างกันยังไงครับ
               </p>
 
-              <div className="post-detail row">
-                <div className="col-6">
-                  <span className="post-date">10 มกราคม 2565</span>
-                </div>
+              <div className="flex-container comment">
+              
+              <div className="flex-1-comment">
+                <span className="post-date">10 มกราคม 2565</span>
+              </div>
+            
 
-                <div className="col menu-group">
-                  <div className="row">
-                    <div className="col sub-menu">
-                      <a href="" className="post-comment">
+              <div className="flex-2-comment">
+              <a href="" className="post-comment">
                         <img
                           className="menu-pic"
                           src={
@@ -129,11 +129,11 @@ const Answer = () => {
                         />
                         <text id="comment-count">10</text>
                       </a>
-                    </div>
+              </div>
 
-                    <div className="col-2 sub-menu menu-dropdown">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="link" id="question-dropdown">
+              <div className="flex-1-comment-right">
+                <Dropdown>
+                        <Dropdown.Toggle variant="link" >
                           <img
                             className="menu-dropdown"
                             src={
@@ -155,55 +155,46 @@ const Answer = () => {
                             Something else
                           </Dropdown.Item>
                         </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </div>
-                </div>
+                </Dropdown>
               </div>
+
             </div>
 
-            <div className="flex-container">
+
+
+
+            </div>
+
+            <div className="flex-container comment">
               
-            <img
-              
-                  src={require("../../images/home/main.png")}
-                  alt="Review.png"
-                  className="img-fluid prof-pic me-2"
-            />
+              <div className="flex-1">
+                <img
+                
+                src={require("../../images/home/main.png")}
+                alt="Review.png"
+                className="img-fluid prof-pic me-2"
+                />
+              </div>
+            
 
-<Form style={{ width: "100%" }}>
-                      <div className="row">
-                        <div className="col-11">
-                          <div className="form-size">
-                            <Form.Control
-                              type="text"
-                              placeholder="เขียนความคิดเห็น..."
-                            />
-                          </div>
-                        </div>
-                        <div className="col-1">
-                          <div className="float-end">
-                            <Button
-                              type="submit"
-                              style={{
-                                backgroundColor: "transparent",
-                                border: "none",
-                              }}
-                            >
-                              <img
-                                src={
-                                  require("../../images/question/three_dots.svg").default
-                                }
-                                alt="sent svg"
-                              />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </Form>
+              <div className="flex-2">
+                <input  
+                  type="text"
+                  className="form-control "
+                  id="modal-input-box"
+                  placeholder="เขียนความคิดเห็น..."
+                ></input>
+              </div>
 
-
-
+              <div className="flex-1-right">
+              <img
+                          className="menu-pic"
+                          src={
+                            require("../../images/question/sent_1.svg").default
+                          }
+                          alt=""
+                        />
+              </div>
 
             </div>
 
