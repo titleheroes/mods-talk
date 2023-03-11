@@ -355,7 +355,7 @@ textarea::-webkit-scrollbar-thumb:hover {
   flex-grow: 25;
   align-items: center;
   text-align: end;
-  background-color: red; 
+  /* background-color: red;  */
 
 }
 
@@ -387,7 +387,10 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 }
 
-
+.flex-container#comment-2{
+  padding-bottom: 3%;
+  /* border-bottom: 1px solid #E6E6E6 !important; */
+}
 
 .flex-1{
   flex-grow: 1;
@@ -397,9 +400,53 @@ textarea::-webkit-scrollbar-thumb:hover {
   flex-grow: 25;
 }
 
+.flex-2-bottom-comment{
+  flex-grow: 50;
+}
+
 .flex-1-right{
   flex-grow: 1;
   text-align: end;
+  /* background-color: red; */
   
 }
 
+.sent-comment{
+  background-color: transparent !important;
+  color: transparent !important;
+  border: none !important;
+}
+
+.reply-box{
+  border-top: 1px solid #E6E6E6 !important;
+  padding-bottom: 3%;
+}
+
+.flex-2-comment-reply{
+  text-align: start ;
+  background-color: red;
+}
+
+#comment-reply{
+  /* background-color: blue; */
+  justify-content: start ;
+  
+}
+
+.poster-name{
+  font-weight: bold;
+}
+
+
+#reply-text{
+  color :black;
+  
+  font-weight: bold;
+  opacity: 0.6;
+
+}
+
+.reply-button{
+  background-color: transparent !important;
+  border: none !important;
+}

@@ -101,8 +101,6 @@ const Answer = () => {
       <div className="row">
         <div className="col-md vertLine">
           <div className="left-content">
-
-
             <div className="post-border">
               <p className="poster-name pb-3">ผู้ไม่ประสงค์ออกนาม</p>
               <p className="pb-2 text">
@@ -112,73 +110,61 @@ const Answer = () => {
               </p>
 
               <div className="flex-container comment">
-              
-              <div className="flex-1-comment">
-                <span className="post-date">10 มกราคม 2565</span>
+                <div className="flex-1-comment">
+                  <span className="post-date">10 มกราคม 2565</span>
+                </div>
+
+                <div className="flex-2-comment">
+                  <a href="" className="post-comment">
+                    <img
+                      className="menu-pic"
+                      src={require("../../images/question/chat_1.svg").default}
+                      alt=""
+                    />
+                    <text id="comment-count">2</text>
+                  </a>
+                </div>
+
+                <div className="flex-1-comment-right">
+                  <Dropdown>
+                    <Dropdown.Toggle variant="link" id="question-dropdown">
+                      <img
+                        className="menu-dropdown"
+                        src={
+                          require("../../images/question/three_dots.svg")
+                            .default
+                        }
+                        alt=""
+                      />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        Report Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        Delete Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-3">
+                        Something else
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
               </div>
-            
-
-              <div className="flex-2-comment">
-              <a href="" className="post-comment">
-                        <img
-                          className="menu-pic"
-                          src={
-                            require("../../images/question/chat_1.svg").default
-                          }
-                          alt=""
-                        />
-                        <text id="comment-count">10</text>
-                      </a>
-              </div>
-
-              <div className="flex-1-comment-right">
-                <Dropdown>
-                        <Dropdown.Toggle variant="link" >
-                          <img
-                            className="menu-dropdown"
-                            src={
-                              require("../../images/question/three_dots.svg")
-                                .default
-                            }
-                            alt=""
-                          />
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#/action-1">
-                            Report Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-2">
-                            Delete Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-3">
-                            Something else
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                </Dropdown>
-              </div>
-
             </div>
 
-
-
-
-            </div>
-
-            <div className="flex-container comment">
-              
+            <div className="flex-container comment" id="comment-2">
               <div className="flex-1">
                 <img
-                
-                src={require("../../images/home/main.png")}
-                alt="Review.png"
-                className="img-fluid prof-pic me-2"
+                  src={require("../../images/home/main.png")}
+                  alt="Review.png"
+                  className="img-fluid prof-pic me-2"
                 />
               </div>
-            
 
               <div className="flex-2">
-                <input  
+                <input
                   type="text"
                   className="form-control "
                   id="modal-input-box"
@@ -187,22 +173,138 @@ const Answer = () => {
               </div>
 
               <div className="flex-1-right">
-              <img
-                          className="menu-pic"
-                          src={
-                            require("../../images/question/sent_1.svg").default
-                          }
-                          alt=""
-                        />
+                <Button className="sent-comment">
+                  <img
+                    className="menu-pic pe-3"
+                    src={require("../../images/question/sent_1.svg").default}
+                    alt=""
+                  />
+                </Button>
               </div>
-
             </div>
 
-            
-            
+            <div className="reply-box">
+              <div className="flex-container comment pt-3">
+                <div className="flex-1">
+                  <img
+                    src={require("../../images/home/main.png")}
+                    alt="Review.png"
+                    className="img-fluid prof-pic me-2"
+                  />
+                </div>
 
-            
-                            
+                <div className="flex-2-bottom-comment">
+                  <span className="poster-name">วรรณดา แม็กซิมอฟ</span>
+                </div>
+
+                <div className="flex-1-right">
+                  <Dropdown>
+                    <Dropdown.Toggle variant="link" id="question-dropdown">
+                      <img
+                        className="menu-dropdown"
+                        src={
+                          require("../../images/question/three_dots.svg")
+                            .default
+                        }
+                        alt=""
+                      />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        Report Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        Delete Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-3">
+                        Something else
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <span>
+                  คำตอบที่ 1
+                </span>
+              </div>
+
+              <div className="flex-container comment pt-2" id="comment-reply">
+                <div className="pe-4">
+                  <span className="post-date">10 มกราคม 2565</span>
+                </div>
+
+                <div className="">
+                  <Button className="reply-button">
+                    <text id="reply-text">ตอบกลับ</text>
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="reply-box">
+              <div className="flex-container comment pt-3">
+                <div className="flex-1">
+                  <img
+                    src={require("../../images/home/main.png")}
+                    alt="Review.png"
+                    className="img-fluid prof-pic me-2"
+                  />
+                </div>
+
+                <div className="flex-2-bottom-comment">
+                  <span className="poster-name">วรรณดา แม็กซิมอฟ</span>
+                </div>
+
+                <div className="flex-1-right">
+                  <Dropdown>
+                    <Dropdown.Toggle variant="link" id="question-dropdown">
+                      <img
+                        className="menu-dropdown"
+                        src={
+                          require("../../images/question/three_dots.svg")
+                            .default
+                        }
+                        alt=""
+                      />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        Report Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        Delete Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-3">
+                        Something else
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <span>
+                  กับคณะวิทย์ต่างกันยังไงครับ รบกวนผู้รู้ตอบผมทีว่า วิทยคอมของคณะ IT กับคณะวิทย์ต่างกันยังไงครับ
+                </span>
+              </div>
+
+              <div className="flex-container comment pt-2" id="comment-reply">
+                <div className="pe-4">
+                  <span className="post-date">10 มกราคม 2565</span>
+                </div>
+
+                <div className="">
+                  <Button className="reply-button">
+                    <text id="reply-text">ตอบกลับ</text>
+                  </Button>
+                </div>
+              </div>
+            </div>
+
 
 
           </div>
