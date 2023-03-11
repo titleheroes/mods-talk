@@ -9,17 +9,16 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
 
 import "../../styles/login.css";
 // import picLogin from "../../images/login/pic-login.png";
 import picSignup from "../../images/login/pic-signup.png";
 // import icon from "../../images/icon.svg";
 import mailrun from "../../images/mail.svg";
-import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 
 import { Link, useLocation } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../config.js";
 
 function Copyright(props) {
   return (
@@ -54,6 +53,7 @@ const theme = createTheme({
 });
 
 export default function Authenticate() {
+  signOut(auth);
   const location = useLocation();
   const email = location.state?.email;
 
