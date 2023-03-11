@@ -163,7 +163,12 @@ const Answer = () => {
             </div>
 
             <div>
-              asdasdasd
+            <img
+              
+                  src={require("../../images/home/main.png")}
+                  alt="Review.png"
+                  className="img-fluid circular--landscape"
+                />
             </div>                   
 
 
