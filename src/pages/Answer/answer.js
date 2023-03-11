@@ -338,9 +338,38 @@ const Answer = () => {
                 ที่ใกล้เคียงหรือหาคำตอบไปด้วยกัน
               </text>
             </div>
+
+            <div>
+
+              <div className="mt-4 pt-4 hit-title mb-2">
+                <span className="">
+                  เป็นที่นิยมใน Mod's Talk
+                </span>
+
+                
+              </div>
+
+              <Button className="hit-tag">Programming</Button>
+              <Button className="hit-tag">Data Science</Button>
+              <Button className="hit-tag">Technology</Button>
+              <Button className="hit-tag">Self Improvement</Button>
+              <Button className="hit-tag">Writing</Button>
+              <Button className="hit-tag">Ralationships</Button>
+              <Button className="hit-tag">Machine Learning</Button>
+              <Button className="hit-tag">Some random topic</Button>
+
+
+            </div>
+            
+
+
           </div>
+          
         </div>
+        
       </div>
+
+      
     </div>
   );
 };
