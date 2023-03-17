@@ -1,29 +1,104 @@
 .sidebar{
-    background-color: burlywood;
+    /* background-color: burlywood; */
     flex: 1;
+    
     min-height: 100vh;
-
+    
 
 }
 
+
 .top{
-    height: 60px;
+    height: 10%;
+    padding-top: 5%;
     display: flex;
+    
     align-items: center;
     justify-content: center;
     /* background-color: aqua; */
 }
 
 .center{
+    
     padding-left: 20%;
+    height: 60%;
+    /* background-color: bisque; */
 }
 
 .center>ul{
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding-top: 10%;
+    padding-left: 5%;
+    
+}
+
+.sidetabs#side1{
+    background-color: #f04e22;
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    padding-left: 30%;
+    color: white;
+    cursor: pointer;
+}
+
+.sidetabs#side2{
+    
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    padding-left: 30%;
+    cursor: pointer;
 }
 
 .userIcon{
     /* color: aliceblue; */
+    margin-right: 0%;
+    
 }
+
+.bottom{
+    /* background-color: aquamarine; */
+    flex-direction: column;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.profile-detail{
+    flex-direction: row;
+}
+
+.profile-name{
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+    
+}
+
+.profile-role{
+    color: #979797;
+    font-weight: normal;
+    
+}
+
+.logout-button{
+    background-color: white !important;
+    color: #f04e22;
+    width: 75%;
+    height: 20%;
+    border: #f04e22 2px solid;
+    border-radius: 4px !important;
+    font-weight: bold;
+  }
+
+  .button-test{
+    background-color: black;
+  }
