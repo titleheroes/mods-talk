@@ -1,15 +1,17 @@
 .sidebar{
     /* background-color: burlywood; */
     flex: 1;
-    
+    position: sticky;
+    top: 0;
     min-height: 100vh;
+    max-height: 100vh;
     
 
 }
 
 
 .top{
-    height: 10%;
+    height: 10vh;
     padding-top: 5%;
     display: flex;
     
@@ -21,7 +23,7 @@
 .center{
     
     padding-left: 20%;
-    height: 60%;
+    height: 60vh;
     /* background-color: bisque; */
 }
 
@@ -65,7 +67,7 @@
 .bottom{
     /* background-color: aquamarine; */
     flex-direction: column;
-    height: 30%;
+    height: 30vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,6 +76,16 @@
 
 .profile-detail{
     flex-direction: row;
+    overflow: hidden;
+
+   
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 1; 
+           line-clamp: 1; 
+   -webkit-box-orient: vertical;
+    
 }
 
 .profile-name{
@@ -81,11 +93,20 @@
     flex-direction: row;
     font-weight: bold;
     
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; 
+            line-clamp: 1; 
+    -webkit-box-orient: vertical;
+    
 }
 
 .profile-role{
     color: #979797;
     font-weight: normal;
+    
     
 }
 

@@ -43,8 +43,8 @@ const Sidebar = () => {
             alt="Review.png"
             className="img-fluid prof-pic rounded-circle shadow-4 me-2"
         />
-        <div className="profile-detail">
-            <span className="profile-name">กอร์ดอน แรมซีย์ <p className="profile-role ms-2">• แอดมิน</p> </span> 
+        <div className="profile-detail pt-2">
+            <span className="profile-name" id="profile-name">กอร์ดอน แรมซีย์<p className="profile-role ms-2">• แอดมิน</p> </span> 
             
         </div>
 

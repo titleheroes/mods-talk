@@ -1,11 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
 .adminpage{
     display: flex ;
-
+    font-family: 'Kanit', sans-serif !important;
 
 }
 
 .adminhome{
-    background-color: #e0e0e0;
+    background-color: #eeeeee;
     flex: 4;
+}
+
+.adminnavbar{
+    background-color: #f04e22;
+    
+}
+
+.admin-title{
+    display: flex;
+    font-weight: bold;
+    color: #666666;
+    align-items: center;
+    /* background-color: aqua; */
+}
+
+.text-title{
+    border-right: 2px solid #c8c8c8;
+}
+
+.searchbox{
+    display: flex;
+    align-items: center;
+    border: 2px solid #c8c8c8;
+    border-radius: 5px;
+    padding: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+
+}
+
+
+
+.searchbox>input{
+    border: none;
+    outline: none;
+    background-color: transparent;
+
+    
+}
+
+.searchInput{
+    min-width: 40vb;
+}
+
+.deleteUserButton{
+    background-color: transparent;
+    border: transparent;
+    color: #f04e22;
 }
 
