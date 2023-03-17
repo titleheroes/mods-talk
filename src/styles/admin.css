@@ -1,0 +1,11 @@
+.adminpage{
+    display: flex ;
+
+
+}
+
+.adminhome{
+    /* background-color: aquamarine; */
+    flex: 4;
+}
+

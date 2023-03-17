@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import About from "./pages/about";
 import Question from "./pages/question";
 import Answer from './pages/Answer/answer';
+import Admin from './pages/admin/admin';
 
 import Login from "./pages/registration/login";
 import SignUp from "./pages/registration/signup";
@@ -29,6 +30,7 @@ function App() {
         <Route path="/login" exact element={<Login />}></Route>
         <Route path="/signup" exact element={<SignUp />}></Route>
         <Route path="/forgetpassword" exact element={<ForgetPass />}></Route>
+        <Route path="/admin" exact element={<Admin/>}> </Route>
         <Route
           path="/forgetpassword/sent"
           exact

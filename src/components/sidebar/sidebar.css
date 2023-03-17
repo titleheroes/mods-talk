@@ -1,0 +1,29 @@
+.sidebar{
+    background-color: burlywood;
+    flex: 1;
+    min-height: 100vh;
+
+
+}
+
+.top{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: aqua; */
+}
+
+.center{
+    padding-left: 20%;
+}
+
+.center>ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.userIcon{
+    /* color: aliceblue; */
+}
