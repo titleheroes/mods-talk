@@ -1,10 +1,17 @@
 import React from "react";
-import "./sidebar.css";
+import { useLocation, Link } from "react-router-dom";
+import './sidebar.css'
+
+
+
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import LogoutIcon from '@mui/icons-material/Logout';
 
+
+
 const Sidebar = () => {
+const { pathname } = useLocation();
   return (
     <div className="sidebar">
 
@@ -15,23 +22,32 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <li>
-            <div className="sidetabs" id="side1">
+
+            <a href='/admin/user' className="tab-link">
+            <div className="sidetabs" id="side1" style={
+                {backgroundColor: pathname === "/admin/user" ? "#f04e22" : "transparent",
+                color: pathname === "/admin/user" ? "#FFFFFF" : "#666666"}
+            }>
                 <span>
                 <AccountBoxIcon className="userIcon me-2" />
                 ผู้ใช้งาน
                 </span>
 
             </div>
-            
+            </a>
           </li>
           <li>
-            <div className="sidetabs" id="side2">
+            <a href='/admin/post' className="tab-link">
+                <div className="sidetabs" id="side2" style={
+                    {backgroundColor: pathname === "/admin/post" ? "#f04e22" : "transparent",
+                    color: pathname === "/admin/post" ? "#FFFFFF" : "#666666"}}>
                     <span>
                     <ReceiptIcon className="userIcon me-2" />
                     โพสต์
                     </span>
 
                 </div>
+            </a>
           </li>
         </ul>
       </div>

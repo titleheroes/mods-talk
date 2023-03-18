@@ -1,6 +1,6 @@
 import React from 'react'
 import "../../styles/admin.css";
-import Sidebar from "../../../src/components/sidebar/sidebar";
+import Sidebar from "../../components/sidebar/sidebar";
 
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
@@ -50,7 +50,7 @@ function createData(id, code, fullname, faculty, major,email,regis_date,manage) 
 
 
 
-const admin = () => {
+const adminUser = () => {
   return (
     <div className='adminpage'>
         <Sidebar/>
@@ -160,4 +160,4 @@ const admin = () => {
   )
 }
 
-export default admin
+export default adminUser

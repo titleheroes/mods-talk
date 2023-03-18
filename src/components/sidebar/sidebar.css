@@ -35,17 +35,26 @@
     
 }
 
+.tab-link{
+    text-decoration: none;
+}
+
 .sidetabs#side1{
     background-color: #f04e22;
+    color: white;
     border-top-left-radius: 18px;
     border-bottom-left-radius: 18px;
+
+
     height: 10vh;
     display: flex;
     align-items: center;
     padding-left: 30%;
-    color: white;
     cursor: pointer;
+
 }
+
+
 
 .sidetabs#side2{
     
@@ -56,6 +65,7 @@
     align-items: center;
     padding-left: 30%;
     cursor: pointer;
+    color: #666666;
 }
 
 .userIcon{

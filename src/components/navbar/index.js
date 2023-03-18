@@ -31,7 +31,8 @@ const Navbar = () => {
     "/datauser",
     "/forgetpassword",
     "/forgetpassword/sent",
-    "/admin",
+    "/admin/user",
+    "/admin/post",
   ].includes(location.pathname);
 
   useEffect(() => {
