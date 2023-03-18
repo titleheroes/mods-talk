@@ -17,6 +17,9 @@ import DataUser from "./pages/registration/datauser";
 import Review from "./pages/review/review";
 import Post from "./pages/review/post";
 
+import Notification from "./pages/notification";
+import Profile from "./pages/profile";
+
 function App() {
   return (
     <Router>
@@ -42,6 +45,12 @@ function App() {
         <Route path="/datauser" exact element={<DataUser />}></Route>
         <Route path="/review" exact element={<Review />}></Route>
         <Route path="/post" exact element={<Post />}></Route>
+        <Route path="/profile" exact element={<Profile />}>
+          {" "}
+        </Route>
+        <Route path="/notification" exact element={<Notification />}>
+          {" "}
+        </Route>
       </Routes>
     </Router>
   );

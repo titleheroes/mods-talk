@@ -1,0 +1,311 @@
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  }
+  
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+  
+.pagePadding {
+  padding-top: 2rem;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+  
+@media (min-width: 1024px) {
+    .pagePadding {
+    padding-top: 3.25rem;
+  }
+}
+  
+.text-limit {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+  
+.rectangle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+    
+.rectangle-border {
+  width: fit-content;
+  background-color: #F1F1F1;
+  border-radius: 1.25rem;
+  border: transparent;
+  padding: 0.5rem;
+  padding-left: 0.9375rem;
+  padding-right: 0.9375rem;
+}
+    
+.rectangle-text {
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.numcom{
+  font-family: "Kanit" !important;
+  font-weight: lighter !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  color: #4f4f4f !important;
+}
+  
+.homeHeader2 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1.75rem;
+}
+  
+@media (min-width: 1024px) {
+    .homeHeader2 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 3.5rem;
+  }
+}
+
+.posttext{
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.75rem;
+}
+  
+.body {
+  font-size: 14px;
+}
+  
+@media (min-width: 1024px) {
+    .body {
+    font-size: 18px;
+  }
+}
+  
+.button {
+  padding: 2.5% 3% 2.5% 3%;
+  font-size: 14px;
+  color: white;
+  background-color: #f04e22;
+  border: 0;
+  border-radius: 5px;
+}
+  
+.vertical-line {
+  height: 100%;
+  border-right: 1px solid #E6E6E6;
+  margin: 0 20px;
+}
+  
+.searchBar {
+  padding-top: 3rem;
+}
+  
+.search-container {
+  position: relative;
+}
+    
+.search-inside {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+  
+.box {
+  display: inline-block;
+  padding-right: 1rem;
+}
+
+.boxblock{
+  
+  display: block;
+  padding-right: 1rem;  
+}
+
+@media (min-width: 1024px) {
+  .boxblock{
+    display: flex;
+    padding-right: 1rem;
+    align-items: center;
+  }
+}
+  
+.nav-tabs .nav-link {
+  background-color: transparent !important;
+  color: #333 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+  
+@media (max-width: 330px) {
+  .nav-tabs .nav-link{
+    font-size: 14px;     
+  }
+}
+  
+.nav-tabs .nav-link.active {
+  background-color: transparent !important;
+  color: #f04e22 !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+  
+.nav-tabs .nav-link.active {
+  border-bottom: solid 3px #f04e22 !important;
+}
+  
+.form-size {
+  width: 90%;
+}
+  
+@media (min-width: 1024px) {
+  .form-size {
+    width: 100%;
+  }
+}
+
+.qTitle{
+  font-size: 2.2rem !important;
+  font-weight: bold;
+  /* white-space: nowrap; */      
+}
+
+@media (min-width: 1024px) {
+  .qTitle {
+    font-size: 2.6875rem !important;
+  }
+}
+
+.postname{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 400 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.43 !important;
+  color: #333333 !important;
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .postname {
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 400 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.43 !important;
+  color: #333333 !important;
+  }
+}
+
+.postdate{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 400 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.43 !important;
+  color: #979797 !important;
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .postdate {
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 400 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.43 !important;
+  color: #979797 !important;
+  padding-left: 1rem;
+  }
+}
+
+.profile-image-data {
+  width: 7.188rem;
+  height: 7.188rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.box-profile-image-data {
+  display: inline-block;
+  padding-right: 1rem;
+  padding-top: 2.438rem;
+}
+
+.profileName{
+  font-family: "Kanit" !important;
+  font-weight: 600 !important;
+  font-size: 1.25rem !important;
+  line-height: 1.43 !important;
+  color: #333333 !important;
+  padding-top: 1.375rem;
+}
+
+.profilestatus{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 100 !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  color: #979797 !important;
+  display: block;
+  padding-top: 0.2rem;
+  padding-bottom: 2.063rem;
+}
+
+.profiledata{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 100 !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  color: #4F4F4F !important;
+  /* padding-top: 2.063rem !important; */
+  display: inline;
+}
+
+.profiledata1{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 100 !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  color: #4F4F4F !important;
+  padding-top: 0.625rem;
+  display: inline;
+}
+
+.profileans{
+  margin: 0 !important;
+  font-family: "Kanit" !important;
+  font-weight: 100 !important;
+  font-size: 1rem !important;
+  line-height: 1.43 !important;
+  color: #979797 !important;
+  display: inline;
+}
+
+.bbprofile{
+  background-color: transparent !important;
+  color: #F04E22 !important;
+  font-family: "Kanit" !important;
+  border-color: #F04E22 !important;
+  border-radius: 4px !important;
+  margin-top: 1rem;
+}
+  
+  
+
+
