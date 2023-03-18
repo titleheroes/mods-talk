@@ -69,3 +69,12 @@
         white-space: nowrap;
     }
 }
+
+.confirmDelButton{
+    background-color: #f04e22 !important;
+    color: #eeeeee !important;
+}
+
+.cancelDelButton{
+    color: #666666 !important;
+}

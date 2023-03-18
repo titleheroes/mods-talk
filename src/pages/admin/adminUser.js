@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState }  from 'react'
 import "../../styles/admin.css";
 import Sidebar from "../../components/sidebar/sidebar";
 
@@ -14,16 +14,77 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { createTheme, ThemeProvider } from '@mui/material';
+
 const theme = createTheme({
     typography: {
       fontFamily: [
         'Kanit', 'sans-serif'
       ].join(','),
     },});
+
+
+
+    const Transition = React.forwardRef(function Transition(props, ref) {
+      return <Slide direction="up" ref={ref} {...props} />;
+    });
+    
+    
+function AlertDialogSlide(name) {
+      const [open, setOpen] = React.useState(false);
+      const username = name
+      const handleClickOpen = () => {
+        setOpen(true);
+        console.log(username)
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+    
+      return (
+        <div>
+          <button className='deleteUserButton' onClick={handleClickOpen}><DeleteOutlineIcon/></button>
+          <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{"ยืนยันการลบบัญชีผู้ใช้"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                คุณแน่ใจหรือไม่ที่จะทำการลบบัญชีผู้ใช้นี้ ?
+                
+                
+              </DialogContentText>
+              
+            </DialogContent>
+            <DialogActions>
+              <Button className='cancelDelButton' onClick={handleClose}>ยกเลิก</Button>
+              <Button className='confirmDelButton' onClick={handleClose}>ยืนยันลบบัญชีผู้ใช้</Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      );
+    }
+
+    
 
 
 function createData(id, code, fullname, faculty, major,email,regis_date,manage) {
@@ -39,11 +100,11 @@ function createData(id, code, fullname, faculty, major,email,regis_date,manage) 
     createData('0006', 61090500447, 'ธนารีย์ อรุณรุ่ง', 'คณะวิทยาศาสตร์', 'สถิติ','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
     createData('0007', 61090500442, 'ธนารีย์ อรุณรุ่ง', 'คณะวิทยาศาสตร์', 'วิทยาการคอมพิวเตอร์ประยุกต์','laila.aaa@mail.kmutt.ac.th','15/10/2022','c'),
     createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
-    createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
-    createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
-    createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
-    createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
-    createData('0010', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
+    createData('0011', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
+    createData('0012', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
+    createData('0013', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
+    createData('0014', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
+    createData('0015', 61090500562, 'แก้วขวัญ ปิติทัศน์', 'คณะวิทยาศาสตร์', 'คณิตศาสตร์','justin.piti@mail.kmutt.ac.th','15/10/2022','c'),
 
    
   ];
@@ -109,7 +170,7 @@ const adminUser = () => {
                         <TableCell align="left">{row.major}</TableCell>
                         <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">{row.regis_date}</TableCell>
-                        <TableCell align="center"><button className='deleteUserButton'><DeleteOutlineIcon/></button></TableCell>
+                        <TableCell align="center"><AlertDialogSlide name={row.fullname} /></TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
