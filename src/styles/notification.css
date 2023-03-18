@@ -5,10 +5,15 @@
 }
 
 .qTitle{
-  font-size: 43px;
+  font-size: 2.2rem !important;
   font-weight: bold;
-  /* white-space: nowrap; */
+  /* white-space: nowrap; */      
+}
 
+@media (min-width: 1024px) {
+  .qTitle {
+    font-size: 2.6875rem !important;
+  }
 }
 
 .left-content{
