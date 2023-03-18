@@ -60,3 +60,12 @@
     color: #f04e22;
 }
 
+.table-text{
+    white-space: normal;
+}
+
+@media (min-width: 1024px) {
+    .table-text{
+        white-space: nowrap;
+    }
+}
