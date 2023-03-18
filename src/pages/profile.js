@@ -3,10 +3,18 @@ import "../styles/profile.css";
 import "../styles/notification.css";
 import { Tabs, Tab, Dropdown, ListGroup, Modal, Form } from "react-bootstrap";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import { IconButton, useMediaQuery } from "@mui/material";
+import {
+  IconButton,
+  useMediaQuery,
+  ListItemAvatar,
+  ListItemButton,
+  ListItem,
+} from "@mui/material";
 import { Typography } from "@mui/material";
 import { ListItemText } from "@mui/material";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
 
 function EditProfile() {
   const [show, setShow] = useState(false);
@@ -26,6 +34,7 @@ function EditProfile() {
       >
         เริ่มต้นการเขียนโพสต์
       </button> */}
+      {/*  */}
 
       <button
         type="button"
@@ -48,7 +57,7 @@ function EditProfile() {
             className="modal-title question-modal-title fs-5 ps-2 "
             id="exampleModalLabel"
           >
-            สร้างโพสต์รีวิว
+            แก้ไขโปรไฟล์
           </h1>
           <button
             type="button"
@@ -60,38 +69,88 @@ function EditProfile() {
         </div>
 
         <div className="modal-body question-modal-body px-4 pt-2">
-          <text className="modal-topic ">เนื้อหาโพสต์</text>
-          <input
-            type="text"
-            className="form-control mt-2 mb-3"
-            id="modal-input-box"
-            placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
-          />
+          <text className="modal-topic">แก้ไขรูปภาพ</text>
+          <div className="row mt-3 mb-3">
+            <div className="col-3">
+              <Avatar
+                className="pic-profile"
+                alt="Remy Sharp"
+                src={require("../images/profile/userinkmutt.png")}
+              />
+            </div>
+            <div className="col-9" style={{ display: "flex", alignItems: "center" }}>
+              <div>
+                <button
+                  type="button"
+                  className="btn post-question-btn mt-0 "
+                  onClick={handleClose}
+                >
+                  อัพเดตรูปภาพ
+                </button>
 
-          <textarea
-            class="form-control mt-2 mb-3 question-modal-input"
-            id="modal-input-box"
-            placeholder="เขียนคำบรรยายเพิ่มเติม..."
-            rows="6"
-          />
+                <text className="modal-topic mt-1" style={{ display: "block" }}>
+                  แนะนำ: ใช้รูปภาพเป็นสกุล JPG หรือ PNG
+                </text>
+              </div>
+            </div>
+          </div>
 
-          <text className="modal-topic">
-            รูปภาพประกอบ : ใส่ได้ไม่เกิน 3 รูป
+          <text className="modal-topic mb-3" style={{ display: "block" }}>
+            แก้ไขข้อมูลส่วนตัว
           </text>
-          <input
-            type="text"
-            className="form-control mt-2 mb-3"
-            id="modal-input-box"
-            placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
-          />
 
-          <text className="modal-topic">แฮชแท็ก</text>
-          <input
-            type="text"
-            className="form-control mt-2 mb-3"
-            id="modal-input-box"
-            placeholder="#แฮชแท็ก"
-          />
+          <div className="row">
+            <div className="col">
+              <text className="modal-topic">ชื่อจริง</text>
+              <input
+                type="text"
+                className="form-control mt-2 mb-3"
+                id="modal-input-box"
+                placeholder="วรรณดา"
+              />
+            </div>
+            <div className="col">
+              <text className="modal-topic">นามสกุล</text>
+              <input
+                type="text"
+                className="form-control mt-2 mb-3"
+                id="modal-input-box"
+                placeholder="แม็กซิมอฟ"
+              />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col">
+              <text className="modal-topic">คณะ</text>
+              <input
+                type="text"
+                className="form-control mt-2 mb-3"
+                id="modal-input-box"
+                placeholder="วิทยาศาสตร์"
+              />
+            </div>
+            <div className="col">
+              <text className="modal-topic">สาขา</text>
+              <input
+                type="text"
+                className="form-control mt-2 mb-3"
+                id="modal-input-box"
+                placeholder="วิทยาการคอมพิวเตอร์ประยุกต์"
+              />
+            </div>
+          </div>
+          <div className="row">
+            <div className="col">
+              <text className="modal-topic">รหัสนักศึกษา</text>
+              <input
+                type="text"
+                className="form-control mt-2 mb-3"
+                id="modal-input-box"
+                placeholder="62090500556"
+              />
+            </div>
+            <div className="col"></div>
+          </div>
         </div>
 
         <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
@@ -100,7 +159,7 @@ function EditProfile() {
             className="btn post-question-btn mx-auto mt-0 "
             onClick={handleClose}
           >
-            เริ่มต้นการเขียนโพสต์
+            บันทึก
           </button>
         </div>
       </Modal>
