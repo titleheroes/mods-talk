@@ -1,13 +1,111 @@
 import React, { useState } from "react";
-import "../styles/review.css";
-import { Tabs, Tab, Dropdown } from "react-bootstrap";
+import "../../styles/review.css";
+import { Tabs, Tab, Dropdown, Modal, Form } from "react-bootstrap";
+
+function Rmodal() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      {/* <button onClick={handleShow} type="button" class="btn ask-button">
+        เริ่มต้นถามคำถาม
+      </button> */}
+      <button
+        type="button"
+        className="button"
+        onClick={handleShow}
+        style={{ width: "100%" }}
+      >
+        เริ่มต้นการเขียนโพสต์
+      </button>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        className="question-modal"
+      >
+        <div className="modal-header question-modal-header pt-4">
+          <h1
+            className="modal-title question-modal-title fs-5 ps-2 "
+            id="exampleModalLabel"
+          >
+            สร้างโพสต์รีวิว
+          </h1>
+          <button
+            type="button"
+            className="btn-close ps-5"
+            id="modal-close"
+            onClick={handleClose}
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div className="modal-body question-modal-body px-4 pt-2">
+          <text className="modal-topic ">เนื้อหาโพสต์</text>
+          <input
+            type="text"
+            className="form-control mt-2 mb-3"
+            id="modal-input-box"
+            placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
+          />
+
+          <textarea
+            class="form-control mt-2 mb-3 question-modal-input"
+            id="modal-input-box"
+            placeholder="เขียนคำบรรยายเพิ่มเติม..."
+            rows="6"
+          />
+
+          <text className="modal-topic">
+            รูปภาพประกอบ : ใส่ได้ไม่เกิน 3 รูป
+          </text>
+          <input
+            type="text"
+            className="form-control mt-2 mb-3"
+            id="modal-input-box"
+            placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+          />
+
+          <text className="modal-topic">แฮชแท็ก</text>
+          <input
+            type="text"
+            className="form-control mt-2 mb-3"
+            id="modal-input-box"
+            placeholder="#แฮชแท็ก"
+          />
+        </div>
+
+        <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
+          <button
+            type="button"
+            className="btn post-question-btn mx-auto mt-0 "
+            onClick={handleClose}
+          >
+            เริ่มต้นการเขียนโพสต์
+          </button>
+        </div>
+      </Modal>
+    </>
+  );
+}
 
 const Review = () => {
   //Search Bar
   const [query, setQuery] = useState("");
+  const [searchTextShow, setSearchTextShow] = useState(true);
 
   const handleInputChange = (event) => {
     setQuery(event.target.value);
+    if (event.target.value == "") {
+      setSearchTextShow(true);
+    } else {
+      setSearchTextShow(false);
+    }
   };
   //-----------
 
@@ -43,7 +141,7 @@ const Review = () => {
                           <div className="box">
                             <div className="profile-image">
                               <img
-                                src={require("../images/home/main.png")}
+                                src={require("../../images/home/main.png")}
                                 alt="main page png"
                                 className="img-fluid"
                               />
@@ -93,7 +191,7 @@ const Review = () => {
                                   <span style={{ paddingRight: "0.5rem" }}>
                                     <img
                                       src={
-                                        require("../images/icon/chat.svg")
+                                        require("../../images/icon/chat.svg")
                                           .default
                                       }
                                       alt="chat svg"
@@ -105,7 +203,7 @@ const Review = () => {
                                   <span style={{ paddingRight: "0.5rem" }}>
                                     <img
                                       src={
-                                        require("../images/icon/like.svg")
+                                        require("../../images/icon/like.svg")
                                           .default
                                       }
                                       alt="like svg"
@@ -150,7 +248,7 @@ const Review = () => {
 
                       <div className="col-3">
                         <img
-                          src={require("../images/example/1x1.png")}
+                          src={require("../../images/example/1x1.png")}
                           alt="ex_1x1"
                           className="img-fluid float-end"
                         />
@@ -214,17 +312,26 @@ const Review = () => {
               <div className="vertical-line"></div>
             </div>
             <div className="col-md-3">
-              <button
+              {/* <button
                 type="button"
                 className="button"
                 onClick=""
                 style={{ width: "100%" }}
               >
                 เริ่มต้นการเขียนโพสต์
-              </button>
+              </button> */}
+              <Rmodal />
               <div className="searchBar">
                 <div className="search-container">
                   <input
+                    type="text"
+                    value={query}
+                    onChange={handleInputChange}
+                    className="form-control"
+                    style={{ paddingLeft: "2.5rem" }}
+                    // placeholder="ค้นหาคำถาม"
+                  />
+                  {/* <input
                     type="text"
                     value={query}
                     onChange={handleInputChange}
@@ -233,18 +340,22 @@ const Review = () => {
                       width: "100%",
                       borderColor: "#E6E6E6",
                     }}
-                  />
+                  /> */}
                   <div className="search-inside">
                     <div>
                       <span>
                         <img
-                          src={require("../images/icon/search.svg").default}
+                          src={require("../../images/icon/search.svg").default}
                           alt="search svg"
                         />
                       </span>
-                      <span style={{ paddingLeft: "1rem", fontSize: "14px" }}>
-                        Search Mod's Talk
-                      </span>
+                      {searchTextShow ? (
+                        <span style={{ paddingLeft: "1rem", fontSize: "14px" }}>
+                          Search Mod's Talk
+                        </span>
+                      ) : (
+                        <div></div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -253,7 +364,7 @@ const Review = () => {
                 <span>คลิก</span>{" "}
                 <span>
                   <img
-                    src={require("../images/icon/search.svg").default}
+                    src={require("../../images/icon/search.svg").default}
                     alt="search svg"
                     style={{ color: "#4F4F4F" }}
                   />

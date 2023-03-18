@@ -66,22 +66,42 @@ const Navbar = () => {
               src={require("../../images/logo2.png")}
               alt=""
             />
-            {/* <h1>Logo</h1> */}
           </NavLink>
+          {/* <h1>Logo</h1> */}
           <Bars />
-          <NavMenu>
-            <NavLink to="/" activeStyle>
-              หน้าหลัก
-            </NavLink>
+          {currentUser ? (
+            <NavMenu>
+              <NavLink to="/" activeStyle>
+                หน้าหลัก
+              </NavLink>
 
-            <NavLink to="/about" activeStyle>
-              เกี่ยวกับ
-            </NavLink>
+              <NavLink to="/about" activeStyle>
+                เกี่ยวกับ
+              </NavLink>
 
-            <NavLink to="/question" activeStyle>
-              ถาม-ตอบ
-            </NavLink>
-          </NavMenu>
+              <NavLink to="/review" activeStyle>
+                รีวิว
+              </NavLink>
+
+              <NavLink to="/question" activeStyle>
+                ถาม-ตอบ
+              </NavLink>
+            </NavMenu>
+          ) : (
+            <NavMenu>
+              <NavLink to="/" activeStyle>
+                หน้าหลัก
+              </NavLink>
+
+              <NavLink to="/about" activeStyle>
+                เกี่ยวกับ
+              </NavLink>
+
+              <NavLink to="/question" activeStyle>
+                ถาม-ตอบ
+              </NavLink>
+            </NavMenu>
+          )}
 
           {/* <NavBtn0>
           <NavBtnLink0 to="/signup">เข้าสู่ระบบ</NavBtnLink0>
