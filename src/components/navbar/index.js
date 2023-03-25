@@ -175,7 +175,12 @@ const Navbar = () => {
               </Link>
             </NavBtn>
           )}
+
+
         </Nav>
+
+          
+
       </div>
     )
   );
