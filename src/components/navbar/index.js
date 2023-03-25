@@ -250,7 +250,7 @@ const Navbar = () => {
           ) : (
 
 
-            <NavBtn>
+            <NavBtn className="mobile-size">
               <Link to="/login" style={{ textDecoration: "none" }}>
                 <NavBtnLink>เข้าสู่ระบบ</NavBtnLink>
               </Link>
