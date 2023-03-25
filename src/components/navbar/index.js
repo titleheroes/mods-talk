@@ -44,6 +44,9 @@ const Navbar = () => {
     "/datauser",
     "/forgetpassword",
     "/forgetpassword/sent",
+    "/admin/login",
+    "/admin/forgetpassword",
+    "/admin/forgetpasswordsent",
     "/admin/user",
     "/admin/post",
   ].includes(location.pathname);
