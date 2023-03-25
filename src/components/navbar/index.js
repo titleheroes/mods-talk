@@ -9,6 +9,7 @@ import {
   Nav,
   NavLink,
   Bars,
+  Times,
   NavMenu,
   NavBtn,
   NavBtnLink,
@@ -16,9 +17,17 @@ import {
   NavBtnLink0,
 } from "./NavbarElement";
 
+
+import "./Navbar.css";
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [click, setClick] = useState(false);
+
+  const handleClick = () => setClick(!click);
+  const closeMobileMenu = () => setClick(false);
 
   const [userData, setUserData] = useState([]);
 
@@ -62,16 +71,77 @@ const Navbar = () => {
     !hideNavbar && (
       <div>
         <Nav>
-          <NavLink to="/">
+          <NavLink to="/" onClick={closeMobileMenu}>
             <img
               className="logo"
               src={require("../../images/logo2.png")}
               alt=""
             />
-            {/* <h1>Logo</h1> */}
+           
           </NavLink>
-          <Bars />
-          <NavMenu>
+
+          <div className="menu-icon" onClick={handleClick}>
+              {click ? <Times /> : <Bars/>}
+          </div>
+
+          <ul className={click ? "nav-menu active" : "nav-menu"}>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  หน้าหลัก
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  เกี่ยวกับ
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/question"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  ถาม-ตอบ
+                </NavLink>
+              </li>
+
+              <li className="nav-item-mobile">
+              <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <button className="login-button">เข้าสู่ระบบ</button>
+
+
+                
+                </NavLink>
+              
+              </li>
+
+
+
+            </ul>
+
+          
+
+          {/* <NavMenu>
             <NavLink to="/" activeStyle>
               หน้าหลัก
             </NavLink>
@@ -83,7 +153,9 @@ const Navbar = () => {
             <NavLink to="/question" activeStyle>
               ถาม-ตอบ
             </NavLink>
-          </NavMenu>
+          </NavMenu> */}
+
+
 
           {/* <NavBtn0>
           <NavBtnLink0 to="/signup">เข้าสู่ระบบ</NavBtnLink0>

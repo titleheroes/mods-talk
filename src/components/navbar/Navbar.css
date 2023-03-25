@@ -1,0 +1,146 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    list-style: none;
+    text-align: center;
+    padding: 0 10%;
+    white-space: nowrap;
+    
+  }
+
+
+
+  @media screen and (min-width: 961px) {
+
+    .nav-menu {
+        padding-top: 1.5%;
+        
+      }
+}
+
+
+  
+  .nav-item-mobile {
+
+    height: 80px;
+    border-bottom: 0.5px solid rgb(211, 211, 211);
+    
+
+  }
+
+
+  .login-button{
+    background: none;
+    border: none;
+  }
+
+  @media screen and (min-width: 961px) {
+
+    .login-button{
+        display: none;
+    }
+
+    }
+  
+  
+  .nav-links {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    height: 100%;
+  }
+
+
+
+  
+ 
+  @media screen and (min-width: 961px) {
+
+    .nav-item-mobile {
+        
+        border-bottom: 2px solid transparent;
+    }
+
+    /* .nav-links {
+
+
+    } */
+
+
+  }
+  
+ 
+  
+  @media screen and (max-width: 960px) {
+    .NavbarItems {
+      position: relative;
+    }
+  
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      position: absolute;
+      top: 80px;
+      left: -100%;
+      opacity: 1;
+      box-shadow: 0 3px 4px 0 rgba(0,0,0,.2);
+      transition: all 0.5s ease;
+      white-space: nowrap;
+    }
+  
+    .nav-menu.active {
+      background: #fff;
+      color: black;
+      left: 0;
+      opacity: 1;
+      transition: all 0.6s ease;
+      z-index: 1;
+      padding: 0;
+    }
+  
+    .nav-links {
+      text-align: center;
+      padding: 2rem;
+      width: 100%;
+      display: table;
+    }
+  
+    .nav-links:hover {
+      color: #09bef0;
+      transform: scale(1.2);
+      transition: all 0.3s ease;
+    }
+  
+    
+  
+    .nav-item-mobile {
+      width: 100%;
+    }
+  
+    .navbar-logo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translate(25%, 50%);
+    }
+  
+    .menu-icon {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translate(-100%, 60%);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+  }
