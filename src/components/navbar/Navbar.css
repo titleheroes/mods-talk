@@ -103,6 +103,12 @@
     .NavbarItems {
       position: relative;
     }
+
+    .mobile-size.navbar-icon{
+      margin-right: 5%;
+      transform: scale(1.3);
+      
+    }
   
     .nav-menu {
       display: flex;

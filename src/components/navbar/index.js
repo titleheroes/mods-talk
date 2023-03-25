@@ -17,8 +17,14 @@ import {
   NavBtnLink0,
 } from "./NavbarElement";
 
+import HomeIcon from '@mui/icons-material/Home';
+import ArticleIcon from '@mui/icons-material/Article';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import LoginIcon from '@mui/icons-material/Login';
+
 
 import "./Navbar.css";
+import { Home } from "@mui/icons-material";
 
 const Navbar = () => {
   const location = useLocation();
@@ -102,6 +108,7 @@ const Navbar = () => {
                   }
                   onClick={closeMobileMenu}
                 >
+                  <HomeIcon className="mobile-size navbar-icon"/>
                   หน้าหลัก
                 </NavLink>
               </li>
@@ -113,6 +120,7 @@ const Navbar = () => {
                   }
                   onClick={closeMobileMenu}
                 >
+                  <ArticleIcon className="mobile-size navbar-icon"/>
                   เกี่ยวกับ
                 </NavLink>
               </li>
@@ -124,6 +132,7 @@ const Navbar = () => {
                   }
                   onClick={closeMobileMenu}
                 >
+                  <QuestionAnswerIcon className="mobile-size navbar-icon"/>
                   <div className="pe-5">ถาม-ตอบ</div>
                 </NavLink>
               </li>
@@ -143,6 +152,7 @@ const Navbar = () => {
                     }
                     onClick={closeMobileMenu}
                   >
+                    <LoginIcon className="mobile-size navbar-icon"/>
                     <div className="login-button">เข้าสู่ระบบ</div>             
                   </NavLink>
                 </div> 
