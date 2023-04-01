@@ -136,7 +136,7 @@ const Navbar = () => {
 
                 <div className="profile-image">
                   <img
-                    src={require("../../images/home/main.png")}
+                    src={userData.profile}
                     alt="main page png"
                     className="img-fluid"
                   />

@@ -72,6 +72,8 @@ export default function DataUser() {
       fac: faculty,
       pos: position,
       type: types,
+      profile:
+        "https://media.discordapp.net/attachments/718002735475064874/1091706761792200794/user.png",
     };
     createData(currentUserId, data)
       .then(() => {
