@@ -12,8 +12,6 @@ import {
   NavMenu,
   NavBtn,
   NavBtnLink,
-  NavBtn0,
-  NavBtnLink0,
 } from "./NavbarElement";
 
 const Navbar = () => {
@@ -21,8 +19,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const [userData, setUserData] = useState([]);
-
-  const currentUser = auth.currentUser;
+  const [currentUser, setCurrentUser] = useState(null);
 
   const hideNavbar = [
     "/signup",
@@ -55,6 +52,14 @@ const Navbar = () => {
 
     fetchData();
   }, [location.pathname, currentUser]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     !hideNavbar && (
@@ -171,8 +176,9 @@ const Navbar = () => {
                     fontSize: "14px",
                   }}
                   onClick={() => {
-                    signOut(auth);
-                    navigate(0);
+                    signOut(auth).then(() => {
+                      navigate("/");
+                    });
                   }}
                 >
                   <span>

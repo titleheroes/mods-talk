@@ -1,4 +1,5 @@
 import "./App.css";
+import { useState, useEffect } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import Navbar from "./components/navbar";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -16,8 +17,25 @@ import DataUser from "./pages/registration/datauser";
 
 import Review from "./pages/review/review";
 import Post from "./pages/review/post";
+import { auth } from "./config";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setIsLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (isLoading) {
+    return <div></div>;
+  }
+
   return (
     <Router>
       <Navbar />
