@@ -17,6 +17,7 @@ import DataUser from "./pages/registration/datauser";
 
 import Review from "./pages/review/review";
 import Post from "./pages/review/post";
+import Review_Answer from "./pages/review/review_answer";
 import { auth } from "./config";
 
 function App() {
@@ -60,6 +61,11 @@ function App() {
         <Route path="/datauser" exact element={<DataUser />}></Route>
         <Route path="/review" exact element={<Review />}></Route>
         <Route path="/post" exact element={<Post />}></Route>
+        <Route
+          path="/review/post/:id"
+          exact
+          element={<Review_Answer />}
+        ></Route>
       </Routes>
     </Router>
   );

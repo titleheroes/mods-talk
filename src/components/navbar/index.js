@@ -30,36 +30,36 @@ const Navbar = () => {
     "/forgetpassword/sent",
   ].includes(location.pathname);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const currentUserId = currentUser && currentUser.uid;
-        const docRef = doc(db, "member", currentUserId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUserData(data);
-          console.log(userData);
-        } else if (currentUser) {
-          navigate("/datauser");
-        } else {
-          console.log("No such document!");
-        }
-      } catch (e) {
-        console.error("Error fetching document: ", e);
+  // pull userData
+  function fetchData() {
+    try {
+      const currentUserInfo = currentUser && currentUser.uid;
+      const docRef = doc(db, "member", currentUserInfo);
+      const docSnap = getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserData(data);
+      } else {
+        console.log("No such document!");
       }
-    };
+    } catch (e) {
+      console.error("Error fetching document: ", e);
+    }
+  }
 
-    fetchData();
-  }, [location.pathname, currentUser]);
+  fetchData();
+  // pull userData
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-    });
+    const timeoutId = setTimeout(() => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        setCurrentUser(user);
+      });
 
-    return unsubscribe;
-  }, []);
+      return unsubscribe;
+    }, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname, currentUser]);
 
   return (
     !hideNavbar && (

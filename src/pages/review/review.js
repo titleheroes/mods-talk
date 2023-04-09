@@ -177,23 +177,27 @@ function Rmodal() {
 
   useEffect(() => {
     checkInfo();
-    const fetchData = async () => {
-      try {
-        const currentUserInfo = currentUser && currentUser.uid;
-        const docRef = doc(db, "member", currentUserInfo);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUserData(data);
-        } else {
-          console.log("No such document!");
-        }
-      } catch (e) {
-        console.error("Error fetching document: ", e);
-      }
-    };
-    fetchData();
   }, [selectedOption]);
+
+  // pull userData
+  function fetchData() {
+    try {
+      const currentUserInfo = currentUser && currentUser.uid;
+      const docRef = doc(db, "member", currentUserInfo);
+      const docSnap = getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setUserData(data);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (e) {
+      console.error("Error fetching document: ", e);
+    }
+  }
+
+  fetchData();
+  // pull userData
 
   return (
     <>
@@ -388,115 +392,119 @@ const Review = () => {
   //-----------
 
   useEffect(() => {
-    const itemsCollection = collection(db, "review");
+    const timeoutId = setTimeout(() => {
+      const itemsCollection = collection(db, "review");
 
-    let sortedCollection = itemsCollection;
+      let sortedCollection = itemsCollection;
 
-    if (selectedOption === "ยอดนิยม") {
-      sortedCollection = query(itemsCollection, orderBy("like", "desc"));
-    }
+      if (selectedOption === "ยอดนิยม") {
+        sortedCollection = query(itemsCollection, orderBy("like", "desc"));
+      }
 
-    try {
-      //all
-      const unsubscribe = onSnapshot(sortedCollection, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
-        });
-        setAll(itemsList);
-      });
-
-      //วิชาเรียน
-      const subjectQuery = query(
-        itemsCollection,
-        where("type", "==", "วิชาเรียน")
-      );
-      const unsubscribeSubject = onSnapshot(subjectQuery, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
-        });
-        setSubject(itemsList);
-      });
-
-      //อาจารย์
-      const teacherQuery = query(
-        itemsCollection,
-        where("type", "==", "อาจารย์")
-      );
-      const unsubscribeTeacher = onSnapshot(teacherQuery, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
-        });
-        setTeacher(itemsList);
-      });
-
-      //อาจารย์
-      const restaurantQuery = query(
-        itemsCollection,
-        where("type", "==", "ร้านอาหาร")
-      );
-      const unsubscribeRestaurant = onSnapshot(
-        restaurantQuery,
-        (querySnapshot) => {
+      try {
+        //all
+        const unsubscribe = onSnapshot(sortedCollection, (querySnapshot) => {
           const itemsList = [];
           querySnapshot.forEach((doc) => {
             const item = doc.data();
             item.id = doc.id;
             itemsList.push(item);
           });
-          setRestaurant(itemsList);
-        }
-      );
-
-      //หอพัก
-      const dormQuery = query(
-        itemsCollection,
-        where("type", "==", "ร้านอาหาร")
-      );
-      const unsubscribeDorm = onSnapshot(dormQuery, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
+          setAll(itemsList);
         });
-        setDorm(itemsList);
-      });
 
-      //หอพัก
-      const workQuery = query(
-        itemsCollection,
-        where("type", "==", "สถานที่ฝึกงาน")
-      );
-      const unsubscribeWork = onSnapshot(workQuery, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
+        //วิชาเรียน
+        const subjectQuery = query(
+          itemsCollection,
+          where("type", "==", "วิชาเรียน")
+        );
+        const unsubscribeSubject = onSnapshot(subjectQuery, (querySnapshot) => {
+          const itemsList = [];
+          querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            item.id = doc.id;
+            itemsList.push(item);
+          });
+          setSubject(itemsList);
         });
-        setWork(itemsList);
-      });
 
-      return () => {
-        unsubscribe();
-        unsubscribeSubject();
-        unsubscribeTeacher();
-        unsubscribeRestaurant();
-        unsubscribeDorm();
-        unsubscribeWork();
-      };
-    } catch (error) {
-      console.error(error);
-    }
+        //อาจารย์
+        const teacherQuery = query(
+          itemsCollection,
+          where("type", "==", "อาจารย์")
+        );
+        const unsubscribeTeacher = onSnapshot(teacherQuery, (querySnapshot) => {
+          const itemsList = [];
+          querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            item.id = doc.id;
+            itemsList.push(item);
+          });
+          setTeacher(itemsList);
+        });
+
+        //อาจารย์
+        const restaurantQuery = query(
+          itemsCollection,
+          where("type", "==", "ร้านอาหาร")
+        );
+        const unsubscribeRestaurant = onSnapshot(
+          restaurantQuery,
+          (querySnapshot) => {
+            const itemsList = [];
+            querySnapshot.forEach((doc) => {
+              const item = doc.data();
+              item.id = doc.id;
+              itemsList.push(item);
+            });
+            setRestaurant(itemsList);
+          }
+        );
+
+        //หอพัก
+        const dormQuery = query(
+          itemsCollection,
+          where("type", "==", "ร้านอาหาร")
+        );
+        const unsubscribeDorm = onSnapshot(dormQuery, (querySnapshot) => {
+          const itemsList = [];
+          querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            item.id = doc.id;
+            itemsList.push(item);
+          });
+          setDorm(itemsList);
+        });
+
+        //หอพัก
+        const workQuery = query(
+          itemsCollection,
+          where("type", "==", "สถานที่ฝึกงาน")
+        );
+        const unsubscribeWork = onSnapshot(workQuery, (querySnapshot) => {
+          const itemsList = [];
+          querySnapshot.forEach((doc) => {
+            const item = doc.data();
+            item.id = doc.id;
+            itemsList.push(item);
+          });
+          setWork(itemsList);
+        });
+
+        return () => {
+          unsubscribe();
+          unsubscribeSubject();
+          unsubscribeTeacher();
+          unsubscribeRestaurant();
+          unsubscribeDorm();
+          unsubscribeWork();
+        };
+      } catch (error) {
+        console.error(error);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
   }, [db, selectedOption]);
 
   return (
@@ -555,7 +563,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -842,7 +850,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -986,7 +994,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1130,7 +1138,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1274,7 +1282,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1418,7 +1426,7 @@ const Review = () => {
                                         >
                                           <div style={{ flex: 1 }}>
                                             <a
-                                              href=""
+                                              href={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1636,20 +1644,17 @@ function MemberInfo({ memberID, time, date }) {
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
 
-  useEffect(() => {
-    async function fetchMemberData() {
-      const memberDocRef = doc(db, "member", memberID);
-      const memberDocSnapshot = await getDoc(memberDocRef);
-      if (memberDocSnapshot.exists()) {
-        const memberData = memberDocSnapshot.data();
-        setMemberData(memberData);
-      } else {
-        console.log("Member document not found");
-      }
+  async function fetchMemberData() {
+    const memberDocRef = doc(db, "member", memberID);
+    const memberDocSnapshot = await getDoc(memberDocRef);
+    if (memberDocSnapshot.exists()) {
+      const memberData = memberDocSnapshot.data();
+      setMemberData(memberData);
+    } else {
+      console.log("Member document not found");
     }
-
-    fetchMemberData();
-  }, [memberID]);
+  }
+  fetchMemberData();
 
   return (
     <div>
@@ -1709,13 +1714,16 @@ function LikeCheck({ postID, like_count }) {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      const liked = await checkIfLiked(currentUserId, postID);
-      setLikedByCurrentUser(liked);
-    };
-    fetchData();
-    const intervalId = setInterval(fetchData, 1000); // update every 1 seconds
-    return () => clearInterval(intervalId);
+    const timeoutId = setTimeout(() => {
+      const fetchData = async () => {
+        const liked = await checkIfLiked(currentUserId, postID);
+        setLikedByCurrentUser(liked);
+      };
+      fetchData();
+      const intervalId = setInterval(fetchData, 1000); // update every 1 seconds
+      return () => clearInterval(intervalId);
+    }, 2000);
+    return () => clearTimeout(timeoutId);
   }, [postID, currentUserId]);
 
   useEffect(() => {
