@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import {NavLink as Link} from 'react-router-dom'
-import {FaBars} from 'react-icons/fa'
+import { FaBars, FaTimes } from "react-icons/fa";
 
 export const Nav = styled.nav`
     background: #fff;
@@ -31,9 +31,30 @@ export const NavLink = styled(Link)`
 export const Bars = styled(FaBars)`
     display: none;
     color: #f04e22;
+    
 
-    @media screen and (max-width: 768px){
+    @media screen and (max-width: 960px){
+        transition: all 0.5s ease;
         display: block;
+        margin-top: 1%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(-100%, 75%);
+        font-size: 1.8rem;
+        cursor: pointer;
+
+    }
+`
+
+export const Times = styled(FaTimes)`
+    display: none;
+    color: #f04e22;
+    transition: all 0.5s ease;
+
+    @media screen and (max-width: 960px){
+        display: block;
+        margin-top: 1%;
         position: absolute;
         top: 0;
         right: 0;
@@ -47,14 +68,32 @@ export const Bars = styled(FaBars)`
 export const NavMenu = styled.div`
     display: flex;
     align-items: center;
-    margin-right: 50px;
+    margin-right: 10%;
     
     white-space: nowrap;
 
     @media screen and (max-width: 768px){
         display: none;
+
+        
+    }
+
+
+`
+
+export const NavMenuActive = styled.div`
+    display: flex;
+    align-items: center;
+    margin-right: 10%;
+    
+    white-space: nowrap;
+
+    @media screen and (max-width: 768px){
+        display: flex;
     }
 `
+
+
 export const NavBtn0 = styled.nav`
     display: flex;
     align-items: center;
@@ -99,7 +138,7 @@ export const NavBtn = styled.nav`
     justify-content: flex-end;
     
     
-    @media screen and (max-width: 768px){
+    @media screen and (max-width: 960px){
         display: none;
     }
 `

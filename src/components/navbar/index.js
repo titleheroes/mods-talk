@@ -9,6 +9,7 @@ import {
   Nav,
   NavLink,
   Bars,
+  Times,
   NavMenu,
   NavBtn,
   NavBtnLink,
@@ -16,13 +17,31 @@ import {
   NavBtnLink0,
 } from "./NavbarElement";
 
+import HomeIcon from '@mui/icons-material/Home';
+import ArticleIcon from '@mui/icons-material/Article';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import LoginIcon from '@mui/icons-material/Login';
+
+
+import "./Navbar.css";
+import { Home } from "@mui/icons-material";
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [click, setClick] = useState(false);
+
+  const handleClick = () => setClick(!click);
+  
+
+  const closeMobileMenu = () => setClick(false);
+
   const [userData, setUserData] = useState([]);
 
   const currentUser = auth.currentUser;
+
+  
 
   const hideNavbar = [
     "/signup",
@@ -31,6 +50,11 @@ const Navbar = () => {
     "/datauser",
     "/forgetpassword",
     "/forgetpassword/sent",
+    "/admin/login",
+    "/admin/forgetpassword",
+    "/admin/forgetpasswordsent",
+    "/admin/user",
+    "/admin/post",
   ].includes(location.pathname);
 
   useEffect(() => {
@@ -56,44 +80,103 @@ const Navbar = () => {
     fetchData();
   }, [location.pathname, currentUser]);
 
+  
+
   return (
     !hideNavbar && (
       <div>
         <Nav>
-          <NavLink to="/">
+          <NavLink to="/" onClick={closeMobileMenu}>
             <img
               className="logo"
               src={require("../../images/logo2.png")}
               alt=""
             />
-            {/* <h1>Logo</h1> */}
+           
           </NavLink>
-          <Bars />
-          <NavMenu>
-            <NavLink to="/" activeStyle>
-              หน้าหลัก
-            </NavLink>
 
-            <NavLink to="/about" activeStyle>
-              เกี่ยวกับ
-            </NavLink>
+          <div className="menu-icon" onClick={handleClick}>
+              {click ? <Times /> : <Bars/>}
+          </div>
 
-            <NavLink to="/question" activeStyle>
-              ถาม-ตอบ
-            </NavLink>
-          </NavMenu>
+          <ul className={click ? "nav-menu active" : "nav-menu"}>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <HomeIcon className="mobile-size navbar-icon"/>
+                  หน้าหลัก
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <ArticleIcon className="mobile-size navbar-icon"/>
+                  เกี่ยวกับ
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile ">
+                <NavLink
+                  to="/question"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <QuestionAnswerIcon className="mobile-size navbar-icon"/>
+                  <div className="pe-5">ถาม-ตอบ</div>
+                </NavLink>
+              </li>
 
-          {/* <NavBtn0>
-          <NavBtnLink0 to="/signup">เข้าสู่ระบบ</NavBtnLink0>
-        </NavBtn0> */}
+              {currentUser ? (
+                null
+              ) : (
 
-          {currentUser ? (
+                <li className="nav-item-mobile">
+                <div className="login-text">
+                  <NavLink
+                    
+                    to="/login"
+                    
+                    className={({ isActive }) =>
+                      "nav-links  " + (isActive ? " activated" : " ")
+                    }
+                    onClick={closeMobileMenu}
+                  >
+                    <LoginIcon className="mobile-size navbar-icon"/>
+                    <div className="login-button">เข้าสู่ระบบ</div>             
+                  </NavLink>
+                </div> 
+              </li>
+
+
+
+              )}
+
+              
+
+              <li>
+
+
+              {currentUser ? (
             <Dropdown
+            className="mobile-size"
               drop="down"
               style={{
                 display: "flex",
                 alignItems: "center",
+                height: "70px"
               }}
+              
             >
               <Dropdown.Toggle
                 variant="link"
@@ -105,6 +188,7 @@ const Navbar = () => {
                   display: "flex",
                   alignItems: "center",
                 }}
+                className=""
               >
                 {userData ? (
                   <div className="mx-3" style={{ color: "black" }}>
@@ -124,15 +208,20 @@ const Navbar = () => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
+
+              
                 <Dropdown.Item
                   className="mt-1"
-                  href="/about"
+                  as={Link}
+                  to="/about"
+                  onClick={closeMobileMenu}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     fontSize: "14px",
                   }}
                 >
+                  
                   <span>
                     <img
                       src={require("../../images/icon/user.svg").default}
@@ -141,8 +230,13 @@ const Navbar = () => {
                     />
                   </span>
                   &nbsp;&nbsp; โปรไฟล์
+
+                 
                 </Dropdown.Item>
+                 
+
                 <hr />
+                
                 <Dropdown.Item
                   className="mb-2"
                   style={{
@@ -167,13 +261,142 @@ const Navbar = () => {
               </Dropdown.Menu>
             </Dropdown>
           ) : (
-            <NavBtn>
-              <Link to="/signup" style={{ textDecoration: "none" }}>
-                <NavBtnLink>สมัครสมาชิก</NavBtnLink>
+
+
+            <NavBtn className="mobile-size">
+              <Link to="/login" style={{ textDecoration: "none" }}>
+                <NavBtnLink>เข้าสู่ระบบ</NavBtnLink>
               </Link>
             </NavBtn>
+
+            
           )}
+
+
+              </li>
+
+
+
+            </ul>
+
+       
+
+            
+      
+    
+    {currentUser ? (
+
+      
+            <Dropdown
+              className="mobile-size2"
+              drop="down"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                
+              }}
+              
+              
+            >
+              <Dropdown.Toggle
+                variant="link"
+                id="dropdown-basic"
+                style={{
+                  border: "none",
+                  boxShadow: "none",
+                  color: "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                className=""
+              >
+                {userData ? (
+                  <div className="mx-3" style={{ color: "black" }}>
+                    {userData.fname}
+                  </div>
+                ) : (
+                  <p>Loading...</p>
+                )}
+
+                <div className="profile-image">
+                  <img
+                    src={require("../../images/home/main.png")}
+                    alt="main page png"
+                    className="img-fluid"
+                  />
+                </div>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+
+              
+                <Dropdown.Item
+                  className="mt-1"
+                  as={Link}
+                  to="/about"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: "14px",
+                  }}
+                >
+                  
+                  <span>
+                    <img
+                      src={require("../../images/icon/user.svg").default}
+                      alt="user svg"
+                      style={{ width: "20px" }}
+                    />
+                  </span>
+                  &nbsp;&nbsp; โปรไฟล์
+
+                 
+                </Dropdown.Item>
+                 
+
+                <hr />
+                
+                <Dropdown.Item
+                  className="mb-2"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontSize: "14px",
+                  }}
+                  onClick={() => {
+                    signOut(auth);
+                    navigate(0);
+                  }}
+                >
+                  <span>
+                    <img
+                      src={require("../../images/icon/exit.svg").default}
+                      alt="exit svg"
+                      style={{ width: "20px" }}
+                    />
+                  </span>
+                  &nbsp;&nbsp; ออกจากระบบ
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+
+
+            <NavBtn>
+              <Link to="/login" style={{ textDecoration: "none" }}>
+                <NavBtnLink>เข้าสู่ระบบ</NavBtnLink>
+              </Link>
+            </NavBtn>
+
+            
+          )}
+
+          
+
         </Nav>
+
+          
+
       </div>
     )
   );

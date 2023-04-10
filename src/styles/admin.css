@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+.adminpage{
+    display: flex ;
+    font-family: 'Kanit', sans-serif !important;
+
+}
+
+.adminhome{
+    background-color: #eeeeee;
+    flex: 4;
+}
+
+.adminnavbar{
+    background-color: #f04e22;
+    
+}
+
+.admin-title{
+    display: flex;
+    font-weight: bold;
+    color: #666666;
+    align-items: center;
+    /* background-color: aqua; */
+}
+
+.text-title{
+    border-right: 2px solid #c8c8c8;
+}
+
+.searchbox{
+    display: flex;
+    align-items: center;
+    border: 2px solid #c8c8c8;
+    border-radius: 5px;
+    padding: 4px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+
+
+}
+
+
+
+.searchbox>input{
+    border: none;
+    outline: none;
+    background-color: transparent;
+
+    
+}
+
+.searchInput{
+    min-width: 40vb;
+}
+
+.deleteUserButton{
+    background-color: transparent;
+    border: transparent;
+    color: #f04e22;
+}
+
+.table-text{
+    white-space: normal;
+}
+
+@media (min-width: 1024px) {
+    .table-text{
+        white-space: nowrap;
+    }
+}
+
+.confirmDelButton{
+    background-color: #f04e22 !important;
+    color: #eeeeee !important;
+}
+
+.cancelDelButton{
+    color: #666666 !important;
+}
+
+.table-bot{
+    margin-bottom: 0% !important;
+}
