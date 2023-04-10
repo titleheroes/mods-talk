@@ -329,10 +329,6 @@ const Review = () => {
   useEffect(() => {
     const itemsCollection = collection(db, "review");
 
-    // const count = 1;
-    // console.log("Review page : Post Load -> " + count);
-    // count++;
-
     let sortedCollection = itemsCollection;
 
     if (selectedOption === "ยอดนิยม") {
@@ -453,25 +449,6 @@ const Review = () => {
                                               {item.comment}
                                             </span>
 
-                                            {/* <span
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <button
-                                                style={{
-                                                  backgroundColor:
-                                                    "transparent",
-                                                  border: "none",
-                                                }}
-                                              >
-                                                <img
-                                                  src={
-                                                    require("../../images/icon/like.svg")
-                                                      .default
-                                                  }
-                                                  alt="like svg"
-                                                />
-                                              </button>
-                                            </span> */}
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -535,149 +512,6 @@ const Review = () => {
                         <div>data not available</div>
                       )}
                     </div>
-                    {/* <div>
-                      <div className="row">
-                        <div className="col-9">
-                          <div
-                            className="body"
-                            style={{
-                              display: "flex",
-                            }}
-                          >
-                            <div className="box">
-                              <div className="profile-image">
-                                <img
-                                  src={require("../../images/home/main.png")}
-                                  alt="main page png"
-                                  className="img-fluid"
-                                />
-                              </div>
-                            </div>
-                            <div
-                              className="box"
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              วรรณดา แม็กซิมอฟ
-                              <span style={{ paddingLeft: "1rem" }}>
-                                4 วันที่ผ่านมา
-                              </span>
-                            </div>
-
-                            <div style={{ paddingLeft: "1rem" }}></div>
-                          </div>
-                          <div>
-                            <div className="homeHeader2">
-                              วิชานี้ GEN231 ดีมั้ยครับ อยากฟังรีวิวจากพี่ๆ ครับ
-                            </div>
-                            <div className="text-limit body">
-                              ผมเรียนอยู่ ปี 3 ภาควิชาคณิตศาสตร์ครับ
-                              อยากทราบความเห็นของพี่ๆ
-                              ที่เรียนวิชานี้ปีที่แล้วครับ ว่ามันดีไม่ดีอย่าง ไร
-                              มันดึงเกรดเยอะมั้ยครับ พอดีไม่อยากให้เกรดตกครับผม
-                            </div>
-                            <div style={{ paddingTop: "1rem", width: "100%" }}>
-                              <div className="box">
-                                <div className="rectangle-container">
-                                  <div className="rectangle-border">
-                                    <div className="rectangle-text">GEN231</div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="box float-end">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <div style={{ flex: 1 }}>
-                                    <a
-                                      href=""
-                                      style={{ paddingRight: "0.5rem" }}
-                                    >
-                                      <img
-                                        src={
-                                          require("../../images/icon/chat.svg")
-                                            .default
-                                        }
-                                        alt="chat svg"
-                                      />
-                                    </a>
-                                    <span style={{ paddingRight: "1rem" }}>
-                                      12
-                                    </span>
-
-                                    <a
-                                      href=""
-                                      style={{ paddingRight: "0.5rem" }}
-                                    >
-                                      <img
-                                        src={
-                                          require("../../images/icon/like.svg")
-                                            .default
-                                        }
-                                        alt="like svg"
-                                      />
-                                    </a>
-                                    <span style={{ paddingRight: "1rem" }}>
-                                      512
-                                    </span>
-                                  </div>
-                                  <Dropdown drop="down">
-                                    <Dropdown.Toggle
-                                      variant="link"
-                                      id="dropdown-basic"
-                                      style={{
-                                        border: "none",
-                                        boxShadow: "none",
-                                        color: "transparent",
-                                      }}
-                                    >
-                                      <span style={{ color: "black" }}>
-                                        <img
-                                          className="menu-dropdown"
-                                          src={
-                                            require("../../images/question/three_dots.svg")
-                                              .default
-                                          }
-                                          alt=""
-                                        />
-                                      </span>
-                                    </Dropdown.Toggle>
-
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#/action-1">
-                                        Report Post
-                                      </Dropdown.Item>
-                                      <Dropdown.Item href="#/action-2">
-                                        Delete Post
-                                      </Dropdown.Item>
-                                      <Dropdown.Item href="#/action-3">
-                                        Something else
-                                      </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="col-3">
-                          <img
-                            src={require("../../images/example/1x1.png")}
-                            alt="ex_1x1"
-                            className="img-fluid float-end"
-                          />
-                        </div>
-                        <div style={{ paddingTop: "1rem" }}>
-                          <hr />
-                        </div>
-                      </div>
-                    </div> */}
                   </Tab>
 
                   <Tab className="pt-4" eventKey="subject" title="วิชาเรียน">

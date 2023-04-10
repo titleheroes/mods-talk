@@ -37,7 +37,7 @@ function App() {
             const data = docSnap.data();
             setUserData(data);
           } else {
-            console.log("No such document!");
+            console.error("No such document!");
           }
         });
       } catch (error) {
@@ -61,7 +61,7 @@ function App() {
 
   return (
     <Router>
-      <Navbar />
+      <Navbar userData={userData} />
       <Routes>
         <Route path="/" exact element={<Home />}></Route>
         <Route path="/about" exact element={<About />}></Route>
@@ -86,7 +86,7 @@ function App() {
         <Route
           path="/review/post/:id"
           exact
-          element={<Review_Answer />}
+          element={<Review_Answer userData={userData} />}
         ></Route>
       </Routes>
     </Router>

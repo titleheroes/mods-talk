@@ -15,6 +15,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -110,10 +111,17 @@ const Answer = ({ userData }) => {
   const [content, setContent] = useState("");
   const [comment, setComment] = useState([]);
 
+  const [visibility, setVisibility] = useState({});
+
+  const handleToggleVisibility = (id) => {
+    setVisibility({
+      ...visibility,
+      [id]: !visibility[id],
+    });
+  };
+
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
-
-  const navigate = useNavigate();
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
@@ -131,21 +139,15 @@ const Answer = ({ userData }) => {
   async function createData(postData) {
     try {
       const docRef = await addDoc(collection(db, "cmnt_review"), postData);
+      const docRef2 = doc(db, "review", id);
+      updateDoc(docRef2, {
+        comment: post.comment + 1,
+      });
       console.log("This Comment has been created", docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
-    }
-  }
-
-  async function createLikeData(postID, content) {
-    try {
-      const docRef = doc(db, "cmnt_review_like", postID);
-      await setDoc(docRef, { content: content });
-      console.log("This Post has been created", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
     }
   }
 
@@ -165,18 +167,9 @@ const Answer = ({ userData }) => {
         time: formattedTime,
       };
       createData(data)
-        .then((id) => {
+        .then(() => {
           console.log("create data success");
-          createLikeData(id, content)
-            .then(() => {
-              console.log("create like data success");
-            })
-            .catch((error) => {
-              console.error(error);
-            })
-            .then(() => {
-              setContent("");
-            });
+          setContent("");
         })
         .catch((error) => {
           console.error(error);
@@ -184,48 +177,47 @@ const Answer = ({ userData }) => {
     }
   };
 
+  // ดึงข้อมูลโพสต์
   useEffect(() => {
-    // ดึงข้อมูล
-    async function fetchPost() {
-      // const count = 1;
-      // console.log("Review page : Post Load -> " + count);
-      // count++;
+    const reviewRef = collection(db, "review");
+    const docRef = doc(reviewRef, id);
 
-      const postRef = doc(db, "review", id);
-      const postDoc = await getDoc(postRef);
+    try {
+      const unsubscribe = onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          setPost(doc.data());
+        } else {
+          console.log("No such document!");
+        }
+      });
 
-      // ดึงข้อมูลโพสต์
-      if (postDoc.exists()) {
-        setPost(postDoc.data());
-        // console.log(post);
-      } else {
-        console.error("No such document!");
-      }
+      return () => {
+        unsubscribe();
+      };
+    } catch (error) {
+      console.error(error);
     }
-
-    fetchPost();
-  }, []);
+  }, [id]);
 
   // ดึง cmnt_review
   useEffect(() => {
+    const q = query(collection(db, "cmnt_review"), where("post_id", "==", id));
+
     try {
-      const fetchData = async () => {
-        const q = query(
-          collection(db, "cmnt_review"),
-          where("post_id", "==", id)
-        );
-        const itemsList = [];
-        const querySnapshot = await getDocs(q);
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const comments = [];
         querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
+          comments.push({ id: doc.id, ...doc.data() });
         });
-        setComment(itemsList);
+        setComment(comments);
+        console.log("Comment has been pulled");
+      });
+
+      return () => {
+        unsubscribe();
       };
-      fetchData();
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   }, []);
 
@@ -241,7 +233,6 @@ const Answer = ({ userData }) => {
             <div className="col-md vertLine">
               <div className="left-content">
                 <div className="post-border">
-                  {console.log("post repeater")}
                   <MemberHost
                     memberID={post.member_id}
                     time={post.time}
@@ -256,6 +247,7 @@ const Answer = ({ userData }) => {
 
                   <div
                     style={{
+                      paddingTop: "1rem",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -284,7 +276,11 @@ const Answer = ({ userData }) => {
                       <text id="comment-count" style={{ paddingRight: "1rem" }}>
                         {post.comment}
                       </text>
-                      <LikeCheck postID={id} like_count={post.like} />
+                      <LikeCheck
+                        postID={id}
+                        users={post.users}
+                        like_count={post.like}
+                      />
                     </div>
 
                     <div className="flex-2-comment"></div>
@@ -366,9 +362,8 @@ const Answer = ({ userData }) => {
                     <div>
                       {comment.map((item) => (
                         <div key={item.id}>
-                          {console.log("item repeater" + item.id)}
                           <div className="flex-container comment pt-3">
-                            <MemberInfo memberID={post.member_id} />
+                            <MemberInfo memberID={item.member_id} />
 
                             <div className="flex-1-right">
                               <Dropdown>
@@ -411,19 +406,47 @@ const Answer = ({ userData }) => {
                           >
                             <div className="pe-4">
                               <span className="post-date">
-                                {formattedDate === post.date
-                                  ? post.time
-                                  : post.date}
+                                {formattedDate === item.date
+                                  ? item.time
+                                  : item.date}
                               </span>
                             </div>
 
-                            <div className="">
-                              <Button className="reply-button">
-                                <text id="reply-text">ตอบกลับ</text>
+                            <div>
+                              <Button
+                                className="reply-button"
+                                onClick={() => handleToggleVisibility(item.id)}
+                              >
+                                <text id="reply-text">
+                                  ตอบกลับ
+                                  <span>
+                                    {" ("}
+                                    {item.reply}
+                                    {")"}
+                                  </span>
+                                </text>
                               </Button>
+                            </div>
+
+                            <div className="flex-1-right px-4">
+                              <LikeCommentCheck
+                                postID={item.id}
+                                users={item.users}
+                                like_count={item.like}
+                              />
                             </div>
                           </div>
                           <hr />
+                          {visibility[item.id] && (
+                            <div className="container">
+                              <ReplyLoad
+                                userData={userData}
+                                postID={id}
+                                cmntID={item.id}
+                                replyCount={item.reply}
+                              />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -562,18 +585,24 @@ function MemberHost({ memberID, time, date }) {
 function MemberInfo({ memberID }) {
   const [memberData, setMemberData] = useState(null);
 
-  async function fetchMemberData() {
-    const memberDocRef = doc(db, "member", memberID);
-    const memberDocSnapshot = await getDoc(memberDocRef);
-    if (memberDocSnapshot.exists()) {
-      const memberData = memberDocSnapshot.data();
-      setMemberData(memberData);
-    } else {
-      console.error("Member document not found");
+  // pull userData
+  useEffect(() => {
+    try {
+      const memberDocRef = doc(db, "member", memberID);
+      getDoc(memberDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          console.log("Successfully Load userData");
+          const data = docSnap.data();
+          setMemberData(data);
+        } else {
+          console.error("Member document not found");
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
-  }
-
-  fetchMemberData();
+  }, []);
+  // pull userData
 
   return (
     <div>
@@ -610,7 +639,190 @@ function MemberInfo({ memberID }) {
   );
 }
 
-function LikeCheck({ postID, like_count }) {
+function ReplyLoad({ userData, postID, cmntID, replyCount }) {
+  const [content, setContent] = useState("");
+  const [reply, setReply] = useState([]);
+
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getDate()}/${
+    currentDate.getMonth() + 1
+  }/${currentDate.getFullYear()}`;
+  const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+  // ดันข้อมูลคอมเมนท์
+  async function createData(postData) {
+    try {
+      const docRef = await addDoc(collection(db, "reply_review"), postData);
+      const docRef2 = doc(db, "cmnt_review", cmntID);
+      updateDoc(docRef2, {
+        reply: replyCount + 1,
+      });
+      console.log("This Comment has been created", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      return null;
+    }
+  }
+
+  const replySubmit = (event) => {
+    if (content === null) {
+    } else {
+      event.preventDefault();
+      const data = {
+        post_id: postID,
+        cmnt_id: cmntID,
+        like: 0,
+        report: 0,
+        content: content,
+        member_id: currentUserId,
+        date: formattedDate,
+        time: formattedTime,
+      };
+      createData(data)
+        .then(() => {
+          console.log("create data success");
+          setContent("");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  // ดึง reply_review
+  useEffect(() => {
+    const q = query(
+      collection(db, "reply_review"),
+      where("post_id", "==", postID) && where("cmnt_id", "==", cmntID)
+    );
+
+    try {
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach((doc) => {
+          replies.push({ id: doc.id, ...doc.data() });
+        });
+        setReply(replies);
+        console.log("Comment has been pulled");
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  return (
+    <div className="px-3">
+      {reply ? (
+        <div>
+          {reply.map((item) => (
+            <div key={item.id}>
+              <div className="flex-container comment pt-3">
+                <MemberInfo memberID={item.member_id} />
+
+                <div className="flex-1-right">
+                  <Dropdown>
+                    <Dropdown.Toggle variant="link" id="question-dropdown">
+                      <img
+                        className="menu-dropdown"
+                        src={
+                          require("../../images/question/three_dots.svg")
+                            .default
+                        }
+                        alt=""
+                      />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      <Dropdown.Item href="#/action-1">
+                        Report Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">
+                        Delete Post
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-3">
+                        Something else
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <span>{item.content}</span>
+              </div>
+
+              <div className="flex-container comment pt-2" id="comment-reply">
+                <div className="pe-4">
+                  <span className="post-date">
+                    {formattedDate === item.date ? item.time : item.date}
+                  </span>
+                </div>
+
+                <div className="flex-1-right px-4">
+                  <LikeReplyCheck
+                    postID={item.id}
+                    users={item.users}
+                    like_count={item.like}
+                  />
+                </div>
+              </div>
+              <hr />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div>data not available</div>
+      )}
+      {/* เขียนคอมเมนท์                           */}
+      <form className="pt-3 pb-1" onSubmit={replySubmit}>
+        <div className="flex-container comment" id="comment-2">
+          <div className="profile-image" style={{ marginRight: "1rem" }}>
+            <img
+              src={userData.profile}
+              alt="main page png"
+              className="img-fluid"
+            />
+          </div>
+
+          <div className="flex-2">
+            <input
+              type="text"
+              className="form-control "
+              id="content"
+              placeholder="เขียนความคิดเห็น..."
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
+            />
+          </div>
+
+          <div className="flex-1-right">
+            <Button className="sent-comment" type="submit">
+              <img
+                className="menu-pic pe-3"
+                src={require("../../images/question/sent_1.svg").default}
+                alt=""
+              />
+            </Button>
+          </div>
+        </div>
+      </form>
+      {/* เขียนคอมเมนท์                           */}
+      <hr />
+    </div>
+  );
+}
+
+function LikeCheck({ postID, users, like_count }) {
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
@@ -620,28 +832,26 @@ function LikeCheck({ postID, like_count }) {
   );
 
   useEffect(() => {
-    const docRef = doc(db, "review_like", postID);
-    const fetchData = async () => {
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const { users } = docSnap.data();
-        setLikedByCurrentUser(users.includes(currentUserId));
+    try {
+      if (users.includes(currentUserId)) {
+        setLikedByCurrentUser(true);
       } else {
         setLikedByCurrentUser(false);
       }
-      console.log("Review_Like download successfully");
-    };
-    fetchData();
-  }, [postID, currentUserId]);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [users]);
 
   const handleLikeClick = () => {
-    const docRef = doc(db, "review_like", postID);
+    const docRef = doc(db, "review", postID);
     if (likedByCurrentUser === false) {
-      updateDoc(docRef, { users: arrayUnion(currentUserId) })
+      updateDoc(docRef, {
+        users: arrayUnion(currentUserId),
+        like: like_count + 1,
+      })
         .then(() => {
           console.log("You Like the post!");
-          const postRef = doc(collection(db, "review"), postID);
-          updateDoc(postRef, { like: like_count + 1 });
           setLikedByCurrentUser(true);
           setLikeURL(require("../../images/icon/red_like.svg").default);
         })
@@ -649,11 +859,168 @@ function LikeCheck({ postID, like_count }) {
           console.error("Error updating document: ", error);
         });
     } else if (likedByCurrentUser === true) {
-      updateDoc(docRef, { users: arrayRemove(currentUserId) })
+      updateDoc(docRef, {
+        users: arrayRemove(currentUserId),
+        like: like_count - 1,
+      })
         .then(() => {
-          const postRef = doc(collection(db, "review"), postID);
           console.log("You Unike the post!");
-          updateDoc(postRef, { like: like_count - 1 });
+          setLikedByCurrentUser(false);
+          setLikeURL(require("../../images/icon/like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (likedByCurrentUser === false) {
+      setLikeURL(require("../../images/icon/like.svg").default);
+    } else {
+      setLikeURL(require("../../images/icon/red_like.svg").default);
+    }
+  }, [likedByCurrentUser]);
+
+  return (
+    <span>
+      <span style={{ paddingRight: "0.5rem" }}>
+        <button
+          style={{
+            backgroundColor: "transparent",
+            border: "none",
+          }}
+          onClick={handleLikeClick}
+        >
+          <img src={likeURL} alt="like svg" style={{ fill: "transparent" }} />
+        </button>
+      </span>
+      <span style={{ paddingRight: "1rem" }}>{like_count}</span>
+    </span>
+  );
+}
+
+function LikeCommentCheck({ postID, users, like_count }) {
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const [likedByCurrentUser, setLikedByCurrentUser] = useState(false);
+  const [likeURL, setLikeURL] = useState(
+    require("../../images/icon/like.svg").default
+  );
+
+  useEffect(() => {
+    try {
+      if (users.includes(currentUserId)) {
+        setLikedByCurrentUser(true);
+      } else {
+        setLikedByCurrentUser(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [users]);
+
+  const handleLikeClick = () => {
+    const docRef = doc(db, "cmnt_review", postID);
+    if (likedByCurrentUser === false) {
+      updateDoc(docRef, {
+        users: arrayUnion(currentUserId),
+        like: like_count + 1,
+      })
+        .then(() => {
+          console.log("You Like the comment!");
+          setLikedByCurrentUser(true);
+          setLikeURL(require("../../images/icon/red_like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    } else if (likedByCurrentUser === true) {
+      updateDoc(docRef, {
+        users: arrayRemove(currentUserId),
+        like: like_count - 1,
+      })
+        .then(() => {
+          console.log("You Unike the comment!");
+          setLikedByCurrentUser(false);
+          setLikeURL(require("../../images/icon/like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (likedByCurrentUser === false) {
+      setLikeURL(require("../../images/icon/like.svg").default);
+    } else {
+      setLikeURL(require("../../images/icon/red_like.svg").default);
+    }
+  }, [likedByCurrentUser]);
+
+  return (
+    <span>
+      <span style={{ paddingRight: "0.5rem" }}>
+        <button
+          style={{
+            backgroundColor: "transparent",
+            border: "none",
+          }}
+          onClick={handleLikeClick}
+        >
+          <img src={likeURL} alt="like svg" style={{ fill: "transparent" }} />
+        </button>
+      </span>
+      <span style={{ paddingRight: "1rem" }}>{like_count}</span>
+    </span>
+  );
+}
+
+function LikeReplyCheck({ postID, users, like_count }) {
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const [likedByCurrentUser, setLikedByCurrentUser] = useState(false);
+  const [likeURL, setLikeURL] = useState(
+    require("../../images/icon/like.svg").default
+  );
+
+  useEffect(() => {
+    try {
+      if (users.includes(currentUserId)) {
+        setLikedByCurrentUser(true);
+      } else {
+        setLikedByCurrentUser(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [users]);
+
+  const handleLikeClick = () => {
+    const docRef = doc(db, "reply_review", postID);
+    if (likedByCurrentUser === false) {
+      updateDoc(docRef, {
+        users: arrayUnion(currentUserId),
+        like: like_count + 1,
+      })
+        .then(() => {
+          console.log("You Like the comment!");
+          setLikedByCurrentUser(true);
+          setLikeURL(require("../../images/icon/red_like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    } else if (likedByCurrentUser === true) {
+      updateDoc(docRef, {
+        users: arrayRemove(currentUserId),
+        like: like_count - 1,
+      })
+        .then(() => {
+          console.log("You Unike the comment!");
           setLikedByCurrentUser(false);
           setLikeURL(require("../../images/icon/like.svg").default);
         })

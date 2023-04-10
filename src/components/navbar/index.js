@@ -14,11 +14,10 @@ import {
   NavBtnLink,
 } from "./NavbarElement";
 
-const Navbar = ({}) => {
+const Navbar = ({ userData }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [userData, setUserData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
   const hideNavbar = [
@@ -29,28 +28,6 @@ const Navbar = ({}) => {
     "/forgetpassword",
     "/forgetpassword/sent",
   ].includes(location.pathname);
-
-  // pull userData
-  useEffect(() => {
-    if (currentUser && currentUser.uid) {
-      try {
-        const docRef = doc(db, "member", currentUser.uid);
-        getDoc(docRef).then((docSnap) => {
-          if (docSnap.exists()) {
-            console.log("Successfully Load userData");
-            const data = docSnap.data();
-            setUserData(data);
-          } else {
-            navigate("/datauser");
-            console.log("No such document!");
-          }
-        });
-      } catch (error) {
-        console.error("Error fetching document: ", error);
-      }
-    }
-  }, [currentUser]);
-  // pull userData
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -139,11 +116,11 @@ const Navbar = ({}) => {
                     }}
                   >
                     <div className="mx-3" style={{ color: "black" }}>
-                      {userData.fname}
+                      {userData && userData.fname}
                     </div>
                     <div className="profile-image">
                       <img
-                        src={userData.profile}
+                        src={userData && userData.profile}
                         alt="main page png"
                         className="img-fluid"
                       />
