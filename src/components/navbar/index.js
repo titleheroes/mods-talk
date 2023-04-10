@@ -35,15 +35,20 @@ const Navbar = () => {
     try {
       const currentUserInfo = currentUser && currentUser.uid;
       const docRef = doc(db, "member", currentUserInfo);
-      const docSnap = getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setUserData(data);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (e) {
-      console.error("Error fetching document: ", e);
+      getDoc(docRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserData(data);
+          } else {
+            console.log("No such document!");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching document: ", error);
+        });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
   }
 

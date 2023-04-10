@@ -184,15 +184,20 @@ function Rmodal() {
     try {
       const currentUserInfo = currentUser && currentUser.uid;
       const docRef = doc(db, "member", currentUserInfo);
-      const docSnap = getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setUserData(data);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (e) {
-      console.error("Error fetching document: ", e);
+      getDoc(docRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserData(data);
+          } else {
+            console.error("No such document!");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching document: ", error);
+        });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
   }
 
@@ -395,6 +400,10 @@ const Review = () => {
     const timeoutId = setTimeout(() => {
       const itemsCollection = collection(db, "review");
 
+      // const count = 1;
+      // console.log("Review page : Post Load -> " + count);
+      // count++;
+
       let sortedCollection = itemsCollection;
 
       if (selectedOption === "ยอดนิยม") {
@@ -502,7 +511,7 @@ const Review = () => {
       } catch (error) {
         console.error(error);
       }
-    }, 3000);
+    }, 10000);
 
     return () => clearTimeout(timeoutId);
   }, [db, selectedOption]);
@@ -1651,7 +1660,7 @@ function MemberInfo({ memberID, time, date }) {
       const memberData = memberDocSnapshot.data();
       setMemberData(memberData);
     } else {
-      console.log("Member document not found");
+      console.error("Member document not found");
     }
   }
   fetchMemberData();

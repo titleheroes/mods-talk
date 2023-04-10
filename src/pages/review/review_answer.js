@@ -122,32 +122,37 @@ const Answer = () => {
   }/${currentDate.getFullYear()}`;
   const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-  // ดึงข้อมูล currentUser
-  if (currentUser) {
-    const uid = currentUser.uid;
-    const userRef = doc(db, "member", uid);
-    getDoc(userRef)
-      .then((doc) => {
-        if (doc.exists()) {
-          const userData = doc.data();
-          console.log(userData);
-        } else {
-          console.log("No such user!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting user data:", error);
-      });
-  } else {
-    console.log("No user signed in!");
-  }
-
   function closeItem() {
     setActive(false);
   }
   function openItem() {
     setActive(true);
   }
+
+  // pull userData
+  function fetchData() {
+    try {
+      const currentUserInfo = currentUser && currentUser.uid;
+      const docRef = doc(db, "member", currentUserInfo);
+      getDoc(docRef)
+        .then((docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setUserData(data);
+          } else {
+            console.error("No such document!");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching document: ", error);
+        });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
+    }
+  }
+
+  fetchData();
+  // pull userData
 
   async function createData(postData) {
     try {
@@ -169,37 +174,6 @@ const Answer = () => {
       console.error("Error adding document: ", error);
     }
   }
-
-  // ดึงข้อมูล
-  async function fetchPost() {
-    const postRef = doc(db, "review", id);
-    const postDoc = await getDoc(postRef);
-
-    // ดึงข้อมูล User
-    try {
-      const currentUserInfo = currentUser && currentUser.uid;
-      const docRef = doc(db, "member", currentUserInfo);
-      const docSnap = getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setUserData(data);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (e) {
-      console.error("Error fetching document: ", e);
-    }
-
-    // ดึงข้อมูลโพสต์
-    if (postDoc.exists()) {
-      setPost(postDoc.data());
-      // console.log(post);
-    } else {
-      console.error("No such document!");
-    }
-  }
-
-  fetchPost();
 
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
@@ -236,30 +210,49 @@ const Answer = () => {
     }
   };
 
+  useEffect(() => {
+    // ดึงข้อมูล
+    async function fetchPost() {
+      const count = 1;
+      // console.log("Review page : Post Load -> " + count);
+      count++;
+
+      const postRef = doc(db, "review", id);
+      const postDoc = await getDoc(postRef);
+
+      // ดึงข้อมูลโพสต์
+      if (postDoc.exists()) {
+        setPost(postDoc.data());
+        // console.log(post);
+      } else {
+        console.error("No such document!");
+      }
+    }
+
+    fetchPost();
+  }, []);
+
   // ดึง cmnt_review
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      try {
-        const fetchData = async () => {
-          const q = query(
-            collection(db, "cmnt_review"),
-            where("post_id", "==", id)
-          );
-          const itemsList = [];
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setComment(itemsList);
-        };
-        fetchData();
-      } catch (e) {
-        // console.error(e);
-      }
-    }, 3000);
-    return () => clearTimeout(timeoutId);
+    try {
+      const fetchData = async () => {
+        const q = query(
+          collection(db, "cmnt_review"),
+          where("post_id", "==", id)
+        );
+        const itemsList = [];
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          const item = doc.data();
+          item.id = doc.id;
+          itemsList.push(item);
+        });
+        setComment(itemsList);
+      };
+      fetchData();
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   if (!post) {
@@ -274,18 +267,38 @@ const Answer = () => {
             <div className="col-md vertLine">
               <div className="left-content">
                 <div className="post-border">
-                  {/* <p className="poster-name pb-3">ผู้ไม่ประสงค์ออกนาม</p> */}
-                  <MemberInfo memberID={post.member_id} />
-                  <p className="pt-2 text">{post.content}</p>
+                  {console.log("post repeater")}
+                  <MemberHost
+                    memberID={post.member_id}
+                    time={post.time}
+                    date={post.date}
+                  />
+
+                  <div className="pt-2 homeHeader2">{post.header}</div>
+
+                  <div>
+                    <Button className="hit-header">{post.tag}</Button>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      height: "400px",
+                    }}
+                  >
+                    <img
+                      src={post.picture}
+                      className="img-fluid"
+                      style={{ height: "100%" }}
+                    />
+                  </div>
+
+                  <p className="pt-3 text">{post.content}</p>
 
                   <div className="flex-container comment">
                     <div className="flex-1-comment">
-                      <span className="post-date">
-                        {formattedDate === post.date ? post.time : post.date}
-                      </span>
-                    </div>
-
-                    <div className="flex-2-comment">
                       <img
                         className="menu-pic"
                         src={
@@ -297,9 +310,10 @@ const Answer = () => {
                       <text id="comment-count" style={{ paddingRight: "1rem" }}>
                         {post.comment}
                       </text>
-                      {console.log(post.like)}
                       <LikeCheck postID={id} like_count={post.like} />
                     </div>
+
+                    <div className="flex-2-comment"></div>
 
                     <div className="flex-1-comment-right">
                       <Dropdown>
@@ -330,6 +344,7 @@ const Answer = () => {
                   </div>
                 </div>
 
+                {/* เขียนคอมเมนท์                           */}
                 <form onSubmit={commentSubmit}>
                   <div className="flex-container comment" id="comment-2">
                     <div
@@ -369,68 +384,78 @@ const Answer = () => {
                     </div>
                   </div>
                 </form>
+                {/* เขียนคอมเมนท์                           */}
 
+                {/* ดึง map comment                           */}
                 <div>
-                  <div className="flex-container comment pt-3">
-                    <div className="flex-1">
-                      <img
-                        src={require("../../images/home/main.png")}
-                        alt="Review.png"
-                        className="img-fluid prof-pic me-2"
-                      />
+                  {comment ? (
+                    <div>
+                      {comment.map((item) => (
+                        <div key={item.id}>
+                          {console.log("item repeater" + item.id)}
+                          <div className="flex-container comment pt-3">
+                            <MemberInfo memberID={post.member_id} />
+
+                            <div className="flex-1-right">
+                              <Dropdown>
+                                <Dropdown.Toggle
+                                  variant="link"
+                                  id="question-dropdown"
+                                >
+                                  <img
+                                    className="menu-dropdown"
+                                    src={
+                                      require("../../images/question/three_dots.svg")
+                                        .default
+                                    }
+                                    alt=""
+                                  />
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item href="#/action-1">
+                                    Report Post
+                                  </Dropdown.Item>
+                                  <Dropdown.Item href="#/action-2">
+                                    Delete Post
+                                  </Dropdown.Item>
+                                  <Dropdown.Item href="#/action-3">
+                                    Something else
+                                  </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                            </div>
+                          </div>
+
+                          <div className="pt-4">
+                            <span>{item.content}</span>
+                          </div>
+
+                          <div
+                            className="flex-container comment pt-2"
+                            id="comment-reply"
+                          >
+                            <div className="pe-4">
+                              <span className="post-date">
+                                {formattedDate === post.date
+                                  ? post.time
+                                  : post.date}
+                              </span>
+                            </div>
+
+                            <div className="">
+                              <Button className="reply-button">
+                                <text id="reply-text">ตอบกลับ</text>
+                              </Button>
+                            </div>
+                          </div>
+                          <hr />
+                        </div>
+                      ))}
                     </div>
-
-                    <div className="flex-2-bottom-comment">
-                      <span className="poster-name">วรรณดา แม็กซิมอฟ</span>
-                    </div>
-
-                    <div className="flex-1-right">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="link" id="question-dropdown">
-                          <img
-                            className="menu-dropdown"
-                            src={
-                              require("../../images/question/three_dots.svg")
-                                .default
-                            }
-                            alt=""
-                          />
-                        </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#/action-1">
-                            Report Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-2">
-                            Delete Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-3">
-                            Something else
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </div>
-
-                  <div className="pt-4">
-                    <span>คำตอบที่ 1</span>
-                  </div>
-
-                  <div
-                    className="flex-container comment pt-2"
-                    id="comment-reply"
-                  >
-                    <div className="pe-4">
-                      <span className="post-date">10 มกราคม 2565</span>
-                    </div>
-
-                    <div className="">
-                      <Button className="reply-button">
-                        <text id="reply-text">ตอบกลับ</text>
-                      </Button>
-                    </div>
-                  </div>
-                  <hr />
+                  ) : (
+                    <div>data not available</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -487,6 +512,73 @@ const Answer = () => {
   );
 };
 
+function MemberHost({ memberID, time, date }) {
+  const [memberData, setMemberData] = useState(null);
+
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getDate()}/${
+    currentDate.getMonth() + 1
+  }/${currentDate.getFullYear()}`;
+  const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+  async function fetchMemberData() {
+    const memberDocRef = doc(db, "member", memberID);
+    const memberDocSnapshot = await getDoc(memberDocRef);
+    if (memberDocSnapshot.exists()) {
+      const memberData = memberDocSnapshot.data();
+      setMemberData(memberData);
+    } else {
+      console.error("Member document not found");
+    }
+  }
+  fetchMemberData();
+
+  return (
+    <div>
+      {memberData && (
+        <div
+          className="body"
+          style={{
+            display: "flex",
+          }}
+        >
+          <div className="box">
+            <div className="profile-image-host">
+              <img
+                src={memberData.profile}
+                alt="main page png"
+                className="img-fluid"
+              />
+            </div>
+          </div>
+          <div>
+            <div
+              className="box"
+              style={{
+                display: "flex",
+              }}
+            >
+              {memberData.fname} {memberData.lname}
+            </div>
+            <div
+              className="box"
+              style={{
+                display: "flex",
+              }}
+            >
+              <span className="post-date">
+                {formattedDate === date ? time : date}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ paddingLeft: "1rem" }}></div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MemberInfo({ memberID }) {
   const [memberData, setMemberData] = useState(null);
 
@@ -497,9 +589,10 @@ function MemberInfo({ memberID }) {
       const memberData = memberDocSnapshot.data();
       setMemberData(memberData);
     } else {
-      console.log("Member document not found");
+      console.error("Member document not found");
     }
   }
+
   fetchMemberData();
 
   return (
@@ -538,7 +631,6 @@ function MemberInfo({ memberID }) {
 }
 
 function LikeCheck({ postID, like_count }) {
-  console.log(postID);
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
@@ -566,7 +658,7 @@ function LikeCheck({ postID, like_count }) {
       fetchData();
       const intervalId = setInterval(fetchData, 1000);
       return () => clearInterval(intervalId);
-    }, 2000);
+    }, 10000);
     return () => clearTimeout(timeoutId);
   }, [postID, currentUserId]);
 
