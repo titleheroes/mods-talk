@@ -101,11 +101,10 @@ function Qmodal() {
   );
 }
 
-const Answer = () => {
+const Answer = ({ userData }) => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
 
-  const [userData, setUserData] = useState([]);
   const [active, setActive] = useState(true);
 
   const [content, setContent] = useState("");
@@ -128,31 +127,6 @@ const Answer = () => {
   function openItem() {
     setActive(true);
   }
-
-  // pull userData
-  function fetchData() {
-    try {
-      const currentUserInfo = currentUser && currentUser.uid;
-      const docRef = doc(db, "member", currentUserInfo);
-      getDoc(docRef)
-        .then((docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUserData(data);
-          } else {
-            console.error("No such document!");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching document: ", error);
-        });
-    } catch (error) {
-      console.error("Error fetching document: ", error);
-    }
-  }
-
-  fetchData();
-  // pull userData
 
   async function createData(postData) {
     try {
@@ -213,9 +187,9 @@ const Answer = () => {
   useEffect(() => {
     // ดึงข้อมูล
     async function fetchPost() {
-      const count = 1;
+      // const count = 1;
       // console.log("Review page : Post Load -> " + count);
-      count++;
+      // count++;
 
       const postRef = doc(db, "review", id);
       const postDoc = await getDoc(postRef);
@@ -519,19 +493,25 @@ function MemberHost({ memberID, time, date }) {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-  async function fetchMemberData() {
-    const memberDocRef = doc(db, "member", memberID);
-    const memberDocSnapshot = await getDoc(memberDocRef);
-    if (memberDocSnapshot.exists()) {
-      const memberData = memberDocSnapshot.data();
-      setMemberData(memberData);
-    } else {
-      console.error("Member document not found");
+  // pull userData
+  useEffect(() => {
+    try {
+      const memberDocRef = doc(db, "member", memberID);
+      getDoc(memberDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          console.log("Successfully Load userData");
+          const data = docSnap.data();
+          setMemberData(data);
+        } else {
+          console.error("Member document not found");
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
-  }
-  fetchMemberData();
+  }, []);
+  // pull userData
 
   return (
     <div>
@@ -639,28 +619,49 @@ function LikeCheck({ postID, like_count }) {
     require("../../images/icon/like.svg").default
   );
 
-  async function checkIfLiked(currentUserID, postID) {
-    const docRef = doc(db, "review_like", postID);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const { users } = docSnap.data();
-      return users.includes(currentUserID);
-    }
-    return false;
-  }
-
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const fetchData = async () => {
-        const liked = await checkIfLiked(currentUserId, postID);
-        setLikedByCurrentUser(liked);
-      };
-      fetchData();
-      const intervalId = setInterval(fetchData, 1000);
-      return () => clearInterval(intervalId);
-    }, 10000);
-    return () => clearTimeout(timeoutId);
+    const docRef = doc(db, "review_like", postID);
+    const fetchData = async () => {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const { users } = docSnap.data();
+        setLikedByCurrentUser(users.includes(currentUserId));
+      } else {
+        setLikedByCurrentUser(false);
+      }
+      console.log("Review_Like download successfully");
+    };
+    fetchData();
   }, [postID, currentUserId]);
+
+  const handleLikeClick = () => {
+    const docRef = doc(db, "review_like", postID);
+    if (likedByCurrentUser === false) {
+      updateDoc(docRef, { users: arrayUnion(currentUserId) })
+        .then(() => {
+          console.log("You Like the post!");
+          const postRef = doc(collection(db, "review"), postID);
+          updateDoc(postRef, { like: like_count + 1 });
+          setLikedByCurrentUser(true);
+          setLikeURL(require("../../images/icon/red_like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    } else if (likedByCurrentUser === true) {
+      updateDoc(docRef, { users: arrayRemove(currentUserId) })
+        .then(() => {
+          const postRef = doc(collection(db, "review"), postID);
+          console.log("You Unike the post!");
+          updateDoc(postRef, { like: like_count - 1 });
+          setLikedByCurrentUser(false);
+          setLikeURL(require("../../images/icon/like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    }
+  };
 
   useEffect(() => {
     if (likedByCurrentUser === false) {
@@ -669,40 +670,6 @@ function LikeCheck({ postID, like_count }) {
       setLikeURL(require("../../images/icon/red_like.svg").default);
     }
   }, [likedByCurrentUser]);
-
-  const handleLikeClick = () => {
-    const docRef = doc(db, "review_like", postID);
-    setLikedByCurrentUser(!likedByCurrentUser);
-    if (likedByCurrentUser === false) {
-      updateDoc(docRef, { users: arrayUnion(currentUserId) })
-        .then(() => {
-          console.log("You Like the post!");
-          const postRef = doc(collection(db, "review"), postID);
-          updateDoc(postRef, { like: like_count + 1 });
-        })
-        .catch((error) => {
-          console.error("Error updating document: ", error);
-        })
-        .then(() => {
-          setLikeURL(require("../../images/icon/red_like.svg").default);
-        });
-    } else if (likedByCurrentUser === true) {
-      updateDoc(docRef, { users: arrayRemove(currentUserId) })
-        .then(() => {
-          const postRef = doc(collection(db, "review"), postID);
-          console.log("You Unike the post!");
-          updateDoc(postRef, {
-            like: like_count - 1,
-          });
-        })
-        .catch((error) => {
-          console.error("Error updating document: ", error);
-        })
-        .then(() => {
-          setLikeURL(require("../../images/icon/like.svg").default);
-        });
-    }
-  };
 
   return (
     <span>

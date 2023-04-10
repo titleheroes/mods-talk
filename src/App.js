@@ -18,11 +18,33 @@ import DataUser from "./pages/registration/datauser";
 import Review from "./pages/review/review";
 import Post from "./pages/review/post";
 import Review_Answer from "./pages/review/review_answer";
-import { auth } from "./config";
+import { auth, db } from "./config";
+import { doc, getDoc } from "firebase/firestore";
 
 function App() {
+  const [userData, setUserData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // pull userData
+  useEffect(() => {
+    if (currentUser && currentUser.uid) {
+      try {
+        const docRef = doc(db, "member", currentUser.uid);
+        getDoc(docRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            console.log("Successfully Load userData");
+            const data = docSnap.data();
+            setUserData(data);
+          } else {
+            console.log("No such document!");
+          }
+        });
+      } catch (error) {
+        console.error("Error fetching document: ", error);
+      }
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {

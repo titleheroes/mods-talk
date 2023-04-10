@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/review.css";
-import { Tabs, Tab, Dropdown, Modal, Form } from "react-bootstrap";
+import { Tabs, Tab, Dropdown, Modal } from "react-bootstrap";
 import { auth, db, storage } from "../../config";
-import { useLocation, useNavigate } from "react-router-dom";
 import {
   addDoc,
   arrayRemove,
@@ -12,21 +11,14 @@ import {
   getDoc,
   onSnapshot,
   query,
-  setDoc,
   updateDoc,
-  where,
   orderBy,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { queries } from "@testing-library/react";
 
 function Rmodal() {
-  const navigate = useNavigate();
-
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
-
-  const location = useLocation();
 
   const timestamp = Date.now();
 
@@ -49,7 +41,6 @@ function Rmodal() {
   const [selectedOption, setSelectedOption] = useState("เลือก");
 
   const [show, setShow] = useState(false);
-  const [userData, setUserData] = useState([]);
   const [file, setFile] = useState(null);
 
   const [header, setHeader] = useState("");
@@ -66,16 +57,6 @@ function Rmodal() {
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
-    }
-  }
-
-  async function createLikeData(postID, header) {
-    try {
-      const docRef = doc(db, "review_like", postID);
-      await setDoc(docRef, { header: header });
-      console.log("This Post has been created", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
     }
   }
 
@@ -116,20 +97,7 @@ function Rmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data)
-          .then((id) => {
-            console.log("create data success");
-            createLikeData(id, header)
-              .then(() => {
-                console.log("create like data success");
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        createData(data);
       } else {
         const storageRef = ref(
           storage,
@@ -153,20 +121,7 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data)
-              .then((id) => {
-                console.log("create data success");
-                createLikeData(id, header)
-                  .then(() => {
-                    console.log("create like data success");
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              })
-              .catch((error) => {
-                console.error(error);
-              });
+            createData(data);
           });
         });
       }
@@ -178,31 +133,6 @@ function Rmodal() {
   useEffect(() => {
     checkInfo();
   }, [selectedOption]);
-
-  // pull userData
-  function fetchData() {
-    try {
-      const currentUserInfo = currentUser && currentUser.uid;
-      const docRef = doc(db, "member", currentUserInfo);
-      getDoc(docRef)
-        .then((docSnap) => {
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUserData(data);
-          } else {
-            console.error("No such document!");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching document: ", error);
-        });
-    } catch (error) {
-      console.error("Error fetching document: ", error);
-    }
-  }
-
-  fetchData();
-  // pull userData
 
   return (
     <>
@@ -397,124 +327,58 @@ const Review = () => {
   //-----------
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const itemsCollection = collection(db, "review");
+    const itemsCollection = collection(db, "review");
 
-      // const count = 1;
-      // console.log("Review page : Post Load -> " + count);
-      // count++;
+    // const count = 1;
+    // console.log("Review page : Post Load -> " + count);
+    // count++;
 
-      let sortedCollection = itemsCollection;
+    let sortedCollection = itemsCollection;
 
-      if (selectedOption === "ยอดนิยม") {
-        sortedCollection = query(itemsCollection, orderBy("like", "desc"));
-      }
+    if (selectedOption === "ยอดนิยม") {
+      sortedCollection = query(itemsCollection, orderBy("like", "desc"));
+    }
 
-      try {
-        //all
-        const unsubscribe = onSnapshot(sortedCollection, (querySnapshot) => {
-          const itemsList = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setAll(itemsList);
-        });
-
-        //วิชาเรียน
-        const subjectQuery = query(
-          itemsCollection,
-          where("type", "==", "วิชาเรียน")
-        );
-        const unsubscribeSubject = onSnapshot(subjectQuery, (querySnapshot) => {
-          const itemsList = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setSubject(itemsList);
-        });
-
-        //อาจารย์
-        const teacherQuery = query(
-          itemsCollection,
-          where("type", "==", "อาจารย์")
-        );
-        const unsubscribeTeacher = onSnapshot(teacherQuery, (querySnapshot) => {
-          const itemsList = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setTeacher(itemsList);
-        });
-
-        //อาจารย์
-        const restaurantQuery = query(
-          itemsCollection,
-          where("type", "==", "ร้านอาหาร")
-        );
-        const unsubscribeRestaurant = onSnapshot(
-          restaurantQuery,
-          (querySnapshot) => {
-            const itemsList = [];
-            querySnapshot.forEach((doc) => {
-              const item = doc.data();
-              item.id = doc.id;
-              itemsList.push(item);
-            });
-            setRestaurant(itemsList);
+    try {
+      const unsubscribe = onSnapshot(sortedCollection, (querySnapshot) => {
+        const itemsList = [];
+        const subject_array = [];
+        const teacher_array = [];
+        const restaurant_array = [];
+        const dorm_array = [];
+        const work_array = [];
+        querySnapshot.forEach((doc) => {
+          const item = doc.data();
+          item.id = doc.id;
+          itemsList.push(item);
+          if (item.type === "วิชาเรียน") {
+            subject_array.push(item);
+          } else if (item.type === "อาจารย์") {
+            teacher_array.push(item);
+          } else if (item.type === "ร้านอาหาร") {
+            restaurant_array.push(item);
+          } else if (item.type === "หอพัก") {
+            dorm_array.push(item);
+          } else if (item.type === "สถานที่ฝึกงาน") {
+            work_array.push(item);
           }
-        );
-
-        //หอพัก
-        const dormQuery = query(
-          itemsCollection,
-          where("type", "==", "ร้านอาหาร")
-        );
-        const unsubscribeDorm = onSnapshot(dormQuery, (querySnapshot) => {
-          const itemsList = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setDorm(itemsList);
+          console.log("Succesfully Loading Post");
         });
+        setAll(itemsList);
+        setSubject(subject_array);
+        setTeacher(teacher_array);
+        setRestaurant(restaurant_array);
+        setDorm(dorm_array);
+        setWork(work_array);
+      });
 
-        //หอพัก
-        const workQuery = query(
-          itemsCollection,
-          where("type", "==", "สถานที่ฝึกงาน")
-        );
-        const unsubscribeWork = onSnapshot(workQuery, (querySnapshot) => {
-          const itemsList = [];
-          querySnapshot.forEach((doc) => {
-            const item = doc.data();
-            item.id = doc.id;
-            itemsList.push(item);
-          });
-          setWork(itemsList);
-        });
-
-        return () => {
-          unsubscribe();
-          unsubscribeSubject();
-          unsubscribeTeacher();
-          unsubscribeRestaurant();
-          unsubscribeDorm();
-          unsubscribeWork();
-        };
-      } catch (error) {
-        console.error(error);
-      }
-    }, 10000);
-
-    return () => clearTimeout(timeoutId);
-  }, [db, selectedOption]);
+      return () => {
+        unsubscribe();
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  }, [selectedOption]);
 
   return (
     <div>
@@ -610,6 +474,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -897,6 +762,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -1041,6 +907,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -1185,6 +1052,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -1329,6 +1197,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -1473,6 +1342,7 @@ const Review = () => {
                                             </span> */}
                                             <LikeCheck
                                               postID={item.id}
+                                              users={item.users}
                                               like_count={item.like}
                                             />
                                           </div>
@@ -1653,17 +1523,24 @@ function MemberInfo({ memberID, time, date }) {
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
 
-  async function fetchMemberData() {
-    const memberDocRef = doc(db, "member", memberID);
-    const memberDocSnapshot = await getDoc(memberDocRef);
-    if (memberDocSnapshot.exists()) {
-      const memberData = memberDocSnapshot.data();
-      setMemberData(memberData);
-    } else {
-      console.error("Member document not found");
+  // pull userData
+  useEffect(() => {
+    try {
+      const memberDocRef = doc(db, "member", memberID);
+      getDoc(memberDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          console.log("Successfully Load userData");
+          const data = docSnap.data();
+          setMemberData(data);
+        } else {
+          console.error("Member document not found");
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching document: ", error);
     }
-  }
-  fetchMemberData();
+  }, []);
+  // pull userData
 
   return (
     <div>
@@ -1703,7 +1580,7 @@ function MemberInfo({ memberID, time, date }) {
   );
 }
 
-function LikeCheck({ postID, like_count }) {
+function LikeCheck({ postID, users, like_count }) {
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
@@ -1712,28 +1589,48 @@ function LikeCheck({ postID, like_count }) {
     require("../../images/icon/like.svg").default
   );
 
-  async function checkIfLiked(currentUserID, postID) {
-    const docRef = doc(db, "review_like", postID);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const { users } = docSnap.data();
-      return users.includes(currentUserID);
-    }
-    return false;
-  }
-
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const fetchData = async () => {
-        const liked = await checkIfLiked(currentUserId, postID);
-        setLikedByCurrentUser(liked);
-      };
-      fetchData();
-      const intervalId = setInterval(fetchData, 1000); // update every 1 seconds
-      return () => clearInterval(intervalId);
-    }, 2000);
-    return () => clearTimeout(timeoutId);
-  }, [postID, currentUserId]);
+    try {
+      if (users.includes(currentUserId)) {
+        setLikedByCurrentUser(true);
+      } else {
+        setLikedByCurrentUser(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [users]);
+
+  const handleLikeClick = () => {
+    const docRef = doc(db, "review", postID);
+    if (likedByCurrentUser === false) {
+      updateDoc(docRef, {
+        users: arrayUnion(currentUserId),
+        like: like_count + 1,
+      })
+        .then(() => {
+          console.log("You Like the post!");
+          setLikedByCurrentUser(true);
+          setLikeURL(require("../../images/icon/red_like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    } else if (likedByCurrentUser === true) {
+      updateDoc(docRef, {
+        users: arrayRemove(currentUserId),
+        like: like_count - 1,
+      })
+        .then(() => {
+          console.log("You Unike the post!");
+          setLikedByCurrentUser(false);
+          setLikeURL(require("../../images/icon/like.svg").default);
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    }
+  };
 
   useEffect(() => {
     if (likedByCurrentUser === false) {
@@ -1742,40 +1639,6 @@ function LikeCheck({ postID, like_count }) {
       setLikeURL(require("../../images/icon/red_like.svg").default);
     }
   }, [likedByCurrentUser]);
-
-  const handleLikeClick = () => {
-    const docRef = doc(db, "review_like", postID);
-    setLikedByCurrentUser(!likedByCurrentUser);
-    if (likedByCurrentUser === false) {
-      updateDoc(docRef, { users: arrayUnion(currentUserId) })
-        .then(() => {
-          console.log("You Like the post!");
-          const postRef = doc(collection(db, "review"), postID);
-          updateDoc(postRef, { like: like_count + 1 });
-        })
-        .catch((error) => {
-          console.error("Error updating document: ", error);
-        })
-        .then(() => {
-          setLikeURL(require("../../images/icon/red_like.svg").default);
-        });
-    } else if (likedByCurrentUser === true) {
-      updateDoc(docRef, { users: arrayRemove(currentUserId) })
-        .then(() => {
-          const postRef = doc(collection(db, "review"), postID);
-          console.log("You Unike the post!");
-          updateDoc(postRef, {
-            like: like_count - 1,
-          });
-        })
-        .catch((error) => {
-          console.error("Error updating document: ", error);
-        })
-        .then(() => {
-          setLikeURL(require("../../images/icon/like.svg").default);
-        });
-    }
-  };
 
   return (
     <span>

@@ -78,6 +78,7 @@ export default function DataUser() {
     createData(currentUserId, data)
       .then(() => {
         navigate("/");
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error);

@@ -14,7 +14,7 @@ import {
   NavBtnLink,
 } from "./NavbarElement";
 
-const Navbar = () => {
+const Navbar = ({}) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -31,40 +31,34 @@ const Navbar = () => {
   ].includes(location.pathname);
 
   // pull userData
-  function fetchData() {
-    try {
-      const currentUserInfo = currentUser && currentUser.uid;
-      const docRef = doc(db, "member", currentUserInfo);
-      getDoc(docRef)
-        .then((docSnap) => {
+  useEffect(() => {
+    if (currentUser && currentUser.uid) {
+      try {
+        const docRef = doc(db, "member", currentUser.uid);
+        getDoc(docRef).then((docSnap) => {
           if (docSnap.exists()) {
+            console.log("Successfully Load userData");
             const data = docSnap.data();
             setUserData(data);
           } else {
+            navigate("/datauser");
             console.log("No such document!");
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching document: ", error);
         });
-    } catch (error) {
-      console.error("Error fetching document: ", error);
+      } catch (error) {
+        console.error("Error fetching document: ", error);
+      }
     }
-  }
-
-  fetchData();
+  }, [currentUser]);
   // pull userData
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
-        setCurrentUser(user);
-      });
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
 
-      return unsubscribe;
-    }, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [location.pathname, currentUser]);
+    return unsubscribe;
+  }, [location.pathname]);
 
   return (
     !hideNavbar && (
@@ -137,20 +131,27 @@ const Navbar = () => {
                 }}
               >
                 {userData ? (
-                  <div className="mx-3" style={{ color: "black" }}>
-                    {userData.fname}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div className="mx-3" style={{ color: "black" }}>
+                      {userData.fname}
+                    </div>
+                    <div className="profile-image">
+                      <img
+                        src={userData.profile}
+                        alt="main page png"
+                        className="img-fluid"
+                      />
+                    </div>
                   </div>
                 ) : (
                   <p>Loading...</p>
                 )}
-
-                <div className="profile-image">
-                  <img
-                    src={userData.profile}
-                    alt="main page png"
-                    className="img-fluid"
-                  />
-                </div>
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
