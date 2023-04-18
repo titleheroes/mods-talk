@@ -9,12 +9,6 @@ import Form from "react-bootstrap/Form";
 import "../styles/question.css";
 import { color, display, style } from "@mui/system";
 
-
-
-
-
-
-
 function Qmodal() {
   const [show, setShow] = useState(false);
 
@@ -95,18 +89,15 @@ function Qmodal() {
 }
 
 const Question = () => {
-
   const [active, setActive] = useState(true);
 
   function closeItem() {
     setActive(false);
-    
   }
   function openItem() {
     setActive(true);
-    
   }
-  
+
   return (
     <div className="page">
       <div className="row">
@@ -178,8 +169,6 @@ const Question = () => {
                       </Dropdown>
                     </div>
                   </div>
-
-                  
                 </div>
 
                 <div className="post-border">

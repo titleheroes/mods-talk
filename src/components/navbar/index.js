@@ -13,20 +13,15 @@ import {
   NavMenu,
   NavBtn,
   NavBtnLink,
-  NavBtn0,
-  NavBtnLink0,
 } from "./NavbarElement";
-
 import HomeIcon from '@mui/icons-material/Home';
 import ArticleIcon from '@mui/icons-material/Article';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import LoginIcon from '@mui/icons-material/Login';
-
-
 import "./Navbar.css";
 import { Home } from "@mui/icons-material";
 
-const Navbar = () => {
+const Navbar = ({ userData }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,7 +34,7 @@ const Navbar = () => {
 
   const [userData, setUserData] = useState([]);
 
-  const currentUser = auth.currentUser;
+  const [currentUser, setCurrentUser] = useState(null);
 
   
 
@@ -58,27 +53,12 @@ const Navbar = () => {
   ].includes(location.pathname);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const currentUserId = currentUser && currentUser.uid;
-        const docRef = doc(db, "member", currentUserId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUserData(data);
-          console.log(userData);
-        } else if (currentUser) {
-          navigate("/datauser");
-        } else {
-          console.log("No such document!");
-        }
-      } catch (e) {
-        console.error("Error fetching document: ", e);
-      }
-    };
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
 
-    fetchData();
-  }, [location.pathname, currentUser]);
+    return unsubscribe;
+  }, [location.pathname]);
 
   
 
@@ -92,14 +72,89 @@ const Navbar = () => {
               src={require("../../images/logo2.png")}
               alt=""
             />
-           
-          </NavLink>
-
-          <div className="menu-icon" onClick={handleClick}>
+            </NavLink>
+            
+                      <div className="menu-icon" onClick={handleClick}>
               {click ? <Times /> : <Bars/>}
           </div>
+          {currentUser ? (
+            <ul className={click ? "nav-menu active" : "nav-menu"}>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <HomeIcon className="mobile-size navbar-icon"/>
+                  หน้าหลัก
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile">
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <ArticleIcon className="mobile-size navbar-icon"/>
+                  เกี่ยวกับ
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile ">
+                <NavLink
+                  to="/review"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <QuestionAnswerIcon className="mobile-size navbar-icon"/>
+                  <div className="pe-5">รีวิว</div>
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile ">
+                <NavLink
+                  to="/question"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
+                  <QuestionAnswerIcon className="mobile-size navbar-icon"/>
+                  <div className="pe-5">ถาม-ตอบ</div>
+                </NavLink>
+              </li>
 
-          <ul className={click ? "nav-menu active" : "nav-menu"}>
+              {currentUser ? (
+                null
+              ) : (
+
+                <li className="nav-item-mobile">
+                <div className="login-text">
+                  <NavLink
+                    
+                    to="/login"
+                    
+                    className={({ isActive }) =>
+                      "nav-links  " + (isActive ? " activated" : " ")
+                    }
+                    onClick={closeMobileMenu}
+                  >
+                    <LoginIcon className="mobile-size navbar-icon"/>
+                    <div className="login-button">เข้าสู่ระบบ</div>             
+                  </NavLink>
+                </div> 
+              </li>
+              )}
+              <li>
+              
+              
+              
+          ) : (
+                      <ul className={click ? "nav-menu active" : "nav-menu"}>
               <li className="nav-item-mobile">
                 <NavLink
                   to="/"
@@ -157,17 +212,9 @@ const Navbar = () => {
                   </NavLink>
                 </div> 
               </li>
-
-
-
               )}
-
-              
-
               <li>
-
-
-              {currentUser ? (
+          )}
             <Dropdown
             className="mobile-size"
               drop="down"
@@ -191,20 +238,27 @@ const Navbar = () => {
                 className=""
               >
                 {userData ? (
-                  <div className="mx-3" style={{ color: "black" }}>
-                    {userData.fname}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div className="mx-3" style={{ color: "black" }}>
+                      {userData && userData.fname}
+                    </div>
+                    <div className="profile-image">
+                      <img
+                        src={userData && userData.profile}
+                        alt="main page png"
+                        className="img-fluid"
+                      />
+                    </div>
                   </div>
                 ) : (
                   <p>Loading...</p>
                 )}
-
-                <div className="profile-image">
-                  <img
-                    src={require("../../images/home/main.png")}
-                    alt="main page png"
-                    className="img-fluid"
-                  />
-                </div>
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
@@ -245,8 +299,9 @@ const Navbar = () => {
                     fontSize: "14px",
                   }}
                   onClick={() => {
-                    signOut(auth);
-                    navigate(0);
+                    signOut(auth).then(() => {
+                      navigate("/");
+                    });
                   }}
                 >
                   <span>

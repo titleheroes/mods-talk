@@ -55,7 +55,7 @@ const Home = () => {
                   type="button"
                   className="button"
                   variant="contained"
-                  onClick=""
+                  onClick={() => {}}
                   style={{
                     paddingTop: "1.25%",
                     paddingBottom: "1.25%",

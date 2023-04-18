@@ -11,6 +11,28 @@
   object-fit: cover;
 }
 
+.profile-image-host {
+  width: 46px;
+  height: 45\6px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image-host img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .profile-image-host {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+}
+
 .pagePadding {
     padding-top: 2rem;
     padding-left: 5%;
@@ -145,5 +167,28 @@
   @media (min-width: 1024px) {
     .form-size {
       width: 100%;
+    }
+  }
+
+  .hit-header{
+    margin-top: 2%;
+    background-color: #f3f3f3 !important;
+    color: #4a4a4a !important;
+    border: none !important;
+    border-radius: 23px !important;
+  }
+  
+  .hit-header:hover{
+    background-color: #a0a0a0 !important;
+    color: #393939 !important;
+  }
+
+  @media (min-width: 1024px) {
+    .hit-header{
+      margin-top: 0%;
+      background-color: #f3f3f3 !important;
+      color: #4a4a4a !important;
+      border: none !important;
+      border-radius: 23px !important;
     }
   }
