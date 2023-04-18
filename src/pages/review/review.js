@@ -15,10 +15,16 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 function Rmodal() {
+  const navigate = useNavigate();
+
   const currentUser = auth.currentUser;
-  const currentUserId = currentUser.uid;
+
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  // const currentUserId = currentUser.uid;
 
   const timestamp = Date.now();
 
@@ -48,6 +54,21 @@ function Rmodal() {
   const [tag, setTag] = useState("");
 
   const [buttonStatus, setButtonStatus] = useState(true);
+
+  useEffect(() => {
+    try {
+      setCurrentUserId(currentUser.uid);
+    } catch (e) {
+      navigate("/");
+    }
+    checkInfo();
+  }, [selectedOption]);
+
+  function checkLogin() {
+    if (currentUser === null) {
+      navigate("/");
+    }
+  }
 
   async function createData(postData) {
     try {
@@ -129,10 +150,6 @@ function Rmodal() {
     setSelectedOption("เลือก");
     setFile(null);
   };
-
-  useEffect(() => {
-    checkInfo();
-  }, [selectedOption]);
 
   return (
     <>
