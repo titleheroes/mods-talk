@@ -1,12 +1,17 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
-import Navbar from "./components/navbar";
+import Navbar from "./components/navbar/";
 import { BrowserRouter as Router } from "react-router-dom";
 import Home from "./pages/home";
 import About from "./pages/about";
 import Question from "./pages/question";
 import Answer from "./pages/Answer/answer";
+import AdminLogin from "./pages/admin/login";
+import AdminUser from './pages/admin/adminUser';
+import AdminPost from './pages/admin/adminPost';
+import AdminForgetPass from './pages/admin/adminforgetPass';
+import AdminForgetPassSent from './pages/admin/adminforgetPassSent';
 
 import Login from "./pages/registration/login";
 import SignUp from "./pages/registration/signup";
@@ -74,6 +79,15 @@ function App() {
         <Route path="/login" exact element={<Login />}></Route>
         <Route path="/signup" exact element={<SignUp />}></Route>
         <Route path="/forgetpassword" exact element={<ForgetPass />}></Route>
+        <Route path="/admin" >
+          <Route path="/admin/login" exact element={<AdminLogin/>}></Route>
+          <Route path="/admin/forgetpassword" exact element={<AdminForgetPass />}></Route>
+          <Route path="/admin/forgetpasswordsent" exact element={<AdminForgetPassSent />}></Route>
+
+          <Route path="/admin/user" exact element={<AdminUser/>}></Route>
+          <Route path="/admin/post" exact element={<AdminPost/>}></Route>
+        </Route>
+
         <Route
           path="/forgetpassword/sent"
           exact
