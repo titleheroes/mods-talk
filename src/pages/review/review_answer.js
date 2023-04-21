@@ -12,27 +12,159 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
   query,
-  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { auth, db } from "../../config";
+import { auth, db, storage } from "../../config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function Qmodal() {
-  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
-  const handleClose = () => setShow(false);
+  const currentUser = auth.currentUser;
+
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  const timestamp = Date.now();
+
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getDate()}/${
+    currentDate.getMonth() + 1
+  }/${currentDate.getFullYear()}`;
+  const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+  function handleClose(event) {
+    setShow(false);
+    setButtonStatus(true);
+    setSelectedOption("เลือก");
+    setFile(null);
+  }
+
+  const finishClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [selectedOption, setSelectedOption] = useState("เลือก");
+
+  const [show, setShow] = useState(false);
+  const [file, setFile] = useState(null);
+
+  const [header, setHeader] = useState("");
+  const [content, setContent] = useState("");
+  const [tag, setTag] = useState("");
+
+  const [buttonStatus, setButtonStatus] = useState(true);
+
+  useEffect(() => {
+    try {
+      setCurrentUserId(currentUser.uid);
+    } catch (e) {
+      navigate("/");
+    }
+    checkInfo();
+  }, [selectedOption]);
+
+  function checkLogin() {
+    if (currentUser === null) {
+      navigate("/");
+    }
+  }
+
+  async function createData(postData) {
+    try {
+      const docRef = await addDoc(collection(db, "review"), postData);
+      console.log("This Post has been created", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      return null;
+    }
+  }
+
+  function checkInfo() {
+    if (
+      header === "" ||
+      content === "" ||
+      selectedOption === "เลือก" ||
+      tag === ""
+    ) {
+      setButtonStatus(true);
+    } else {
+      setButtonStatus(false);
+    }
+  }
+
+  function handleUpload(event) {
+    const file = event.target.files[0];
+    setFile(file);
+  }
+
+  const handleSubmit = (event) => {
+    if (selectedOption === "เลือก") {
+    } else {
+      event.preventDefault();
+      if (file === null) {
+        const data = {
+          like: 0,
+          report: 0,
+          comment: 0,
+          header: header,
+          content: content,
+          tag: tag,
+          type: selectedOption,
+          member_id: currentUserId,
+          date: formattedDate,
+          time: formattedTime,
+          picture:
+            "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
+        };
+        createData(data);
+      } else {
+        const storageRef = ref(
+          storage,
+          currentUserId + "-" + timestamp + "-" + file.name
+        );
+
+        uploadBytes(storageRef, file).then(() => {
+          console.log("File uploaded successfully");
+          getDownloadURL(storageRef).then((url) => {
+            console.log("Download URL:", url);
+            const data = {
+              like: 0,
+              report: 0,
+              comment: 0,
+              header: header,
+              content: content,
+              tag: tag,
+              type: selectedOption,
+              member_id: currentUserId,
+              date: formattedDate,
+              time: formattedTime,
+              picture: url,
+            };
+            createData(data);
+          });
+        });
+      }
+    }
+    setSelectedOption("เลือก");
+    setFile(null);
+  };
 
   return (
     <>
-      <button onClick={handleShow} type="button" class="btn ask-button">
-        เริ่มต้นถามคำถาม
+      <button
+        type="button"
+        className="button"
+        onClick={handleShow}
+        style={{ width: "100%" }}
+      >
+        เริ่มต้นการเขียนโพสต์
       </button>
 
       <Modal
@@ -42,76 +174,194 @@ function Qmodal() {
         keyboard={false}
         className="question-modal"
       >
-        <div className="modal-header question-modal-header pt-4">
-          <h1
-            className="modal-title question-modal-title fs-5 ps-2 "
-            id="exampleModalLabel"
-          >
-            สร้างโพสต์คำถาม
-          </h1>
-          <button
-            type="button"
-            className="btn-close ps-5"
-            id="modal-close"
-            onClick={handleClose}
-            aria-label="Close"
-          ></button>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="modal-header question-modal-header pt-4">
+            <h1
+              className="modal-title question-modal-title fs-5 ps-2 "
+              id="exampleModalLabel"
+            >
+              สร้างโพสต์รีวิว
+            </h1>
+            <button
+              type="button"
+              className="btn-close ps-5"
+              id="modal-close"
+              onClick={handleClose}
+              aria-label="Close"
+            ></button>
+          </div>
 
-        <div className="modal-body question-modal-body px-4 pt-2">
-          <text className="modal-topic ">ชื่อ-นามสกุล</text>
-          <input
-            type="text"
-            className="form-control mt-2 mb-3"
-            id="modal-input-box"
-            placeholder="ระบุชื่อและนามสกุลของท่าน"
-          ></input>
+          <div className="modal-body question-modal-body px-4 pt-2">
+            <text className="modal-topic ">เนื้อหาโพสต์</text>
+            <input
+              type="text"
+              className="form-control mt-2 mb-3"
+              id="header"
+              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
+              onChange={(e) => {
+                setHeader(e.target.value);
+                checkInfo();
+              }}
+            />
 
-          <text className="modal-topic ">คำถามที่ต้องการจะถาม</text>
-          <textarea
-            class="form-control mt-2 question-modal-input"
-            id="modal-input-box"
-            placeholder="เขียนคำถามที่ต้องการถาม"
-            rows="3"
-          ></textarea>
+            <textarea
+              class="form-control mt-2 mb-3 question-modal-input"
+              id="content"
+              placeholder="เขียนคำบรรยายเพิ่มเติม..."
+              rows="6"
+              onChange={(e) => {
+                setContent(e.target.value);
+                checkInfo();
+              }}
+            />
 
-          <div className="anon-tick mt-3 py-2  flex-container">
-            <div>
-              <text className="ps-3">โพสต์โดยไม่ระบุตัวตน</text>
-            </div>
+            <text className="modal-topic">รูปภาพประกอบ :</text>
+            <input
+              type="file"
+              className="form-control mt-2 mb-3"
+              id="picture"
+              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+              onChange={handleUpload}
+            />
 
-            <div className="me-2">
-              <Form>
-                <Form.Check type="switch" id="question-anon-tick" />
-              </Form>
+            <text className="modal-topic">แฮชแท็ก</text>
+            <input
+              type="text"
+              className="form-control mt-2"
+              id="tag"
+              placeholder="#แฮชแท็ก"
+              onChange={(e) => {
+                setTag(e.target.value);
+                checkInfo();
+              }}
+            />
+          </div>
+
+          <div className="modal-body question-modal-body px-4 pt-2">
+            <text className="modal-topic ">หมวดหมู่</text>
+            <div className="form-control mt-2 mb-3">
+              <Dropdown>
+                <Dropdown.Toggle
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "black",
+                    borderColor: "transparent",
+                    width: "100%",
+                  }}
+                  id="dropdown-basic"
+                >
+                  {selectedOption}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ width: "100%", textAlign: "center" }}>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("วิชาเรียน");
+                      checkInfo();
+                    }}
+                  >
+                    วิชาเรียน
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("อาจารย์");
+                      checkInfo();
+                    }}
+                  >
+                    อาจารย์
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("ร้านอาหาร");
+                      checkInfo();
+                    }}
+                  >
+                    ร้านอาหาร
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("หอพัก");
+                      checkInfo();
+                    }}
+                  >
+                    หอพัก
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("สถานที่ฝึกงาน");
+                      checkInfo();
+                    }}
+                  >
+                    สถานที่ฝึกงาน
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </div>
-        </div>
 
-        <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
-          <button
-            type="button"
-            className="btn post-question-btn mx-auto mt-0 "
-            onClick={handleClose}
-          >
-            เริ่มต้นการเขียนโพสต์
-          </button>
-        </div>
+          <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
+            <button
+              type="submit"
+              disabled={buttonStatus}
+              className="btn post-question-btn mx-auto mt-0 "
+              onClick={finishClose}
+            >
+              เริ่มต้นการเขียนโพสต์
+            </button>
+          </div>
+        </form>
       </Modal>
     </>
   );
 }
 
 const Answer = ({ userData }) => {
+  const navigate = useNavigate();
+
+  //Search Bar
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTextShow, setSearchTextShow] = useState(true);
+
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+    if (event.target.value === "") {
+      setSearchTextShow(true);
+    } else {
+      setSearchTextShow(false);
+    }
+  };
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      handleSearchSubmit(event);
+    }
+  }
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+    if (searchTextShow === false) {
+      setSearchQuery("");
+      navigate("/review/search/" + searchQuery);
+    }
+  }
+  //-----------
+
   const { id } = useParams();
   const [post, setPost] = useState(null);
-
-  const [active, setActive] = useState(true);
 
   const [content, setContent] = useState("");
   const [comment, setComment] = useState([]);
 
   const [visibility, setVisibility] = useState({});
+  const [buttonStatus, setButtonStatus] = useState(true);
+
+  function checkInfo() {
+    if (content === "" || content === null) {
+      setButtonStatus(true);
+    } else {
+      setButtonStatus(false);
+    }
+  }
 
   const handleToggleVisibility = (id) => {
     setVisibility({
@@ -128,13 +378,6 @@ const Answer = ({ userData }) => {
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
   const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-  function closeItem() {
-    setActive(false);
-  }
-  function openItem() {
-    setActive(true);
-  }
 
   async function createData(postData) {
     try {
@@ -153,7 +396,7 @@ const Answer = ({ userData }) => {
 
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
-    if (content === null) {
+    if (content === "" || content === null) {
     } else {
       event.preventDefault();
       const data = {
@@ -221,6 +464,10 @@ const Answer = ({ userData }) => {
     }
   }, []);
 
+  useEffect(() => {
+    checkInfo();
+  }, [content]);
+
   if (!post) {
     return <div>Loading...</div>;
   }
@@ -230,7 +477,7 @@ const Answer = ({ userData }) => {
       <div className="pagePadding">
         <div className="container">
           <div className="row">
-            <div className="col-md vertLine">
+            <div className="col-md-8">
               <div className="left-content">
                 <div className="post-border">
                   <MemberHost
@@ -286,29 +533,33 @@ const Answer = ({ userData }) => {
                     <div className="flex-2-comment"></div>
 
                     <div className="flex-1-comment-right">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="link" id="question-dropdown">
-                          <img
-                            className="menu-dropdown"
-                            src={
-                              require("../../images/question/three_dots.svg")
-                                .default
-                            }
-                            alt=""
-                          />
+                      <Dropdown drop="down">
+                        <Dropdown.Toggle
+                          variant="link"
+                          id="dropdown-basic"
+                          style={{
+                            border: "none",
+                            boxShadow: "none",
+                            color: "transparent",
+                          }}
+                        >
+                          <span style={{ color: "black" }}>
+                            <img
+                              className="menu-dropdown"
+                              src={
+                                require("../../images/question/three_dots.svg")
+                                  .default
+                              }
+                              alt=""
+                            />
+                          </span>
                         </Dropdown.Toggle>
-
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#/action-1">
-                            Report Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-2">
-                            Delete Post
-                          </Dropdown.Item>
-                          <Dropdown.Item href="#/action-3">
-                            Something else
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
+                        <Rep_Del_Click
+                          postID={id}
+                          rep_users={post.rep_users}
+                          rep_count={post.report}
+                          member_id={post.member_id}
+                        />
                       </Dropdown>
                     </div>
                   </div>
@@ -337,12 +588,17 @@ const Answer = ({ userData }) => {
                         value={content}
                         onChange={(e) => {
                           setContent(e.target.value);
+                          checkInfo();
                         }}
                       />
                     </div>
 
                     <div className="flex-1-right">
-                      <Button className="sent-comment" type="submit">
+                      <Button
+                        className="sent-comment"
+                        disabled={buttonStatus}
+                        type="submit"
+                      >
                         <img
                           className="menu-pic pe-3"
                           src={
@@ -381,17 +637,14 @@ const Answer = ({ userData }) => {
                                   />
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#/action-1">
-                                    Report Post
-                                  </Dropdown.Item>
-                                  <Dropdown.Item href="#/action-2">
-                                    Delete Post
-                                  </Dropdown.Item>
-                                  <Dropdown.Item href="#/action-3">
-                                    Something else
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
+                                <Rep_Del_Comment_Click
+                                  postID={id}
+                                  cmnt_count={post.comment}
+                                  cmnt_id={item.id}
+                                  rep_users={item.rep_users}
+                                  rep_count={item.report}
+                                  member_id={item.member_id}
+                                />
                               </Dropdown>
                             </div>
                           </div>
@@ -456,50 +709,71 @@ const Answer = ({ userData }) => {
                 </div>
               </div>
             </div>
+            <div className="col-md-1">
+              <div className="vertical-line"></div>
+            </div>
+            <div className="col-md-3">
+              <Qmodal />
 
-            <div className="col-md-4">
-              <div className="d-grid mx-auto right-content ">
-                <Qmodal />
-
-                <div className="search-box">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="ค้นหาคำถาม"
-                  ></input>
-                </div>
-
-                <div className="search-tips">
-                  <text className="search-tips" id="s1">
-                    คลิก
-                  </text>
-                  <img
-                    className="search-icon"
-                    id="2"
-                    src={require("../../images/question/search.svg").default}
-                    alt=""
-                  />
-
-                  <text className="search-tips" id="s2">
-                    และพิมพ์เกี่ยวกับสิ่งที่คุณอยากรู้เพื่อค้นหาคำถาม
-                    ที่ใกล้เคียงหรือหาคำตอบไปด้วยกัน
-                  </text>
-                </div>
-
-                <div>
-                  <div className="mt-4 pt-4 hit-title mb-2">
-                    <span className="">เป็นที่นิยมใน Mod's Talk</span>
+              <div className="searchBar">
+                <div className="search-container">
+                  <form>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
+                      className="form-control"
+                      style={{ paddingLeft: "2.5rem" }}
+                    />
+                  </form>
+                  <div className="search-inside">
+                    <div>
+                      <span>
+                        <img
+                          src={require("../../images/icon/search.svg").default}
+                          alt="search svg"
+                        />
+                      </span>
+                      {searchTextShow ? (
+                        <span style={{ paddingLeft: "1rem", fontSize: "14px" }}>
+                          Search Mod's Talk
+                        </span>
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
                   </div>
-
-                  <Button className="hit-tag">Programming</Button>
-                  <Button className="hit-tag">Data Science</Button>
-                  <Button className="hit-tag">Technology</Button>
-                  <Button className="hit-tag">Self Improvement</Button>
-                  <Button className="hit-tag">Writing</Button>
-                  <Button className="hit-tag">Ralationships</Button>
-                  <Button className="hit-tag">Machine Learning</Button>
-                  <Button className="hit-tag">Some random topic</Button>
                 </div>
+              </div>
+              <div style={{ paddingTop: "1rem", color: "#4F4F4F" }}>
+                <span>คลิก</span>{" "}
+                <span>
+                  <img
+                    src={require("../../images/icon/search.svg").default}
+                    alt="search svg"
+                    style={{ color: "#4F4F4F" }}
+                  />
+                </span>{" "}
+                <span>
+                  และพิมพ์เกี่ยวกับสิ่งที่คุณอยากรู้เพื่อค้นหาสิ่งที่คุณต้องการอ่าน
+                  เริ่มต้นเพลิดเพลินไปกับการรีวิวด้านบน
+                </span>
+              </div>
+
+              <div>
+                <div className="mt-4 pt-4 hit-title mb-2">
+                  <span className="">เป็นที่นิยมใน Mod's Talk</span>
+                </div>
+
+                <Button className="hit-tag">Programming</Button>
+                <Button className="hit-tag">Data Science</Button>
+                <Button className="hit-tag">Technology</Button>
+                <Button className="hit-tag">Self Improvement</Button>
+                <Button className="hit-tag">Writing</Button>
+                <Button className="hit-tag">Ralationships</Button>
+                <Button className="hit-tag">Machine Learning</Button>
+                <Button className="hit-tag">Some random topic</Button>
               </div>
             </div>
           </div>
@@ -642,6 +916,7 @@ function MemberInfo({ memberID }) {
 function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const [content, setContent] = useState("");
   const [reply, setReply] = useState([]);
+  const [buttonStatus, setButtonStatus] = useState(true);
 
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
@@ -651,6 +926,14 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
   const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+  function checkInfo() {
+    if (content === "" || content === null) {
+      setButtonStatus(true);
+    } else {
+      setButtonStatus(false);
+    }
+  }
 
   // ดันข้อมูลคอมเมนท์
   async function createData(postData) {
@@ -718,6 +1001,10 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     }
   }, []);
 
+  useEffect(() => {
+    checkInfo();
+  }, [content]);
+
   return (
     <div className="px-3">
       {reply ? (
@@ -728,29 +1015,35 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
                 <MemberInfo memberID={item.member_id} />
 
                 <div className="flex-1-right">
-                  <Dropdown>
-                    <Dropdown.Toggle variant="link" id="question-dropdown">
-                      <img
-                        className="menu-dropdown"
-                        src={
-                          require("../../images/question/three_dots.svg")
-                            .default
-                        }
-                        alt=""
-                      />
+                  <Dropdown drop="down">
+                    <Dropdown.Toggle
+                      variant="link"
+                      id="dropdown-basic"
+                      style={{
+                        border: "none",
+                        boxShadow: "none",
+                        color: "transparent",
+                      }}
+                    >
+                      <span style={{ color: "black" }}>
+                        <img
+                          className="menu-dropdown"
+                          src={
+                            require("../../images/question/three_dots.svg")
+                              .default
+                          }
+                          alt=""
+                        />
+                      </span>
                     </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                      <Dropdown.Item href="#/action-1">
-                        Report Post
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#/action-2">
-                        Delete Post
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#/action-3">
-                        Something else
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
+                    <Rep_Del_Reply_Click
+                      cmnt_id={cmntID}
+                      reply_count={replyCount}
+                      reply_id={item.id}
+                      rep_users={item.rep_users}
+                      rep_count={item.report}
+                      member_id={item.member_id}
+                    />
                   </Dropdown>
                 </div>
               </div>
@@ -806,7 +1099,11 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
           </div>
 
           <div className="flex-1-right">
-            <Button className="sent-comment" type="submit">
+            <Button
+              className="sent-comment"
+              disabled={buttonStatus}
+              type="submit"
+            >
               <img
                 className="menu-pic pe-3"
                 src={require("../../images/question/sent_1.svg").default}
@@ -818,6 +1115,289 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
       </form>
       {/* เขียนคอมเมนท์                           */}
       <hr />
+    </div>
+  );
+}
+
+function Rep_Del_Click({ postID, rep_users, rep_count, member_id }) {
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const navigate = useNavigate();
+
+  const [authorCheck, setAuthorCheck] = useState(false);
+  const [reportedByCurrentUser, setReportedByCurrentUser] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (rep_users.includes(currentUserId)) {
+        setReportedByCurrentUser(true);
+      } else {
+        setReportedByCurrentUser(false);
+      }
+
+      if (member_id === currentUserId) {
+        setAuthorCheck(true);
+      } else {
+        setAuthorCheck(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [rep_users, reportedByCurrentUser]);
+
+  const handleReportClick = () => {
+    const docRef = doc(db, "review", postID);
+    if (reportedByCurrentUser === false) {
+      updateDoc(docRef, {
+        rep_users: arrayUnion(currentUserId),
+        report: rep_count + 1,
+      })
+        .then(() => {
+          console.log("You Report the post!");
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+      alert("ขอบคุณที่แจ้งรายงาน ทางแอดมินจะพยายามตรวจสอบให้เร็วที่สุด");
+    } else if (reportedByCurrentUser === true) {
+      alert("คุณได้รายงานโพสต์ไปแล้ว");
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    // Create a reference to the post document
+    const docRef = doc(db, "review", postID);
+
+    // Create a query to get all comments for the post
+    const commentQuery = query(
+      collection(db, "cmnt_review"),
+      where("post_id", "==", postID)
+    );
+
+    // Create a query to get all replies for the post
+    const replyQuery = query(
+      collection(db, "reply_review"),
+      where("post_id", "==", postID)
+    );
+
+    // Use Promise.all() to execute both queries in parallel
+    const [commentSnapshot, replySnapshot] = await Promise.all([
+      getDocs(commentQuery),
+      getDocs(replyQuery),
+    ]);
+
+    // Delete the post document
+    await deleteDoc(docRef);
+
+    // Delete all comment documents
+    commentSnapshot.forEach(async (commentDoc) => {
+      const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+      await deleteDoc(commentDocRef);
+    });
+
+    // Delete all reply documents
+    replySnapshot.forEach(async (replyDoc) => {
+      const replyDocRef = doc(db, "reply_review", replyDoc.id);
+      await deleteDoc(replyDocRef);
+    });
+
+    console.log("Post, comments, and replies deleted successfully.");
+    alert("ลบโพสต์สำเร็จ");
+    navigate("/review");
+  };
+
+  return (
+    <div>
+      {authorCheck ? (
+        <div />
+      ) : (
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={handleReportClick}>รายงานโพสต์</Dropdown.Item>
+          <Dropdown.Item onClick={handleDeleteClick}>ลบโพสต์</Dropdown.Item>
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+}
+
+function Rep_Del_Comment_Click({
+  postID,
+  cmnt_count,
+  cmnt_id,
+  rep_users,
+  rep_count,
+  member_id,
+}) {
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const [authorCheck, setAuthorCheck] = useState(false);
+  const [reportedByCurrentUser, setReportedByCurrentUser] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (rep_users.includes(currentUserId)) {
+        setReportedByCurrentUser(true);
+      } else {
+        setReportedByCurrentUser(false);
+      }
+
+      if (member_id === currentUserId) {
+        setAuthorCheck(true);
+      } else {
+        setAuthorCheck(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [rep_users, reportedByCurrentUser]);
+
+  const handleReportClick = () => {
+    const docRef = doc(db, "cmnt_review", cmnt_id);
+    if (reportedByCurrentUser === false) {
+      updateDoc(docRef, {
+        rep_users: arrayUnion(currentUserId),
+        report: rep_count + 1,
+      })
+        .then(() => {
+          console.log("You Report the post!");
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+      alert("ขอบคุณที่แจ้งรายงาน ทางแอดมินจะพยายามตรวจสอบให้เร็วที่สุด");
+    } else if (reportedByCurrentUser === true) {
+      alert("คุณได้รายงานคอมเมนท์ไปแล้ว");
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    const postRef = doc(db, "review", postID);
+
+    updateDoc(postRef, {
+      comment: cmnt_count - 1,
+    });
+
+    const docRef = doc(db, "cmnt_review", cmnt_id);
+
+    // Create a query to get all replies for the post
+    const replyQuery = query(
+      collection(db, "reply_review"),
+      where("cmnt_id", "==", cmnt_id)
+    );
+
+    // Use Promise.all() to execute both queries in parallel
+    const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
+
+    // Delete the post document
+    await deleteDoc(docRef);
+
+    // Delete all reply documents
+    replySnapshot.forEach(async (replyDoc) => {
+      const replyDocRef = doc(db, "reply_review", replyDoc.id);
+      await deleteDoc(replyDocRef);
+    });
+
+    console.log("Comments, and replies deleted successfully.");
+    alert("ลบคอมเมนท์สำเร็จ");
+  };
+
+  return (
+    <div>
+      {authorCheck ? (
+        <div />
+      ) : (
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={handleReportClick}>
+            รายงานคอมเมนท์
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
+        </Dropdown.Menu>
+      )}
+    </div>
+  );
+}
+
+function Rep_Del_Reply_Click({
+  cmnt_id,
+  reply_count,
+  reply_id,
+  rep_users,
+  rep_count,
+  member_id,
+}) {
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser.uid;
+
+  const [authorCheck, setAuthorCheck] = useState(false);
+  const [reportedByCurrentUser, setReportedByCurrentUser] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (rep_users.includes(currentUserId)) {
+        setReportedByCurrentUser(true);
+      } else {
+        setReportedByCurrentUser(false);
+      }
+
+      if (member_id === currentUserId) {
+        setAuthorCheck(true);
+      } else {
+        setAuthorCheck(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [rep_users, reportedByCurrentUser]);
+
+  const handleReportClick = () => {
+    const docRef = doc(db, "reply_review", reply_id);
+    if (reportedByCurrentUser === false) {
+      updateDoc(docRef, {
+        rep_users: arrayUnion(currentUserId),
+        report: rep_count + 1,
+      })
+        .then(() => {
+          console.log("You Report the post!");
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+      alert("ขอบคุณที่แจ้งรายงาน ทางแอดมินจะพยายามตรวจสอบให้เร็วที่สุด");
+    } else if (reportedByCurrentUser === true) {
+      alert("คุณได้รายงานตอบกลับไปแล้ว");
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    const cmntRef = doc(db, "cmnt_review", cmnt_id);
+
+    updateDoc(cmntRef, {
+      reply: reply_count - 1,
+    });
+
+    const docRef = doc(db, "reply_review", reply_id);
+
+    // Delete the post document
+    await deleteDoc(docRef);
+
+    console.log("Replies deleted successfully.");
+    alert("ลบตอบกลับสำเร็จ");
+  };
+
+  return (
+    <div>
+      {authorCheck ? (
+        <div />
+      ) : (
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={handleReportClick}>
+            รายงานตอบกลับ
+          </Dropdown.Item>
+          <Dropdown.Item onClick={handleDeleteClick}>ลบตอบกลับ</Dropdown.Item>
+        </Dropdown.Menu>
+      )}
     </div>
   );
 }

@@ -23,6 +23,7 @@ import DataUser from "./pages/registration/datauser";
 import Review from "./pages/review/review";
 import Post from "./pages/review/post";
 import Review_Answer from "./pages/review/review_answer";
+import Review_Search from "./pages/review/review_search";
 import { auth, db } from "./config";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -110,6 +111,16 @@ function App() {
           exact
           element={<Review_Answer userData={userData} />}
         ></Route>
+        <Route
+          path="/review/search/:keyword"
+          exact
+          element={<Review_Search />}
+        ></Route>
+        {/* <Route
+          path="/review/tag/:keyword"
+          exact
+          element={<Review_Tag />}
+        ></Route> */}
       </Routes>
     </Router>
   );

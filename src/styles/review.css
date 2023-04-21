@@ -192,3 +192,17 @@
       border-radius: 23px !important;
     }
   }
+
+.reviewSearch_Title{
+    font-size: 28px;
+    font-weight: bold;
+    width: 70%;
+}
+
+@media (min-width: 1024px) {
+  .reviewSearch_Title{
+    font-size: 43px;
+    font-weight: bold;
+    width: 85%;
+  }
+}
