@@ -5,8 +5,7 @@ import Navbar from "./components/navbar/";
 import { BrowserRouter as Router } from "react-router-dom";
 import Home from "./pages/home";
 import About from "./pages/about";
-import Question from "./pages/question";
-import Answer from "./pages/Answer/answer";
+
 import AdminLogin from "./pages/admin/login";
 import AdminUser from "./pages/admin/adminUser";
 import AdminPost from "./pages/admin/adminPost";
@@ -24,6 +23,12 @@ import Review from "./pages/review/review";
 import Post from "./pages/review/post";
 import Review_Answer from "./pages/review/review_answer";
 import Review_Search from "./pages/review/review_search";
+import Review_Tag from "./pages/review/review_tag";
+
+import Question from "./pages/Question/question";
+import Question_Search from "./pages/Question/question_search";
+import Answer from "./pages/Question/answer";
+
 import { auth, db } from "./config";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -71,12 +76,17 @@ function App() {
       <Routes>
         <Route path="/" exact element={<Home />}></Route>
         <Route path="/about" exact element={<About />}></Route>
-        <Route path="/question" exact element={<Question />}>
-          {" "}
-        </Route>
-        <Route path="/Answer" exact element={<Answer />}>
-          {" "}
-        </Route>
+        <Route path="/question" exact element={<Question />}></Route>
+        <Route
+          path="/question/search/:keyword"
+          exact
+          element={<Question_Search />}
+        ></Route>
+        <Route
+          path="/question/post/:id"
+          exact
+          element={<Answer userData={userData} />}
+        ></Route>
         <Route path="/login" exact element={<Login />}></Route>
         <Route path="/signup" exact element={<SignUp />}></Route>
         <Route path="/forgetpassword" exact element={<ForgetPass />}></Route>
@@ -116,11 +126,11 @@ function App() {
           exact
           element={<Review_Search />}
         ></Route>
-        {/* <Route
+        <Route
           path="/review/tag/:keyword"
           exact
           element={<Review_Tag />}
-        ></Route> */}
+        ></Route>
       </Routes>
     </Router>
   );

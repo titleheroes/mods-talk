@@ -312,7 +312,7 @@ function Rmodal() {
   );
 }
 
-const Review_Search = () => {
+const Review_Tag = () => {
   const navigate = useNavigate();
 
   const [all, setAll] = useState([]);
@@ -356,11 +356,7 @@ const Review_Search = () => {
   //-----------
 
   useEffect(() => {
-    const q = query(
-      collection(db, "review"),
-      where("header", ">=", keyword),
-      where("header", "<=", keyword + "\uf8ff")
-    );
+    const q = query(collection(db, "review"), where("tag", "==", keyword));
 
     try {
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -405,7 +401,7 @@ const Review_Search = () => {
                         className="breadcrumb-item active"
                         aria-current="page"
                       >
-                        ค้นหา
+                        แฮชแท็ก
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -415,7 +411,7 @@ const Review_Search = () => {
                       </li>
                     </ol>
                   </nav>
-                  <div className="reviewSearch_Title">ค้นหาจาก "{keyword}"</div>
+                  <div className="reviewSearch_Title">แฮชแท็ก "{keyword}"</div>
                 </div>
                 <div style={{ position: "absolute", top: 50, right: 0 }}>
                   <Dropdown>
@@ -468,11 +464,11 @@ const Review_Search = () => {
                                     width: "100%",
                                   }}
                                 >
-                                  <Link to={`/review/tag/${item.tag}`}>
+                                  <a href={`/review/tag/${item.tag}`}>
                                     <Button className="hit-tag">
                                       {item.tag}
                                     </Button>
-                                  </Link>
+                                  </a>
                                   <div className="box float-end">
                                     <div
                                       style={{
@@ -716,9 +712,9 @@ function PopularTag({}) {
   return (
     <div className="pb-5">
       {data.map((doc) => (
-        <Link to={`/review/tag/${doc.id}`}>
+        <a href={`/review/tag/${doc.id}`}>
           <Button className="hit-tag">{doc.id}</Button>
-        </Link>
+        </a>
       ))}
     </div>
   );
@@ -728,7 +724,7 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
-  const [authorCheck, setAuthorCheck] = useState(false);
+  const [authorCheck, setAuthorCheck] = useState(true);
   const [reportedByCurrentUser, setReportedByCurrentUser] = useState(false);
 
   useEffect(() => {
@@ -845,14 +841,18 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
   };
 
   return (
-    <Dropdown.Menu>
-      <Dropdown.Item onClick={handleReportClick}>รายงานคอมเมนท์</Dropdown.Item>
-      {authorCheck ? (
-        <div />
-      ) : (
-        <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
-      )}
-    </Dropdown.Menu>
+    <div>
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={handleReportClick}>
+          รายงานคอมเมนท์
+        </Dropdown.Item>
+        {authorCheck ? (
+          <div />
+        ) : (
+          <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
+        )}
+      </Dropdown.Menu>
+    </div>
   );
 }
 
@@ -934,4 +934,4 @@ function LikeCheck({ postID, users, like_count }) {
   );
 }
 
-export default Review_Search;
+export default Review_Tag;

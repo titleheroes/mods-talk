@@ -355,7 +355,7 @@ const Navbar = ({ userData }) => {
                   }}
                   onClick={() => {
                     signOut(auth);
-                    navigate(0);
+                    navigate("/");
                   }}
                 >
                   <span>

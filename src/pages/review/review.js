@@ -17,9 +17,10 @@ import {
   deleteDoc,
   getDocs,
   setDoc,
+  limit,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Rmodal() {
   const navigate = useNavigate();
@@ -65,12 +66,6 @@ function Rmodal() {
     }
     checkInfo();
   }, [selectedOption]);
-
-  function checkLogin() {
-    if (currentUser === null) {
-      navigate("/");
-    }
-  }
 
   async function createData(postData, tagName) {
     try {
@@ -463,8 +458,8 @@ const Review = () => {
                         <div>
                           {all.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -483,15 +478,12 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
+
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -500,8 +492,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -511,7 +503,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -550,6 +542,7 @@ const Review = () => {
                                               rep_users={item.rep_users}
                                               rep_count={item.report}
                                               tagName={item.tag}
+                                              member_id={item.member_id}
                                             />
                                           </Dropdown>
                                         </div>
@@ -558,7 +551,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3 pt-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -583,8 +576,8 @@ const Review = () => {
                         <div>
                           {subject.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -603,15 +596,11 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -620,8 +609,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -631,7 +620,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -672,6 +661,7 @@ const Review = () => {
                                                 rep_users={item.rep_users}
                                                 rep_count={item.report}
                                                 tagName={item.tag}
+                                                member_id={item.member_id}
                                               />
                                             </Dropdown.Menu>
                                           </Dropdown>
@@ -681,7 +671,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3 pt-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -706,8 +696,8 @@ const Review = () => {
                         <div>
                           {teacher.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -726,15 +716,11 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -743,8 +729,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -754,7 +740,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -795,6 +781,7 @@ const Review = () => {
                                                 rep_users={item.rep_users}
                                                 rep_count={item.report}
                                                 tagName={item.tag}
+                                                member_id={item.member_id}
                                               />
                                             </Dropdown.Menu>
                                           </Dropdown>
@@ -804,7 +791,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3 pt-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -829,8 +816,8 @@ const Review = () => {
                         <div>
                           {restaurant.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -849,15 +836,11 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -866,8 +849,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -877,7 +860,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -918,6 +901,7 @@ const Review = () => {
                                                 rep_users={item.rep_users}
                                                 rep_count={item.report}
                                                 tagName={item.tag}
+                                                member_id={item.member_id}
                                               />
                                             </Dropdown.Menu>
                                           </Dropdown>
@@ -927,7 +911,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3 pt-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -952,8 +936,8 @@ const Review = () => {
                         <div>
                           {dorm.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -972,15 +956,11 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -989,8 +969,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1000,7 +980,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -1041,6 +1021,7 @@ const Review = () => {
                                                 rep_users={item.rep_users}
                                                 rep_count={item.report}
                                                 tagName={item.tag}
+                                                member_id={item.member_id}
                                               />
                                             </Dropdown.Menu>
                                           </Dropdown>
@@ -1050,7 +1031,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -1075,8 +1056,8 @@ const Review = () => {
                         <div>
                           {work.map((item) => (
                             <div key={item.id}>
-                              <div className="row">
-                                <div className="col-9">
+                              <div className="row flex-wrap">
+                                <div className="col-sm-9">
                                   <MemberInfo
                                     memberID={item.member_id}
                                     time={item.time}
@@ -1095,15 +1076,11 @@ const Review = () => {
                                         width: "100%",
                                       }}
                                     >
-                                      <div className="box">
-                                        <div className="rectangle-container">
-                                          <div className="rectangle-border">
-                                            <div className="rectangle-text">
-                                              {item.tag}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                      <a href={`/review/tag/${item.tag}`}>
+                                        <Button className="hit-tag">
+                                          {item.tag}
+                                        </Button>
+                                      </a>
                                       <div className="box float-end">
                                         <div
                                           style={{
@@ -1112,8 +1089,8 @@ const Review = () => {
                                           }}
                                         >
                                           <div style={{ flex: 1 }}>
-                                            <a
-                                              href={"/review/post/" + item.id}
+                                            <Link
+                                              to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
                                             >
                                               <img
@@ -1123,7 +1100,7 @@ const Review = () => {
                                                 }
                                                 alt="chat svg"
                                               />
-                                            </a>
+                                            </Link>
                                             <span
                                               style={{ paddingRight: "1rem" }}
                                             >
@@ -1164,6 +1141,7 @@ const Review = () => {
                                                 rep_users={item.rep_users}
                                                 rep_count={item.report}
                                                 tagName={item.tag}
+                                                member_id={item.member_id}
                                               />
                                             </Dropdown.Menu>
                                           </Dropdown>
@@ -1173,7 +1151,7 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-3">
+                                <div className="col-sm-3 pt-3">
                                   <img
                                     src={item.picture}
                                     className="img-fluid"
@@ -1280,8 +1258,7 @@ const Review = () => {
                   <span className="">เป็นที่นิยมใน Mod's Talk</span>
                 </div>
 
-                <Button className="hit-tag">Programming</Button>
-                <Button className="hit-tag">Data Science</Button>
+                <PopularTag />
               </div>
             </div>
           </div>
@@ -1356,10 +1333,48 @@ function MemberInfo({ memberID, time, date }) {
   );
 }
 
-function Rep_Del_Click({ postID, rep_users, rep_count, tagName }) {
+function PopularTag({}) {
+  const [data, setData] = useState([]); // initialize state variable for data
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = collection(db, "tag_ranked"); // create a reference to the "tag_ranked" collection
+
+        const q = query(docRef, orderBy("count", "desc"), limit(10)); // create a query that sorts by "count" field in ascending order and limits to 5 documents
+
+        const snapshot = await getDocs(q); // execute the query and get the snapshot of results
+
+        const documentsData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })); // map through each document and extract its data and ID
+
+        setData(documentsData); // set the state variable to the retrieved data
+      } catch (error) {
+        console.error("Error fetching document: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <div className="pb-5">
+      {data.map((doc) => (
+        <a href={`/review/tag/${doc.id}`}>
+          <Button className="hit-tag">{doc.id}</Button>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
+  const [authorCheck, setAuthorCheck] = useState(false);
   const [reportedByCurrentUser, setReportedByCurrentUser] = useState(false);
 
   useEffect(() => {
@@ -1374,22 +1389,36 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName }) {
     }
   }, [rep_users, reportedByCurrentUser]);
 
+  useEffect(() => {
+    if (member_id === currentUserId) {
+      setAuthorCheck(false);
+    } else if (member_id !== currentUserId) {
+      setAuthorCheck(true);
+    }
+  }, []);
+
   const handleReportClick = () => {
-    const docRef = doc(db, "review", postID);
-    if (reportedByCurrentUser === false) {
-      updateDoc(docRef, {
-        rep_users: arrayUnion(currentUserId),
-        report: rep_count + 1,
-      })
-        .then(() => {
-          console.log("You Report the post!");
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะรายงานโพสต์ใช่หรือไม่ ?"
+    );
+
+    if (confirmed) {
+      const docRef = doc(db, "review", postID);
+      if (reportedByCurrentUser === false) {
+        updateDoc(docRef, {
+          rep_users: arrayUnion(currentUserId),
+          report: rep_count + 1,
         })
-        .catch((error) => {
-          console.error("Error updating document: ", error);
-        });
-      alert("ขอบคุณที่แจ้งรายงาน ทางแอดมินจะพยายามตรวจสอบให้เร็วที่สุด");
-    } else if (reportedByCurrentUser === true) {
-      alert("คุณได้รายงานโพสต์ไปแล้ว");
+          .then(() => {
+            console.log("You Report the post!");
+          })
+          .catch((error) => {
+            console.error("Error updating document: ", error);
+          });
+        alert("ขอบคุณที่แจ้งรายงาน ทางแอดมินจะพยายามตรวจสอบให้เร็วที่สุด");
+      } else if (reportedByCurrentUser === true) {
+        alert("คุณได้รายงานโพสต์ไปแล้ว");
+      }
     }
   };
 
@@ -1430,19 +1459,24 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName }) {
       await deleteDoc(replyDocRef);
     });
 
+    // Clear Tag
     const tagDocRef = doc(db, "tag_ranked", tagName);
     getDoc(tagDocRef).then((docSnap) => {
       if (docSnap.exists()) {
         const tagCount = docSnap.data().count;
-        updateDoc(tagDocRef, {
-          count: tagCount - 1,
-        })
-          .then(() => {
-            console.log("Document updated with new count value");
+        if (tagCount - 1 === 0) {
+          deleteDoc(tagDocRef);
+        } else {
+          updateDoc(tagDocRef, {
+            count: tagCount - 1,
           })
-          .catch((error) => {
-            console.error("Error updating document: ", error);
-          });
+            .then(() => {
+              console.log("Document updated with new count value");
+            })
+            .catch((error) => {
+              console.error("Error updating document: ", error);
+            });
+        }
       }
     });
 
@@ -1453,7 +1487,11 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName }) {
   return (
     <Dropdown.Menu>
       <Dropdown.Item onClick={handleReportClick}>รายงานโพสต์</Dropdown.Item>
-      <Dropdown.Item onClick={handleDeleteClick}>ลบโพสต์</Dropdown.Item>
+      {authorCheck ? (
+        <div />
+      ) : (
+        <Dropdown.Item onClick={handleDeleteClick}>ลบโพสต์</Dropdown.Item>
+      )}
     </Dropdown.Menu>
   );
 }
