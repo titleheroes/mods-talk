@@ -32,6 +32,9 @@ import Answer from "./pages/Question/answer";
 import { auth, db } from "./config";
 import { doc, getDoc } from "firebase/firestore";
 
+import Notification from "./pages/notification";
+import Profile from "./pages/profile";
+
 function App() {
   const [userData, setUserData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -116,6 +119,12 @@ function App() {
         <Route path="/datauser" exact element={<DataUser />}></Route>
         <Route path="/review" exact element={<Review />}></Route>
         <Route path="/post" exact element={<Post />}></Route>
+        <Route path="/profile" exact element={<Profile />}>
+          {" "}
+        </Route>
+        <Route path="/notification" exact element={<Notification />}>
+          {" "}
+        </Route>
         <Route
           path="/review/post/:id"
           exact
