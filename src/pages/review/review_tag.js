@@ -401,7 +401,7 @@ const Review_Tag = () => {
                         className="breadcrumb-item active"
                         aria-current="page"
                       >
-                        แฮชแท็ก
+                        แท็ก
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -411,7 +411,7 @@ const Review_Tag = () => {
                       </li>
                     </ol>
                   </nav>
-                  <div className="reviewSearch_Title">แฮชแท็ก "{keyword}"</div>
+                  <div className="reviewSearch_Title">แท็ก : "{keyword}"</div>
                 </div>
                 <div style={{ position: "absolute", top: 50, right: 0 }}>
                   <Dropdown>

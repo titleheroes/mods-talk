@@ -77,8 +77,7 @@ export default function DataUser() {
     };
     createData(currentUserId, data)
       .then(() => {
-        navigate("/");
-        window.location.reload();
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error(error);

@@ -304,6 +304,7 @@
   border-color: #F04E22 !important;
   border-radius: 4px !important;
   margin-top: 1rem;
+  font-size: 14px;
 }
 
 .form-control:disabled {

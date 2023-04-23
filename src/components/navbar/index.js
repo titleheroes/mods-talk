@@ -5,7 +5,7 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import LoginIcon from "@mui/icons-material/Login";
 
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Dropdown } from "react-bootstrap";
 import { signOut } from "firebase/auth";
 import { auth } from "../../config.js";
@@ -13,7 +13,6 @@ import { Nav, NavLink, Bars, Times, NavBtn, NavBtnLink } from "./NavbarElement";
 
 const Navbar = ({ userData }) => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const [click, setClick] = useState(false);
 
@@ -41,9 +40,19 @@ const Navbar = ({ userData }) => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
     });
-
     return unsubscribe;
-  }, [location.pathname]);
+  }, []);
+
+  useEffect(() => {
+    console.log(userData);
+    if (currentUser) {
+      if (location.pathname !== "/datauser") {
+        if (userData === "Login But no Data") {
+          window.location.href = "/datauser";
+        }
+      }
+    }
+  }, [location.pathname, userData]);
 
   return (
     !hideNavbar && (
@@ -76,38 +85,26 @@ const Navbar = ({ userData }) => {
               </li>
               <li className="nav-item-mobile">
                 <NavLink
-                  to="/about"
-                  className={({ isActive }) =>
-                    "nav-links" + (isActive ? " activated" : "")
-                  }
-                  onClick={closeMobileMenu}
-                >
-                  <ArticleIcon className="mobile-size navbar-icon" />
-                  เกี่ยวกับ
-                </NavLink>
-              </li>
-              <li className="nav-item-mobile ">
-                <NavLink
-                  to="/review"
-                  className={({ isActive }) =>
-                    "nav-links" + (isActive ? " activated" : "")
-                  }
-                  onClick={closeMobileMenu}
-                >
-                  <QuestionAnswerIcon className="mobile-size navbar-icon" />
-                  รีวิว
-                </NavLink>
-              </li>
-              <li className="nav-item-mobile ">
-                <NavLink
                   to="/question"
                   className={({ isActive }) =>
                     "nav-links" + (isActive ? " activated" : "")
                   }
                   onClick={closeMobileMenu}
                 >
+                  <ArticleIcon className="mobile-size navbar-icon" />
+                  ถาม-ตอบ
+                </NavLink>
+              </li>
+              <li className="nav-item-mobile ">
+                <NavLink
+                  to="/notification"
+                  className={({ isActive }) =>
+                    "nav-links" + (isActive ? " activated" : "")
+                  }
+                  onClick={closeMobileMenu}
+                >
                   <QuestionAnswerIcon className="mobile-size navbar-icon" />
-                  <div className="pe-5">ถาม-ตอบ</div>
+                  <div className="pe-5">แจ้งเตือน</div>
                 </NavLink>
               </li>
 
@@ -173,7 +170,7 @@ const Navbar = ({ userData }) => {
                       <Dropdown.Item
                         className="mt-1"
                         as={Link}
-                        to="/about"
+                        to={`/profile/${userData.id}`}
                         onClick={closeMobileMenu}
                         style={{
                           display: "flex",
@@ -202,7 +199,7 @@ const Navbar = ({ userData }) => {
                         }}
                         onClick={() => {
                           signOut(auth);
-                          navigate(0);
+                          window.location.href = "/";
                         }}
                       >
                         <span>
@@ -327,7 +324,7 @@ const Navbar = ({ userData }) => {
                 <Dropdown.Item
                   className="mt-1"
                   as={Link}
-                  to="/about"
+                  to={`/profile/${userData.id}`}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -355,7 +352,7 @@ const Navbar = ({ userData }) => {
                   }}
                   onClick={() => {
                     signOut(auth);
-                    navigate("/");
+                    window.location.href = "/";
                   }}
                 >
                   <span>

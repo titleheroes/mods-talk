@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
 import Navbar from "./components/navbar/";
 import { BrowserRouter as Router } from "react-router-dom";
 import Home from "./pages/home";
@@ -39,6 +39,7 @@ function App() {
   const [userData, setUserData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoading2, setIsLoading2] = useState(true);
 
   // pull userData
   useEffect(() => {
@@ -52,6 +53,7 @@ function App() {
             setUserData(data);
           } else {
             console.error("No such document!");
+            setUserData("Login But no Data");
           }
         });
       } catch (error) {
@@ -71,78 +73,73 @@ function App() {
 
   if (isLoading) {
     return <div></div>;
+  } else {
+    return (
+      <Router>
+        <Navbar userData={userData} />
+        <Routes>
+          <Route path="/" exact element={currentUser ? <Review /> : <Home />} />
+          <Route path="/about" exact element={<About />} />
+          <Route path="/question" exact element={<Question />} />
+          <Route
+            path="/question/search/:keyword"
+            exact
+            element={<Question_Search />}
+          />
+          <Route
+            path="/question/post/:id"
+            exact
+            element={<Answer userData={userData} />}
+          />
+          <Route path="/login" exact element={<Login />} />
+          <Route path="/signup" exact element={<SignUp />} />
+          <Route path="/forgetpassword" exact element={<ForgetPass />} />
+          <Route path="/admin">
+            <Route path="/admin/login" exact element={<AdminLogin />} />
+            <Route
+              path="/admin/forgetpassword"
+              exact
+              element={<AdminForgetPass />}
+            />
+            <Route
+              path="/admin/forgetpasswordsent"
+              exact
+              element={<AdminForgetPassSent />}
+            />
+
+            <Route path="/admin/user" exact element={<AdminUser />} />
+            <Route path="/admin/post" exact element={<AdminPost />} />
+          </Route>
+
+          <Route
+            path="/forgetpassword/sent"
+            exact
+            element={<ForgetPassSent />}
+          />
+          <Route path="/authenticate" exact element={<Authenticate />} />
+          <Route path="/datauser" exact element={<DataUser />} />
+          <Route path="/post" exact element={<Post />} />
+          <Route
+            path="/profile/:id"
+            exact
+            element={<Profile userData={userData} />}
+          />
+          <Route path="/notification" exact element={<Notification />} />
+          <Route
+            path="/review/post/:id"
+            exact
+            element={<Review_Answer userData={userData} />}
+          />
+          <Route
+            path="/review/search/:keyword"
+            exact
+            element={<Review_Search />}
+          />
+          <Route path="/review/tag/:keyword" exact element={<Review_Tag />} />
+        </Routes>
+      </Router>
+    );
   }
-
-  return (
-    <Router>
-      <Navbar userData={userData} />
-      <Routes>
-        <Route path="/" exact element={<Home />}></Route>
-        <Route path="/about" exact element={<About />}></Route>
-        <Route path="/question" exact element={<Question />}></Route>
-        <Route
-          path="/question/search/:keyword"
-          exact
-          element={<Question_Search />}
-        ></Route>
-        <Route
-          path="/question/post/:id"
-          exact
-          element={<Answer userData={userData} />}
-        ></Route>
-        <Route path="/login" exact element={<Login />}></Route>
-        <Route path="/signup" exact element={<SignUp />}></Route>
-        <Route path="/forgetpassword" exact element={<ForgetPass />}></Route>
-        <Route path="/admin">
-          <Route path="/admin/login" exact element={<AdminLogin />}></Route>
-          <Route
-            path="/admin/forgetpassword"
-            exact
-            element={<AdminForgetPass />}
-          ></Route>
-          <Route
-            path="/admin/forgetpasswordsent"
-            exact
-            element={<AdminForgetPassSent />}
-          ></Route>
-
-          <Route path="/admin/user" exact element={<AdminUser />}></Route>
-          <Route path="/admin/post" exact element={<AdminPost />}></Route>
-        </Route>
-
-        <Route
-          path="/forgetpassword/sent"
-          exact
-          element={<ForgetPassSent />}
-        ></Route>
-        <Route path="/authenticate" exact element={<Authenticate />}></Route>
-        <Route path="/datauser" exact element={<DataUser />}></Route>
-        <Route path="/review" exact element={<Review />}></Route>
-        <Route path="/post" exact element={<Post />}></Route>
-        <Route path="/profile" exact element={<Profile />}>
-          {" "}
-        </Route>
-        <Route path="/notification" exact element={<Notification />}>
-          {" "}
-        </Route>
-        <Route
-          path="/review/post/:id"
-          exact
-          element={<Review_Answer userData={userData} />}
-        ></Route>
-        <Route
-          path="/review/search/:keyword"
-          exact
-          element={<Review_Search />}
-        ></Route>
-        <Route
-          path="/review/tag/:keyword"
-          exact
-          element={<Review_Tag />}
-        ></Route>
-      </Routes>
-    </Router>
-  );
 }
 
 export default App;
