@@ -107,8 +107,16 @@ function App() {
               element={<AdminForgetPassSent />}
             />
 
-            <Route path="/admin/user" exact element={<AdminUser />} />
-            <Route path="/admin/post" exact element={<AdminPost />} />
+            <Route
+              path="/admin/user"
+              exact
+              element={<AdminUser userData={userData} />}
+            />
+            <Route
+              path="/admin/post"
+              exact
+              element={<AdminPost userData={userData} />}
+            />
           </Route>
 
           <Route
@@ -124,7 +132,12 @@ function App() {
             exact
             element={<Profile userData={userData} />}
           />
-          <Route path="/notification" exact element={<Notification />} />
+          <Route
+            path="/notification"
+            exact
+            element={<Notification userData={userData} />}
+          />
+          <Route path="/review" exact element={<Review />} />
           <Route
             path="/review/post/:id"
             exact

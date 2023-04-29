@@ -84,6 +84,7 @@ export default function SignInSide() {
               window.location.href = "/";
             } else {
               signOut(auth);
+              alert("คุณยังไม่ได้ยืนยันอีเมลล์");
               console.log("No Verified");
             }
           })

@@ -60,7 +60,10 @@ function Rmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  const formattedTime = `${currentDate.getHours()}:${currentDate
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}`;
 
   function handleClose(event) {
     setShow(false);
@@ -417,7 +420,7 @@ function EditProfile({ userData }) {
     event.preventDefault();
     if (file === null) {
       const data = {
-        id: studentid,
+        code: studentid,
         fname: fullname,
         lname: lastname,
         fac: faculty,
@@ -436,7 +439,7 @@ function EditProfile({ userData }) {
         getDownloadURL(storageRef).then((url) => {
           console.log("Download URL:", url);
           const data = {
-            id: studentid,
+            code: studentid,
             fname: fullname,
             lname: lastname,
             fac: faculty,
@@ -453,7 +456,7 @@ function EditProfile({ userData }) {
   useEffect(() => {
     setFname(userData.fname);
     setLname(userData.lname);
-    setId(userData.id);
+    setId(userData.code);
     setFac(userData.fac);
     setPos(userData.pos);
   }, [userData]);
@@ -497,7 +500,7 @@ function EditProfile({ userData }) {
             <text className="modal-topic">แก้ไขรูปภาพ</text>
             <div className="row mt-3 mb-3">
               <div className="col-3">
-                <div>
+                <div className="edit-profile-image">
                   <img
                     src={userData.profile}
                     alt="main page png"
@@ -647,7 +650,7 @@ function EditProfile({ userData }) {
                   type="text"
                   className="form-control mt-2 mb-3"
                   id="modal-input-box"
-                  placeholder={userData.id}
+                  placeholder={userData.code}
                   onChange={(e) => {
                     setId(e.target.value);
                   }}
@@ -912,7 +915,7 @@ const Profile = ({ userData }) => {
                   secondary={
                     <Typography className="profileans">
                       {" "}
-                      &nbsp; {userData.id}
+                      &nbsp; {userData.code}
                     </Typography>
                   }
                 />

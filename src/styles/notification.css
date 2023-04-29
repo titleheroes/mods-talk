@@ -218,7 +218,7 @@ border: none;
   margin: 0 !important;
   font-family: "Kanit" !important;
   font-weight: 500 !important;
-  font-size: 0.875rem !important;
+  font-size: 0.96rem !important;
   line-height: 1.43 !important;
   letter-spacing: 0.01071em !important;
   color: #333333 !important;
@@ -233,9 +233,10 @@ border: none;
 
 .notiTime{
   margin: 0 !important;
+  margin-top: 10px !important;
   font-family: "Kanit" !important;
   font-weight: 400 !important;
-  font-size: 0.85rem !important;
+  font-size: 1rem !important;
   line-height: 1.5 !important;
   letter-spacing: 0.00938em !important;
   color: #979797 !important;

@@ -58,7 +58,7 @@ const Navbar = ({ userData }) => {
     !hideNavbar && (
       <div>
         <Nav>
-          <NavLink to="/" onClick={closeMobileMenu}>
+          <NavLink to={currentUser ? "/review" : "/"} onClick={closeMobileMenu}>
             <img
               className="logo"
               src={require("../../images/logo2.png")}
@@ -73,7 +73,7 @@ const Navbar = ({ userData }) => {
             <ul className={click ? "nav-menu active" : "nav-menu"}>
               <li className="nav-item-mobile">
                 <NavLink
-                  to="/"
+                  to="/review"
                   className={({ isActive }) =>
                     "nav-links" + (isActive ? " activated" : "")
                   }
