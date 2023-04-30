@@ -37,6 +37,15 @@ export default function DataUser() {
   const currentUserId = currentUser && currentUser.uid;
   const navigate = useNavigate();
 
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getDate()}/${
+    currentDate.getMonth() + 1
+  }/${currentDate.getFullYear()}`;
+  const formattedTime = `${currentDate.getHours()}:${currentDate
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}`;
+
   const [fullname, setFname] = useState("");
   const [lastname, setLname] = useState("");
   const [studentid, setId] = useState("");
@@ -65,7 +74,7 @@ export default function DataUser() {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = {
-      id: studentid,
+      code: studentid,
       email: currentUserEmail,
       fname: fullname,
       lname: lastname,
@@ -74,11 +83,12 @@ export default function DataUser() {
       type: types,
       profile:
         "https://media.discordapp.net/attachments/718002735475064874/1091706761792200794/user.png",
+      date: formattedDate,
+      time: formattedTime,
     };
     createData(currentUserId, data)
       .then(() => {
-        navigate("/");
-        window.location.reload();
+        window.location.href = "/";
       })
       .catch((error) => {
         console.error(error);

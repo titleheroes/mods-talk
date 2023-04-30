@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "../styles/home.css";
+import { auth, db } from "../config";
+import { useNavigate } from "react-router-dom";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 
 const Home = () => {
-  const visitor = 600;
-  const member = 250;
-  const no_posts = 100;
+  const [visitorCount, setvisitorCount] = useState("Loading");
+  const [memberCount, setMemberCount] = useState("Loading");
+  const [reviewCount, setReviewCount] = useState("Loading");
+
+  const visitor = visitorCount;
+  const member = memberCount;
+  const no_posts = reviewCount;
+
+  const currentUser = auth.currentUser;
+  const navigate = useNavigate();
 
   const [active, setActive] = useState({});
 
@@ -24,6 +40,58 @@ const Home = () => {
       [id]: !visibility[id],
     });
   };
+
+  const handleReviewClick = (event) => {
+    event.preventDefault();
+    if (currentUser) {
+      navigate("/review");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleQuestionClick = (event) => {
+    event.preventDefault();
+    navigate("/question");
+  };
+
+  // Visitor Count
+  useEffect(() => {
+    const docRef = doc(db, "webCount", "Mod's Talk");
+    getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        const visitorCount = docSnap.data().visitor;
+        updateDoc(docRef, {
+          visitor: visitorCount + 1,
+        })
+          .then(() => {
+            console.log("Document updated with new count value");
+            setvisitorCount(visitorCount);
+          })
+          .catch((error) => {
+            console.error("Error updating document: ", error);
+          });
+      }
+    });
+  }, []);
+
+  // Member Count
+  useEffect(() => {
+    const countDocs = async () => {
+      const querySnapshot = await getDocs(collection(db, "member"));
+      setMemberCount(querySnapshot.size); // set the state with the number of documents
+    };
+    countDocs();
+  }, []);
+
+  // Review Count
+  useEffect(() => {
+    const countDocs = async () => {
+      const querySnapshot = await getDocs(collection(db, "review"));
+      setReviewCount(querySnapshot.size); // set the state with the number of documents
+    };
+    countDocs();
+  }, []);
 
   return (
     <div>
@@ -55,7 +123,7 @@ const Home = () => {
                   type="button"
                   className="button"
                   variant="contained"
-                  onClick={() => {}}
+                  onClick={handleReviewClick}
                   style={{
                     paddingTop: "1.25%",
                     paddingBottom: "1.25%",
@@ -71,16 +139,16 @@ const Home = () => {
                 className="row"
                 style={{ paddingTop: "7%", paddingBottom: "3rem" }}
               >
-                <div class="col">
-                  <div className="count">{visitor}+</div>
-                  <div>จำนวนผู้เข้าชมเว็บไซต์ของเรา</div>
+                <div class="col-5">
+                  <div className="count">{visitor}</div>
+                  <div>จำนวนการเข้าใช้งานเว็บไซต์ของเรา</div>
                 </div>
-                <div class="col">
-                  <div className="count">{member}+</div>
+                <div class="col-3">
+                  <div className="count">{member}</div>
                   <div>จำนวนสมาชิก</div>
                 </div>
-                <div class="col">
-                  <div className="count">{no_posts}+</div>
+                <div class="col-3">
+                  <div className="count">{no_posts}</div>
                   <div>จำนวนโพสต์รีวิว</div>
                 </div>
               </div>
@@ -441,7 +509,11 @@ const Home = () => {
             ทุกคำตอบล้วนมาจากบุคลากรและนักศึกษาของมหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรีเท่านั้น
           </div>
           <div className="body sendAnswer">
-            <button type="button" className="button" onClick="">
+            <button
+              type="button"
+              className="button"
+              onClick={handleQuestionClick}
+            >
               เริ่มต้นส่งคำถามที่นี่ →
             </button>
           </div>

@@ -18,9 +18,8 @@ import icon from "../../images/icon.svg";
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from "../../config.js";
-
-
+import { auth, db } from "../../config.js";
+import { doc, getDoc } from "firebase/firestore";
 
 const theme = createTheme({
   typography: {
@@ -58,19 +57,33 @@ export default function SignInSide() {
           .then((userCredential) => {
             const isEmailVerified = userCredential.user.emailVerified;
             if (isEmailVerified) {
-              navigate("/");
+              const uid = userCredential.user.uid;
+              const docRef = doc(db, "admin", uid);
+              getDoc(docRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                  window.location.href = "/admin/user";
+                } else {
+                  alert("คุณไม่ได้เป็น แอดมิน");
+                  signOut(auth);
+                }
+              });
             } else {
               signOut(auth);
+              alert("คุณยังไม่ได้ยืนยันอีเมลล์");
               console.log("No Verified");
             }
           })
           .catch((error) => {
+            alert("อีเมลหรือพาสเวิร์ดผิด.");
             console.error(error);
           });
       } catch (error) {
         console.error(error);
       }
     } else {
+      alert(
+        "กรุณาล็อคอินด้วยอีเมลสกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
+      );
       console.error("Bruh");
     }
   };
@@ -128,7 +141,7 @@ export default function SignInSide() {
                         className=""
                         src={icon}
                         alt="icon svg"
-                        style={{ width: "25%",maxWidth: "60px" }}
+                        style={{ width: "25%", maxWidth: "60px" }}
                       ></img>{" "}
                       ยินดีต้อนรับเข้าสู่ระบบแอดมิน
                     </Typography>
@@ -266,13 +279,8 @@ export default function SignInSide() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        
                       }}
-                    >
-                      
-                    </div>
-
-                    
+                    ></div>
                   </Box>
                 </Box>
               </div>

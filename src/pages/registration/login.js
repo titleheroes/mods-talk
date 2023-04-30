@@ -81,19 +81,24 @@ export default function SignInSide() {
           .then((userCredential) => {
             const isEmailVerified = userCredential.user.emailVerified;
             if (isEmailVerified) {
-              navigate("/");
+              window.location.href = "/";
             } else {
               signOut(auth);
+              alert("คุณยังไม่ได้ยืนยันอีเมลล์");
               console.log("No Verified");
             }
           })
           .catch((error) => {
+            alert("อีเมลหรือพาสเวิร์ดผิด.");
             console.error(error);
           });
       } catch (error) {
         console.error(error);
       }
     } else {
+      alert(
+        "กรุณาล็อคอินด้วยอีเมลสกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
+      );
       console.error("Bruh");
     }
   };
