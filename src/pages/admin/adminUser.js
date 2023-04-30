@@ -46,6 +46,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { Modal } from "react-bootstrap";
@@ -162,11 +163,11 @@ function AlertDialogSlide({ id, fullname, suspended }) {
     if (confirmed) {
       const docRef = doc(db, "admin", id);
       if (selectedOption === "แอดมิน") {
-        setSelectedOption("admin");
         try {
-          updateDoc(docRef, {
-            level: selectedOption,
+          setDoc(docRef, {
+            level: "admin",
           }).then(() => {
+            alert(`คุณ ${fullname} ถูกปรับบทบาทให้เป็นแอดมินแล้ว`);
             setSelectedOption("เลือก");
             console.log("Changed level of admin :", docRef.id);
           });
@@ -176,8 +177,8 @@ function AlertDialogSlide({ id, fullname, suspended }) {
       } else if (selectedOption === "สมาชิก") {
         try {
           deleteDoc(docRef).then(() => {
+            alert(`คุณ ${fullname} ถูกปรับบทบาทให้เป็นสมาชิกแล้ว`);
             setSelectedOption("เลือก");
-            console.log("Remove from admin :", docRef.id);
           });
         } catch (error) {
           console.error("Error adding document: ", error);

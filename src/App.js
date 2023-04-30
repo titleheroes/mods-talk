@@ -50,7 +50,7 @@ function App() {
           if (docSnap.exists()) {
             console.log("Successfully Load userData");
             const data = docSnap.data();
-            setUserData(data);
+            setUserData({ ...data, id: docSnap.id }); // add id to userData
           } else {
             console.error("No such document!");
             setUserData("Login But no Data");

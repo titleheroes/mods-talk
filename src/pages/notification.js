@@ -372,11 +372,28 @@ const Notification = ({ userData }) => {
   //-----------
 
   // Pull Notification
+  const reviewRef = query(
+    collection(db, "review"),
+    where("member_id", "==", userData.id)
+  );
 
   const cmntReviewRef = collection(db, "cmnt_review");
+  const cmntReviewRef2 = query(
+    collection(db, "cmnt_review"),
+    where("member_id", "==", userData.id)
+  );
   const replyReviewRef = collection(db, "reply_review");
 
+  const questionRef = query(
+    collection(db, "question"),
+    where("member_id", "==", userData.id)
+  );
+
   const cmntQuestionRef = collection(db, "cmnt_question");
+  const cmntQuestionRef2 = query(
+    collection(db, "cmnt_question"),
+    where("member_id", "==", userData.id)
+  );
   const replyQuestionRef = collection(db, "reply_question");
 
   const [sortedData, setSortedData] = useState([]);
@@ -384,51 +401,91 @@ const Notification = ({ userData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cmntReviewDocs = await getDocs(cmntReviewRef);
+        // Review
+        const reviewDocs = await getDocs(reviewRef);
+        const reviewIds = reviewDocs.docs.map((doc) => doc.id);
+
+        const cmntReviewDocs = await getDocs(cmntReviewRef2);
         const cmntReviewIds = cmntReviewDocs.docs.map((doc) => doc.id);
 
-        const cmntReviewData = cmntReviewDocs.docs.map((doc) => ({
-          id: doc.id,
-          status: 0,
-          reply_status: 0,
-          ...doc.data(),
-        }));
+        const cmntReviewQuery =
+          reviewIds.length > 0
+            ? query(cmntReviewRef, where("post_id", "in", reviewIds))
+            : null;
+        const cmntReviewDocs2 = cmntReviewQuery
+          ? await getDocs(cmntReviewQuery)
+          : null;
 
-        const replyReviewQuery = query(
-          replyReviewRef,
-          where("cmnt_id", "in", cmntReviewIds)
-        );
-        const replyReviewDocs = await getDocs(replyReviewQuery);
+        const cmntReviewData =
+          cmntReviewDocs2 && cmntReviewDocs2.docs.length > 0
+            ? cmntReviewDocs2.docs.map((doc) => ({
+                id: doc.id,
+                status: 0,
+                reply_status: 0,
+                ...doc.data(),
+              }))
+            : [];
 
-        const replyReviewData = replyReviewDocs.docs.map((doc) => ({
-          id: doc.id,
-          status: 0,
-          reply_status: 1,
-          ...doc.data(),
-        }));
+        const replyReviewQuery =
+          cmntReviewIds.length > 0
+            ? query(replyReviewRef, where("cmnt_id", "in", cmntReviewIds))
+            : null;
+        const replyReviewDocs = replyReviewQuery
+          ? await getDocs(replyReviewQuery)
+          : null;
 
-        const cmntQuestionDocs = await getDocs(cmntQuestionRef);
+        const replyReviewData =
+          replyReviewDocs && replyReviewDocs.docs.length > 0
+            ? replyReviewDocs.docs.map((doc) => ({
+                id: doc.id,
+                status: 0,
+                reply_status: 1,
+                ...doc.data(),
+              }))
+            : [];
+
+        // Question
+        const questionDocs = await getDocs(questionRef);
+        const questionIds = questionDocs.docs.map((doc) => doc.id);
+
+        const cmntQuestionDocs = await getDocs(cmntQuestionRef2);
         const cmntQuestionIds = cmntQuestionDocs.docs.map((doc) => doc.id);
 
-        const cmntQuestionData = cmntQuestionDocs.docs.map((doc) => ({
-          id: doc.id,
-          status: 1,
-          reply_status: 0,
-          ...doc.data(),
-        }));
+        const cmntQuestionQuery =
+          questionIds.length > 0
+            ? query(cmntQuestionRef, where("post_id", "in", questionIds))
+            : null;
+        const cmntQuestionDocs2 = cmntQuestionQuery
+          ? await getDocs(cmntQuestionQuery)
+          : null;
 
-        const replyQuestionQuery = query(
-          replyQuestionRef,
-          where("cmnt_id", "in", cmntQuestionIds)
-        );
-        const replyQuestionDocs = await getDocs(replyQuestionQuery);
+        const cmntQuestionData =
+          cmntQuestionDocs2 && cmntQuestionDocs2.docs.length > 0
+            ? cmntQuestionDocs2.docs.map((doc) => ({
+                id: doc.id,
+                status: 1,
+                reply_status: 0,
+                ...doc.data(),
+              }))
+            : [];
 
-        const replyQuestionData = replyQuestionDocs.docs.map((doc) => ({
-          id: doc.id,
-          status: 1,
-          reply_status: 1,
-          ...doc.data(),
-        }));
+        const replyQuestionQuery =
+          cmntQuestionIds.length > 0
+            ? query(replyQuestionRef, where("cmnt_id", "in", cmntQuestionIds))
+            : null;
+        const replyQuestionDocs = replyQuestionQuery
+          ? await getDocs(replyQuestionQuery)
+          : null;
+
+        const replyQuestionData =
+          replyQuestionDocs && replyQuestionDocs.docs.length > 0
+            ? replyQuestionDocs.docs.map((doc) => ({
+                id: doc.id,
+                status: 1,
+                reply_status: 1,
+                ...doc.data(),
+              }))
+            : [];
 
         const mergedData = [
           ...cmntReviewData,
@@ -473,11 +530,15 @@ const Notification = ({ userData }) => {
                   <Tab className="pt-4" eventKey="all" title="ทั้งหมด">
                     {sortedData.map((data) => (
                       <div key={data.id}>
-                        {data.member_id === userData.id ? (
+                        {/* {alert(data.member_id + "===" + userData.id)} */}
+                        {data.member_id !== userData.id ? (
                           <MemberInfo
                             memberID={data.member_id}
                             postID={data.post_id}
+                            cmntID={data.cmnt_id}
                             status={data.status}
+                            reply_status={data.reply_status}
+                            this_content={data.content}
                             time={data.time}
                             date={data.date}
                           />
@@ -582,7 +643,6 @@ const Notification = ({ userData }) => {
                   </div>
 
                   <p className="tipsContent">
-                    {" "}
                     คุณสามารถเริ่มถามคำถามจากปุ่มด้านบนนี้ หรือ
                     ถ้าสงสัยเกี่ยวกับรายวิชา หอพัก สิ่งต่างๆ
                     สามารถค้นหาสิ่งที่คุณอยากรู้ได้ที่แถบด้านล่างนี้เลย

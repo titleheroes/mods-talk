@@ -1277,11 +1277,11 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
 
   return (
     <Dropdown.Menu>
-      <Dropdown.Item onClick={handleReportClick}>รายงานคอมเมนท์</Dropdown.Item>
+      <Dropdown.Item onClick={handleReportClick}>รายงานโพสต์</Dropdown.Item>
       {authorCheck ? (
         <div />
       ) : (
-        <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
+        <Dropdown.Item onClick={handleDeleteClick}>ลบโพสต์</Dropdown.Item>
       )}
     </Dropdown.Menu>
   );
