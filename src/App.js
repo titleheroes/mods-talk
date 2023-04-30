@@ -73,6 +73,19 @@ function App() {
 
   if (isLoading) {
     return <div></div>;
+  } else if (userData.suspended === 1) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <h1>บัญชีของคุณถูกระงับโปรดติดต่อ Admin</h1>
+      </div>
+    );
   } else {
     return (
       <Router>

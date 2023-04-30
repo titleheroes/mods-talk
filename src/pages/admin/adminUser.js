@@ -39,7 +39,16 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 import { auth, db } from "../../config";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
+import { Modal } from "react-bootstrap";
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -120,197 +129,278 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function AlertDialogSlide(name) {
-  const [open, setOpen] = React.useState(false);
-  const username = name;
-  const handleClickOpen = () => {
-    setOpen(true);
-    console.log(username);
+function AlertDialogSlide({ id, fullname, suspended }) {
+  const [buttonStatus, setButtonStatus] = useState(true);
+  const [show, setShow] = useState(false);
+
+  const [selectedOption, setSelectedOption] = useState("เลือก");
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  const finishClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  function checkInfo() {
+    if (selectedOption === "เลือก") {
+      setButtonStatus(true);
+    } else {
+      setButtonStatus(false);
+    }
+  }
+
+  function handleClose(event) {
+    setShow(false);
+    setButtonStatus(true);
+    setSelectedOption("เลือก");
+  }
+
+  const handleSubmitRole = (event) => {
+    event.preventDefault();
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะเปลี่ยนบทบาทใช่หรือไม่ ?"
+    );
+
+    if (confirmed) {
+      const docRef = doc(db, "admin", id);
+      if (selectedOption === "แอดมิน") {
+        setSelectedOption("admin");
+        try {
+          updateDoc(docRef, {
+            level: selectedOption,
+          }).then(() => {
+            setSelectedOption("เลือก");
+            console.log("Changed level of admin :", docRef.id);
+          });
+        } catch (error) {
+          console.error("Error adding document: ", error);
+        }
+      } else if (selectedOption === "สมาชิก") {
+        try {
+          deleteDoc(docRef).then(() => {
+            setSelectedOption("เลือก");
+            console.log("Remove from admin :", docRef.id);
+          });
+        } catch (error) {
+          console.error("Error adding document: ", error);
+        }
+      }
+    }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleShowDel = async (event) => {
+    event.preventDefault();
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะระงับสมาชิกคนนี้ใช่หรือไม่ ?"
+    );
+
+    if (confirmed) {
+      const currentUser = auth.currentUser;
+      const currentUserId = currentUser.uid;
+
+      const docRef = doc(db, "admin", currentUserId);
+      const memberRef = doc(db, "member", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const level = docSnap.data().level;
+        if (level === "superadmin" && !isSuperAdmin) {
+          alert("คุณไม่สามารถระงับบัญชีซูเปอร์แอดมินได้");
+        } else {
+          try {
+            const memberDocSnap = await getDoc(memberRef);
+            if (memberDocSnap.exists() && memberDocSnap.data().suspended) {
+              alert("บัญชีนี้ถูกระงับแล้ว");
+            } else {
+              await updateDoc(memberRef, {
+                suspended: 1,
+              });
+              alert(`คุณระงับบัญชี ${fullname} แล้ว`);
+              console.log("Suspended User :", memberRef.id);
+              window.location.reload();
+            }
+          } catch (error) {
+            alert("เกิดข้อผิดพลาดในการระงับบัญชี");
+            console.error("Error Suspended : ", error);
+          }
+        }
+      }
+    }
   };
+
+  const handleUnsuspended = async (event) => {
+    event.preventDefault();
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะปลดระงับสมาชิกคนนี้ใช่หรือไม่ ?"
+    );
+
+    if (confirmed) {
+      const currentUser = auth.currentUser;
+      const currentUserId = currentUser.uid;
+
+      const docRef = doc(db, "admin", currentUserId);
+      const memberRef = doc(db, "member", id);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const level = docSnap.data().level;
+        if (level === "superadmin" && !isSuperAdmin) {
+          alert("คุณไม่สามารถระงับบัญชีซูเปอร์แอดมินได้");
+        } else {
+          try {
+            const memberDocSnap = await getDoc(memberRef);
+            if (memberDocSnap.exists() && memberDocSnap.data().suspended) {
+              await updateDoc(memberRef, {
+                suspended: 0,
+              });
+              alert(`คุณปลดระงับบัญชี ${fullname} แล้ว`);
+              console.log("Suspended User :", memberRef.id);
+              window.location.reload();
+            }
+          } catch (error) {
+            alert("เกิดข้อผิดพลาดในการระงับบัญชี");
+            console.error("Error Suspended : ", error);
+          }
+        }
+      }
+    }
+  };
+
+  // ดึงข้อมูลแอดมิน
+  useEffect(() => {
+    try {
+      const currentUser = auth.currentUser;
+      const currentUserId = currentUser.uid;
+      const docRef = doc(db, "admin", currentUserId);
+      getDoc(docRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const level = docSnap.data().level;
+          if (level === "superadmin") {
+            setIsSuperAdmin(true);
+          }
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+  // ดึงข้อมูลแอดมิน
+
+  useEffect(() => {
+    checkInfo();
+  });
 
   return (
     <div>
-      <button className="deleteUserButton" onClick={handleClickOpen}>
-        <DeleteOutlineIcon />
-      </button>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description"
+      <Dropdown drop="down">
+        <Dropdown.Toggle
+          variant="link"
+          id="dropdown-basic"
+          style={{
+            border: "none",
+            boxShadow: "none",
+            color: "transparent",
+          }}
+        >
+          <span>
+            <img
+              className="menu-dropdown"
+              src={require("../../images/question/three_dots.svg").default}
+              alt=""
+            />
+          </span>
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {isSuperAdmin ? (
+            <Dropdown.Item onClick={handleShow}>แก้ไขบทบาท</Dropdown.Item>
+          ) : (
+            <div></div>
+          )}
+          {suspended === 1 ? (
+            <Dropdown.Item onClick={handleUnsuspended}>
+              ปลดระงับสมาชิก
+            </Dropdown.Item>
+          ) : (
+            <Dropdown.Item onClick={handleShowDel}>ระงับสมาชิก</Dropdown.Item>
+          )}
+        </Dropdown.Menu>
+      </Dropdown>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+        className="question-modal"
       >
-        <DialogTitle>{"ยืนยันการลบบัญชีผู้ใช้"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            คุณแน่ใจหรือไม่ที่จะทำการลบบัญชีผู้ใช้นี้ ?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button className="cancelDelButton" onClick={handleClose}>
-            ยกเลิก
-          </Button>
-          <Button className="confirmDelButton" onClick={handleClose}>
-            ยืนยันลบบัญชีผู้ใช้
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <form onSubmit={handleSubmitRole}>
+          <div className="modal-header question-modal-header pt-4">
+            <h1
+              className="modal-title question-modal-title fs-5 ps-2 "
+              id="exampleModalLabel"
+            >
+              แก้ไขบทบาท
+            </h1>
+            <button
+              type="button"
+              className="btn-close ps-5"
+              id="modal-close"
+              onClick={handleClose}
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div className="modal-body question-modal-body px-4 pt-2">
+            <text className="modal-topic ">เลือกบทบาท</text>
+            <div className="form-control mt-2 mb-3">
+              <Dropdown>
+                <Dropdown.Toggle
+                  style={{
+                    backgroundColor: "transparent",
+                    color: "black",
+                    borderColor: "transparent",
+                    width: "100%",
+                  }}
+                  id="dropdown-basic"
+                >
+                  {selectedOption}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu style={{ width: "100%", textAlign: "center" }}>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("สมาชิก");
+                      checkInfo();
+                    }}
+                  >
+                    สมาชิก
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setSelectedOption("แอดมิน");
+                      checkInfo();
+                    }}
+                  >
+                    แอดมิน
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </div>
+
+          <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
+            <button
+              type="submit"
+              disabled={buttonStatus}
+              className="btn post-question-btn mx-auto mt-0 "
+              onClick={finishClose}
+            >
+              ยืนยันการเปลี่ยนบทบาท
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
-
-// function createData(
-//   id,
-//   code,
-//   fullname,
-//   faculty,
-//   major,
-//   email,
-//   regis_date,
-//   manage
-// )
-
-// {
-
-//   return { id, code, fullname, faculty, major, email, regis_date, manage };
-// }
-
-// const rows = [
-//   createData(
-//     "0001",
-//     61090500444,
-//     "เมริสา อินทรเกียรติ",
-//     "คณะวิทยาศาสตร์",
-//     "วิทยาการคอมพิวเตอร์ประยุกต์",
-//     "chanai.prommabuth@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0002",
-//     61090525421,
-//     "เมริสา อินทรเกียรติ",
-//     "คณะวิทยาศาสตร์",
-//     "วิทยาการคอมพิวเตอร์ประยุกต์",
-//     "saaira.ma@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0003",
-//     61090521566,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "saaira.ma@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0004",
-//     61090502156,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "saaira.ma@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0005",
-//     61090500445,
-//     "ธนารีย์ อรุณรุ่ง",
-//     "คณะวิทยาศาสตร์",
-//     "สถิติ",
-//     "saaira.ma@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0006",
-//     61090500447,
-//     "ธนารีย์ อรุณรุ่ง",
-//     "คณะวิทยาศาสตร์",
-//     "สถิติ",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0007",
-//     61090500442,
-//     "ธนารีย์ อรุณรุ่ง",
-//     "คณะวิทยาศาสตร์",
-//     "วิทยาการคอมพิวเตอร์ประยุกต์",
-//     "laila.aaa@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0010",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0011",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0012",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0013",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0014",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-//   createData(
-//     "0015",
-//     61090500562,
-//     "แก้วขวัญ ปิติทัศน์",
-//     "คณะวิทยาศาสตร์",
-//     "คณิตศาสตร์",
-//     "justin.piti@mail.kmutt.ac.th",
-//     "15/10/2022",
-//     "c"
-//   ),
-// ];
 
 const AdminUser = ({ userData }) => {
   const [page, setPage] = React.useState(0);
@@ -399,7 +489,7 @@ const AdminUser = ({ userData }) => {
                         <TableCell align="left">สาขา/ตำแหน่ง</TableCell>
                         <TableCell align="left">อีเมล</TableCell>
                         <TableCell align="left">วันที่สมัคร</TableCell>
-                        <TableCell align="left">การจัดการ</TableCell>
+                        <TableCell align="center">การจัดการ</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -447,7 +537,11 @@ const AdminUser = ({ userData }) => {
                           <TableCell align="left">{data.email}</TableCell>
                           <TableCell align="left">{data.date}</TableCell>
                           <TableCell align="center">
-                            <AlertDialogSlide name={data.fullname} />
+                            <AlertDialogSlide
+                              id={data.id}
+                              fullname={data.fname + " " + data.lname}
+                              suspended={data.suspended}
+                            />
                           </TableCell>
                         </TableRow>
                       ))}
