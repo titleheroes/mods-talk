@@ -414,9 +414,6 @@ const AdminUser = ({ userData }) => {
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
 
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - memberData.length) : 0;
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };

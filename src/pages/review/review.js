@@ -344,13 +344,6 @@ function Rmodal() {
 const Review = () => {
   const navigate = useNavigate();
 
-  const [all, setAll] = useState([]);
-  const [subject, setSubject] = useState([]);
-  const [teacher, setTeacher] = useState([]);
-  const [restaurant, setRestaurant] = useState([]);
-  const [dorm, setDorm] = useState([]);
-  const [work, setWork] = useState([]);
-
   //Search Bar
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTextShow, setSearchTextShow] = useState(true);
@@ -386,6 +379,14 @@ const Review = () => {
     setSelectedOption(optionName);
   };
   //-----------
+
+  // pull post
+  const [all, setAll] = useState([]);
+  const [subject, setSubject] = useState([]);
+  const [teacher, setTeacher] = useState([]);
+  const [restaurant, setRestaurant] = useState([]);
+  const [dorm, setDorm] = useState([]);
+  const [work, setWork] = useState([]);
 
   useEffect(() => {
     const itemsCollection = collection(db, "review");
@@ -442,6 +443,7 @@ const Review = () => {
       console.error(error);
     }
   }, [selectedOption]);
+  // pull post
 
   return (
     <div>
