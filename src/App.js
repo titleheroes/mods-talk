@@ -107,8 +107,7 @@ function App() {
           <Route path="/login" exact element={<Login />} />
           <Route path="/signup" exact element={<SignUp />} />
           <Route path="/forgetpassword" exact element={<ForgetPass />} />
-          <Route path="/admin">
-            <Route path="/admin/login" exact element={<AdminLogin />} />
+          {/* <Route path="/admin/login" exact element={<AdminLogin />} />
             <Route
               path="/admin/forgetpassword"
               exact
@@ -118,19 +117,18 @@ function App() {
               path="/admin/forgetpasswordsent"
               exact
               element={<AdminForgetPassSent />}
-            />
+            /> */}
 
-            <Route
-              path="/admin/user"
-              exact
-              element={<AdminUser userData={userData} />}
-            />
-            <Route
-              path="/admin/post"
-              exact
-              element={<AdminPost userData={userData} />}
-            />
-          </Route>
+          <Route
+            path="/admin/user"
+            exact
+            element={<AdminUser userData={userData} />}
+          />
+          <Route
+            path="/admin/post"
+            exact
+            element={<AdminPost userData={userData} />}
+          />
 
           <Route
             path="/forgetpassword/sent"
