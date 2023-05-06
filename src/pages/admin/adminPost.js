@@ -14,14 +14,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
-
 import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -187,36 +179,36 @@ const rows = [
   ),
 ];
 
-function AlertDialogSlide({ id, header, section, type, suspended }) {
+function AlertDialogSlide({ id, header, section, category, suspended }) {
   let docRef;
 
   const handleDelete = (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
-      `คุณยืนยันที่ต้องการจะลบ${type}นี้ใช่หรือไม่ ?`
+      `คุณยืนยันที่ต้องการจะลบ${category}นี้ใช่หรือไม่ ?`
     );
     if (confirmed) {
       if (section === "รีวิว") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "review", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_review", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_review", id);
         }
       } else if (section === "ถาม-ตอบ") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "question", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_question", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_question", id);
         }
       }
 
       try {
         deleteDoc(docRef).then(() => {
-          alert(`${type} ${header} ได้ถูกลบแล้ว`);
+          alert(`${category} ${header} ได้ถูกลบแล้ว`);
         });
       } catch (error) {
         console.error("Error adding document: ", error);
@@ -227,24 +219,24 @@ function AlertDialogSlide({ id, header, section, type, suspended }) {
   const handleSuspended = async (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
-      `คุณยืนยันที่ต้องการจะระงับ${type}นี้ใช่หรือไม่ ?`
+      `คุณยืนยันที่ต้องการจะระงับ${category}นี้ใช่หรือไม่ ?`
     );
 
     if (confirmed) {
       if (section === "รีวิว") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "review", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_review", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_review", id);
         }
       } else if (section === "ถาม-ตอบ") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "question", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_question", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_question", id);
         }
       }
@@ -252,12 +244,12 @@ function AlertDialogSlide({ id, header, section, type, suspended }) {
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists() && docSnap.data().status) {
-          alert(`${type}ได้ถูกระงับอยู่แล้ว`);
+          alert(`${category}ได้ถูกระงับอยู่แล้ว`);
         } else {
           await updateDoc(docRef, {
             status: 1,
           });
-          alert(`คุณระงับ${type} ${header} แล้ว`);
+          alert(`คุณระงับ${category} ${header} แล้ว`);
           console.log("Suspended :", docRef.id);
           window.location.reload();
         }
@@ -271,24 +263,24 @@ function AlertDialogSlide({ id, header, section, type, suspended }) {
   const handleUnsuspended = async (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
-      `คุณยืนยันที่ต้องการจะอนุมัติ${type}นี้ใช่หรือไม่ ?`
+      `คุณยืนยันที่ต้องการจะอนุมัติ${category}นี้ใช่หรือไม่ ?`
     );
 
     if (confirmed) {
       if (section === "รีวิว") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "review", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_review", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_review", id);
         }
       } else if (section === "ถาม-ตอบ") {
-        if (type === "โพสต์") {
+        if (category === "โพสต์") {
           const docRef = doc(db, "question", id);
-        } else if (type === "คอมเมนท์") {
+        } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_question", id);
-        } else if (type === "ตอบกลับ") {
+        } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_question", id);
         }
       }
@@ -299,11 +291,11 @@ function AlertDialogSlide({ id, header, section, type, suspended }) {
           await updateDoc(docRef, {
             status: null,
           });
-          alert(`คุณอนุมัติ${type} ${header} แล้ว`);
+          alert(`คุณอนุมัติ${category} ${header} แล้ว`);
           console.log("Approved :", docRef.id);
           window.location.reload();
         } else {
-          alert(`${type}ได้รับการอนุมัติอยู่แล้ว`);
+          alert(`${category}ได้รับการอนุมัติอยู่แล้ว`);
         }
       } catch (error) {
         alert("เกิดข้อผิดพลาดในการอนุมัติ");
@@ -333,13 +325,15 @@ function AlertDialogSlide({ id, header, section, type, suspended }) {
           </span>
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          <Dropdown.Item onClick={handleDelete}>ลบ{type}</Dropdown.Item>
-          {suspended === 1 ? (
+          <Dropdown.Item onClick={handleDelete}>ลบ{category}</Dropdown.Item>
+          {suspended === 0 || 1 ? (
             <Dropdown.Item onClick={handleUnsuspended}>
-              อนุมัติ{type}
+              อนุมัติ{category}
             </Dropdown.Item>
           ) : (
-            <Dropdown.Item onClick={handleSuspended}>ระงับ{type}</Dropdown.Item>
+            <Dropdown.Item onClick={handleSuspended}>
+              ระงับ{category}
+            </Dropdown.Item>
           )}
         </Dropdown.Menu>
       </Dropdown>
@@ -366,6 +360,7 @@ const AdminPost = ({ userData }) => {
 
   // pull post
   const [allData, setAllData] = useState([]);
+  const [reportData, setReportData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -375,7 +370,7 @@ const AdminPost = ({ userData }) => {
         const reviewData = reviewDocs.docs.map((doc) => ({
           id: doc.id,
           section: "รีวิว", // 0 = review, 1 = question
-          type: "โพสต์", // 0 = post, 1 = cmnt, 2 = reply
+          category: "โพสต์", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
@@ -383,7 +378,7 @@ const AdminPost = ({ userData }) => {
         const cmntReviewData = cmntReviewDocs.docs.map((doc) => ({
           id: doc.id,
           section: "รีวิว", // 0 = review, 1 = question
-          type: "คอมเมนท์", // 0 = post, 1 = cmnt, 2 = reply
+          category: "คอมเมนท์", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
@@ -391,7 +386,7 @@ const AdminPost = ({ userData }) => {
         const replyReviewData = replyReviewDocs.docs.map((doc) => ({
           id: doc.id,
           section: "รีวิว", // 0 = review, 1 = question
-          type: "ตอบกลับ", // 0 = post, 1 = cmnt, 2 = reply
+          category: "ตอบกลับ", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
@@ -401,7 +396,7 @@ const AdminPost = ({ userData }) => {
         const questionData = questionDocs.docs.map((doc) => ({
           id: doc.id,
           section: "ถาม-ตอบ", // 0 = review, 1 = question
-          type: "โพสต์", // 0 = post, 1 = cmnt, 2 = reply
+          category: "โพสต์", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
@@ -409,7 +404,7 @@ const AdminPost = ({ userData }) => {
         const cmntQuestionData = cmntQuestionDocs.docs.map((doc) => ({
           id: doc.id,
           section: "ถาม-ตอบ", // 0 = review, 1 = question
-          type: "คอมเมนท์", // 0 = post, 1 = cmnt, 2 = reply
+          category: "คอมเมนท์", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
@@ -419,11 +414,19 @@ const AdminPost = ({ userData }) => {
         const replyQuestionData = replyQuestionDocs.docs.map((doc) => ({
           id: doc.id,
           section: "ถาม-ตอบ", // 0 = review, 1 = question
-          type: "ตอบกลับ", // 0 = post, 1 = cmnt, 2 = reply
+          category: "ตอบกลับ", // 0 = post, 1 = cmnt, 2 = reply
           ...doc.data(),
         }));
 
         const mergedData = [
+          ...reviewData,
+          ...cmntReviewData,
+          ...replyReviewData,
+          ...cmntQuestionData,
+          ...replyQuestionData,
+        ];
+
+        const mergedData2 = [
           ...reviewData,
           ...cmntReviewData,
           ...replyReviewData,
@@ -439,7 +442,23 @@ const AdminPost = ({ userData }) => {
             return b.time.localeCompare(a.time);
           }
         });
+
+        const sortedData2 = mergedData2.sort((a, b) => {
+          const reportComparison = b.report - a.report;
+          if (reportComparison !== 0) {
+            return reportComparison;
+          } else {
+            const dateComparison = b.date.localeCompare(a.date);
+            if (dateComparison !== 0) {
+              return dateComparison;
+            } else {
+              return b.time.localeCompare(a.time);
+            }
+          }
+        });
+
         setAllData(sortedData);
+        setReportData(sortedData2);
       } catch (error) {
         console.error(error);
       }
@@ -501,7 +520,7 @@ const AdminPost = ({ userData }) => {
                             data.section
                               .toLowerCase()
                               .includes(searchQuery.toLowerCase()) ||
-                            data.type
+                            data.category
                               .toLowerCase()
                               .includes(searchQuery.toLowerCase()) ||
                             (fullNames[data.id] &&
@@ -541,20 +560,24 @@ const AdminPost = ({ userData }) => {
                               {fullNames[data.id]}
                             </TableCell>
                             <TableCell align="left">{data.section}</TableCell>
-                            <TableCell align="left">{data.type}</TableCell>
+                            <TableCell align="left">{data.category}</TableCell>
                             <TableCell align="left">
                               {console.log(data.status)}
                               <h
                                 style={{
                                   color:
-                                    data.status === undefined
-                                      ? "#17BF5F"
-                                      : "#f7be3a",
+                                    data.status === 0
+                                      ? "#ed3419"
+                                      : data.status === 1
+                                      ? "#f7be3a"
+                                      : "#17BF5F",
                                 }}
                               >
-                                {data.status === undefined
-                                  ? "อนุมัติแล้ว"
-                                  : "ถูกระงับ"}
+                                {data.status === 0
+                                  ? "ถูกระงับ"
+                                  : data.status === 1
+                                  ? "รอการอนุมัติ"
+                                  : "อนุมัติแล้ว"}
                                 {/* ตอนนี้ใช้แบบนี้ไปก่อน เพราะยังไม่ได้ทำ text sentiment ถ้ามีค่อยใส่ค่า status เพิ่มตอนโพสต์ */}
                               </h>
                             </TableCell>
@@ -563,7 +586,7 @@ const AdminPost = ({ userData }) => {
                                 id={data.id}
                                 header={data.header}
                                 section={data.section}
-                                type={data.type}
+                                category={data.category}
                                 suspended={data.status}
                               />
                             </TableCell>
@@ -623,59 +646,99 @@ const AdminPost = ({ userData }) => {
                         <TableCell align="center">วันที่โพสต์</TableCell>
                         <TableCell align="left">ข้อความ</TableCell>
                         <TableCell align="left">ชื่อ-นามสกุล</TableCell>
-                        <TableCell align="center">
-                          จำนวนครั้งที่โดนรายงาน
-                        </TableCell>
+                        <TableCell align="center">รายงาน</TableCell>
                         <TableCell align="left">ประเภท</TableCell>
+                        <TableCell align="left">หมวดหมู่</TableCell>
                         <TableCell align="left">สถานะโพสต์</TableCell>
                         <TableCell align="center">การจัดการ</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {(rowsPerPage > 0
-                        ? rows.slice(
-                            page * rowsPerPage,
-                            page * rowsPerPage + rowsPerPage
-                          )
-                        : rows
-                      ).map((row) => (
-                        <TableRow
-                          key={row.id}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell align="center" component="th" scope="row">
-                            {row.post_date}
-                          </TableCell>
-                          <TableCell align="left">{row.msg}</TableCell>
-                          <TableCell align="left" className="table-text">
-                            <h className="table-text">{row.fullname}</h>
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.report_count}
-                          </TableCell>
-                          <TableCell align="left">{row.id}</TableCell>
-                          <TableCell align="left">
-                            <h
-                              className="table-text"
-                              style={{
-                                color:
-                                  row.post_status === "อนุมัติโพสต์แล้ว"
-                                    ? "#17BF5F"
-                                    : "#f7be3a",
-                              }}
+                      {reportData
+                        .filter(
+                          (data) =>
+                            data.content
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
+                            data.date
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
+                            data.section
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
+                            data.category
+                              .toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
+                            (fullNames[data.id] &&
+                              fullNames[data.id]
+                                .toLowerCase()
+                                .includes(searchQuery.toLowerCase()))
+                        )
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((data) => (
+                          <TableRow
+                            key={data.id}
+                            sx={{
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <TableCell
+                              align="center"
+                              component="th"
+                              scope="row"
                             >
-                              {row.post_status}
-                            </h>
-                          </TableCell>
-                          <TableCell align="center">
-                            <button className="deleteUserButton">
-                              <DeleteOutlineIcon />
-                            </button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                              {data.date}
+                            </TableCell>
+                            <TableCell align="left">{data.content}</TableCell>
+                            <TableCell align="left">
+                              <MemberInfo
+                                memberID={data.member_id}
+                                onLoadFullName={(fullName) =>
+                                  setFullNames((prev) => ({
+                                    ...prev,
+                                    [data.id]: fullName,
+                                  }))
+                                }
+                              />
+                              {fullNames[data.id]}
+                            </TableCell>
+                            <TableCell align="center">{data.report}</TableCell>
+                            <TableCell align="left">{data.section}</TableCell>
+                            <TableCell align="left">{data.category}</TableCell>
+                            <TableCell align="left">
+                              {console.log(data.status)}
+                              <h
+                                style={{
+                                  color:
+                                    data.status === 0
+                                      ? "#ed3419"
+                                      : data.status === 1
+                                      ? "#f7be3a"
+                                      : "#17BF5F",
+                                }}
+                              >
+                                {data.status === 0
+                                  ? "ถูกระงับ"
+                                  : data.status === 1
+                                  ? "รอการอนุมัติ"
+                                  : "อนุมัติแล้ว"}
+                                {/* ตอนนี้ใช้แบบนี้ไปก่อน เพราะยังไม่ได้ทำ text sentiment ถ้ามีค่อยใส่ค่า status เพิ่มตอนโพสต์ */}
+                              </h>
+                            </TableCell>
+                            <TableCell align="center">
+                              <AlertDialogSlide
+                                id={data.id}
+                                header={data.header}
+                                section={data.section}
+                                category={data.category}
+                                suspended={data.status}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                     <TableFooter>
                       <TableRow>
