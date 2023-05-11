@@ -372,35 +372,35 @@ const Notification = ({ userData }) => {
   //-----------
 
   // Pull Notification
-  const reviewRef = query(
-    collection(db, "review"),
-    where("member_id", "==", userData.id)
-  );
-
-  const cmntReviewRef = collection(db, "cmnt_review");
-  const cmntReviewRef2 = query(
-    collection(db, "cmnt_review"),
-    where("member_id", "==", userData.id)
-  );
-  const replyReviewRef = collection(db, "reply_review");
-
-  const questionRef = query(
-    collection(db, "question"),
-    where("member_id", "==", userData.id)
-  );
-
-  const cmntQuestionRef = collection(db, "cmnt_question");
-  const cmntQuestionRef2 = query(
-    collection(db, "cmnt_question"),
-    where("member_id", "==", userData.id)
-  );
-  const replyQuestionRef = collection(db, "reply_question");
-
   const [sortedData, setSortedData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const reviewRef = query(
+          collection(db, "review"),
+          where("member_id", "==", userData.id)
+        );
+
+        const cmntReviewRef = collection(db, "cmnt_review");
+        const cmntReviewRef2 = query(
+          collection(db, "cmnt_review"),
+          where("member_id", "==", userData.id)
+        );
+        const replyReviewRef = collection(db, "reply_review");
+
+        const questionRef = query(
+          collection(db, "question"),
+          where("member_id", "==", userData.id)
+        );
+
+        const cmntQuestionRef = collection(db, "cmnt_question");
+        const cmntQuestionRef2 = query(
+          collection(db, "cmnt_question"),
+          where("member_id", "==", userData.id)
+        );
+        const replyQuestionRef = collection(db, "reply_question");
+
         // Review
         const reviewDocs = await getDocs(reviewRef);
         const reviewIds = reviewDocs.docs.map((doc) => doc.id);
@@ -510,7 +510,7 @@ const Notification = ({ userData }) => {
     };
 
     fetchData();
-  }, []);
+  }, [userData]);
 
   const [active, setActive] = useState(true);
 
