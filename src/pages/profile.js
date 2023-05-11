@@ -2,31 +2,10 @@ import React, { useEffect, useState } from "react";
 import "../styles/profile.css";
 import "../styles/notification.css";
 import "../styles/review.css";
-import {
-  Tabs,
-  Tab,
-  Dropdown,
-  ListGroup,
-  Modal,
-  Form,
-  FormControl,
-} from "react-bootstrap";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import {
-  IconButton,
-  useMediaQuery,
-  ListItemAvatar,
-  ListItemButton,
-  ListItem,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@mui/material";
+import { Tabs, Tab, Dropdown, Modal } from "react-bootstrap";
+import { useMediaQuery } from "@mui/material";
 import { Typography } from "@mui/material";
 import { ListItemText } from "@mui/material";
-import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
 import {
   addDoc,
   arrayRemove,

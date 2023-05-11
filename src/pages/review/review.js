@@ -1428,65 +1428,71 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
   };
 
   const handleDeleteClick = async () => {
-    // Create a reference to the post document
-    const docRef = doc(db, "review", postID);
-
-    // Create a query to get all comments for the post
-    const commentQuery = query(
-      collection(db, "cmnt_review"),
-      where("post_id", "==", postID)
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะลบโพสต์ใช่หรือไม่ ?"
     );
 
-    // Create a query to get all replies for the post
-    const replyQuery = query(
-      collection(db, "reply_review"),
-      where("post_id", "==", postID)
-    );
+    if (confirmed) {
+      // Create a reference to the post document
+      const docRef = doc(db, "review", postID);
 
-    // Use Promise.all() to execute both queries in parallel
-    const [commentSnapshot, replySnapshot] = await Promise.all([
-      getDocs(commentQuery),
-      getDocs(replyQuery),
-    ]);
+      // Create a query to get all comments for the post
+      const commentQuery = query(
+        collection(db, "cmnt_review"),
+        where("post_id", "==", postID)
+      );
 
-    // Delete the post document
-    await deleteDoc(docRef);
+      // Create a query to get all replies for the post
+      const replyQuery = query(
+        collection(db, "reply_review"),
+        where("post_id", "==", postID)
+      );
 
-    // Delete all comment documents
-    commentSnapshot.forEach(async (commentDoc) => {
-      const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
-      await deleteDoc(commentDocRef);
-    });
+      // Use Promise.all() to execute both queries in parallel
+      const [commentSnapshot, replySnapshot] = await Promise.all([
+        getDocs(commentQuery),
+        getDocs(replyQuery),
+      ]);
 
-    // Delete all reply documents
-    replySnapshot.forEach(async (replyDoc) => {
-      const replyDocRef = doc(db, "reply_review", replyDoc.id);
-      await deleteDoc(replyDocRef);
-    });
+      // Delete the post document
+      await deleteDoc(docRef);
 
-    // Clear Tag
-    const tagDocRef = doc(db, "tag_ranked", tagName);
-    getDoc(tagDocRef).then((docSnap) => {
-      if (docSnap.exists()) {
-        const tagCount = docSnap.data().count;
-        if (tagCount - 1 === 0) {
-          deleteDoc(tagDocRef);
-        } else {
-          updateDoc(tagDocRef, {
-            count: tagCount - 1,
-          })
-            .then(() => {
-              console.log("Document updated with new count value");
+      // Delete all comment documents
+      commentSnapshot.forEach(async (commentDoc) => {
+        const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+        await deleteDoc(commentDocRef);
+      });
+
+      // Delete all reply documents
+      replySnapshot.forEach(async (replyDoc) => {
+        const replyDocRef = doc(db, "reply_review", replyDoc.id);
+        await deleteDoc(replyDocRef);
+      });
+
+      // Clear Tag
+      const tagDocRef = doc(db, "tag_ranked", tagName);
+      getDoc(tagDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const tagCount = docSnap.data().count;
+          if (tagCount - 1 === 0) {
+            deleteDoc(tagDocRef);
+          } else {
+            updateDoc(tagDocRef, {
+              count: tagCount - 1,
             })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
+              .then(() => {
+                console.log("Document updated with new count value");
+              })
+              .catch((error) => {
+                console.error("Error updating document: ", error);
+              });
+          }
         }
-      }
-    });
+      });
 
-    console.log("Post, comments, and replies deleted successfully.");
-    alert("ลบโพสต์สำเร็จ");
+      console.log("Post, comments, and replies deleted successfully.");
+      alert("ลบโพสต์สำเร็จ");
+    }
   };
 
   return (

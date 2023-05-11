@@ -697,7 +697,11 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const [buttonStatus, setButtonStatus] = useState(true);
 
   const currentUser = auth.currentUser;
-  const currentUserId = currentUser.uid;
+  const [currentUserId, setCurrentUserId] = useState(null);
+
+  if (currentUser) {
+    setCurrentUserId(currentUser.uid);
+  }
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
@@ -846,44 +850,49 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         <div>data not available</div>
       )}
       {/* เขียนคอมเมนท์                           */}
-      <form className="pt-3 pb-1" onSubmit={replySubmit}>
-        <div className="flex-container comment" id="comment-2">
-          <div className="profile-image" style={{ marginRight: "1rem" }}>
-            <img
-              src={userData.profile}
-              alt="main page png"
-              className="img-fluid"
-            />
-          </div>
-
-          <div className="flex-2">
-            <input
-              type="text"
-              className="form-control "
-              id="content"
-              placeholder="เขียนความคิดเห็น..."
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="flex-1-right">
-            <Button
-              className="sent-comment"
-              disabled={buttonStatus}
-              type="submit"
-            >
+      {currentUser ? (
+        <form className="pt-3 pb-1" onSubmit={replySubmit}>
+          <div className="flex-container comment" id="comment-2">
+            <div className="profile-image" style={{ marginRight: "1rem" }}>
               <img
-                className="menu-pic pe-3"
-                src={require("../../images/question/sent_1.svg").default}
-                alt=""
+                src={userData.profile}
+                alt="main page png"
+                className="img-fluid"
               />
-            </Button>
+            </div>
+
+            <div className="flex-2">
+              <input
+                type="text"
+                className="form-control "
+                id="content"
+                placeholder="เขียนความคิดเห็น..."
+                value={content}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                }}
+              />
+            </div>
+
+            <div className="flex-1-right">
+              <Button
+                className="sent-comment"
+                disabled={buttonStatus}
+                type="submit"
+              >
+                <img
+                  className="menu-pic pe-3"
+                  src={require("../../images/question/sent_1.svg").default}
+                  alt=""
+                />
+              </Button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      ) : (
+        <div></div>
+      )}
+
       {/* เขียนคอมเมนท์                           */}
     </div>
   );
@@ -926,7 +935,7 @@ function Rep_Del_Comment_Click({
 }) {
   const currentUser = auth.currentUser;
 
-  const [authorCheck, setAuthorCheck] = useState(false);
+  const [authorCheck, setAuthorCheck] = useState(true);
 
   useEffect(() => {
     if (currentUser) {
@@ -1017,7 +1026,7 @@ function Rep_Del_Reply_Click({
 }) {
   const currentUser = auth.currentUser;
 
-  const [authorCheck, setAuthorCheck] = useState(false);
+  const [authorCheck, setAuthorCheck] = useState(true);
 
   useEffect(() => {
     if (currentUser) {
@@ -1074,11 +1083,11 @@ function Rep_Del_Reply_Click({
 
   return (
     <Dropdown.Menu>
-      <Dropdown.Item onClick={handleReportClick}>รายงานคอมเมนท์</Dropdown.Item>
+      <Dropdown.Item onClick={handleReportClick}>รายงานตอบกลับ</Dropdown.Item>
       {authorCheck ? (
         <div />
       ) : (
-        <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
+        <Dropdown.Item onClick={handleDeleteClick}>ลบตอบกลับ</Dropdown.Item>
       )}
     </Dropdown.Menu>
   );
