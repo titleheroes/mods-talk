@@ -697,11 +697,6 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const [buttonStatus, setButtonStatus] = useState(true);
 
   const currentUser = auth.currentUser;
-  const [currentUserId, setCurrentUserId] = useState(null);
-
-  if (currentUser) {
-    setCurrentUserId(currentUser.uid);
-  }
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
@@ -737,6 +732,8 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   }
 
   const replySubmit = (event) => {
+    const currentUserId = currentUser.uid;
+
     if (content === null) {
     } else {
       event.preventDefault();
