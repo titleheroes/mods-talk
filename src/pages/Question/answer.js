@@ -5,6 +5,9 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+
+import axios from 'axios';
+
 import "../../styles/question.css";
 import { auth, db } from "../../config";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -43,7 +46,21 @@ function Qmodal() {
   const [show, setShow] = useState(false);
 
   const [name, setName] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); //question input text
+  const [result, setResult] = useState(""); //sentiment result
+
+  const sendStringToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setResult(response.data.result); // Extract the result
+        console.log(response.data.result).then(finishClose());
+        
+      })
+      .catch(error => {
+        
+      });
+      finishClose();
+  };
 
   const [buttonStatus, setButtonStatus] = useState(true);
   const [switchOn, setSwitchOn] = useState(false);
@@ -180,7 +197,7 @@ function Qmodal() {
               type="submit"
               disabled={buttonStatus}
               className="btn post-question-btn mx-auto mt-0 "
-              onClick={finishClose}
+              onClick={sendStringToFlask}
             >
               เริ่มต้นการเขียนโพสต์
             </button>
@@ -442,6 +459,7 @@ const Answer = ({ userData }) => {
                           className="sent-comment"
                           disabled={buttonStatus}
                           type="submit"
+                          
                         >
                           <img
                             className="menu-pic pe-3"
@@ -749,6 +767,7 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         date: formattedDate,
         time: formattedTime,
       };
+      
       createData(data)
         .then(() => {
           console.log("create data success");
@@ -879,6 +898,7 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
                 className="sent-comment"
                 disabled={buttonStatus}
                 type="submit"
+                
               >
                 <img
                   className="menu-pic pe-3"

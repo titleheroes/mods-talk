@@ -22,6 +22,8 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate } from "react-router-dom";
 
+import axios from 'axios';
+
 function Rmodal() {
   const navigate = useNavigate();
 
@@ -57,6 +59,34 @@ function Rmodal() {
 
   const [header, setHeader] = useState("");
   const [content, setContent] = useState("");
+
+  const [headerResult, setHeaderResult] = useState(''); //sentiment result
+  const [contentResult, setContentResult] = useState(''); //sentiment result
+
+  const sendHeaderToFlask = () => {
+    axios.post('/api/sentiment', { string: header})
+      .then(response => {
+        setHeaderResult(response.data.result); // Extract the result
+        console.log('header => '+ response.data.result);
+        sendContentToFlask()
+      })
+      .catch(error => {
+        
+      });
+  };
+  
+  const sendContentToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setContentResult(response.data.result); // Extract the result
+        console.log('content => '+response.data.result);
+        finishClose();
+      })
+      .catch(error => {
+        
+      });
+  };
+
   const [tag, setTag] = useState("");
 
   const [buttonStatus, setButtonStatus] = useState(true);
@@ -330,7 +360,7 @@ function Rmodal() {
               type="submit"
               disabled={buttonStatus}
               className="btn post-question-btn mx-auto mt-0 "
-              onClick={finishClose}
+              onClick={sendHeaderToFlask}
             >
               เริ่มต้นการเขียนโพสต์
             </button>

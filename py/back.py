@@ -13,14 +13,6 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route('/api/endpoint', methods=['POST'])
-def receive_string_from_react():
-    data = request.get_json()
-    received_string = data['string']
-    # Process the received string as needed
-    processed_string = received_string.upper()
-    return jsonify(result=received_string)
-
 
 @app.route('/api/sentiment', methods=['POST'])
 def index():
@@ -73,6 +65,11 @@ def index():
     response_data = {'result': string_value}
 
     return jsonify(response_data)
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run()

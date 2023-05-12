@@ -5,6 +5,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+
 import axios from 'axios';
 
 
@@ -24,6 +25,8 @@ import {
 } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
+
+
 function Qmodal() {
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
@@ -40,13 +43,32 @@ function Qmodal() {
     setSwitchOn(false);
   }
 
-  const finishClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
+  
+
+  
 
   const [show, setShow] = useState(false);
 
   const [name, setName] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); //input text
+  const [result, setResult] = useState(''); //sentiment result
+
+  const sendStringToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setResult(response.data.result); // Extract the result
+        console.log(response.data.result).then(finishClose());
+        
+      })
+      .catch(error => {
+        
+      });
+      finishClose();
+  };
+
+  const finishClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const [buttonStatus, setButtonStatus] = useState(true);
   const [switchOn, setSwitchOn] = useState(false);
@@ -183,7 +205,7 @@ function Qmodal() {
               type="submit"
               disabled={buttonStatus}
               className="btn post-question-btn mx-auto mt-0 "
-              onClick={finishClose}
+              onClick={sendStringToFlask}
             >
               เริ่มต้นการเขียนโพสต์
             </button>
