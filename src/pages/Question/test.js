@@ -6,13 +6,17 @@ const MyComponent = () => {
   const [result, setResult] = useState('');
 
   const sendStringToFlask = () => {
-    axios.post('/api/endpoint', { string: inputValue })
+    axios.post('/api/sentiment', { string: inputValue })
       .then(response => {
         setResult(response.data.result); // Extract the result from the response
       })
       .catch(error => {
         // Handle any errors that occur during the request
       });
+
+    console.log({result})
+    
+    
   };
 
   return (
@@ -24,6 +28,7 @@ const MyComponent = () => {
       />
       <button onClick={sendStringToFlask}>Send String to Flask</button>
       <p>Result from Flask: {result}</p>
+      
     </div>
   );
 };
