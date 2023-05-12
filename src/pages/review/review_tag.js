@@ -345,7 +345,8 @@ const Review_Tag = () => {
     event.preventDefault();
     if (searchTextShow === false) {
       setSearchQuery("");
-      navigate("/review/search/" + searchQuery);
+      // navigate("/review/search/" + searchQuery);
+      window.location.href = "/review/search/" + searchQuery;
     }
   }
   //-----------
