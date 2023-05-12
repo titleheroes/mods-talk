@@ -28,6 +28,7 @@ import Review_Tag from "./pages/review/review_tag";
 import Question from "./pages/Question/question";
 import Question_Search from "./pages/Question/question_search";
 import Answer from "./pages/Question/answer";
+import Test from "./pages/Question/test";
 
 import { auth, db } from "./config";
 import { doc, getDoc } from "firebase/firestore";
@@ -94,6 +95,7 @@ function App() {
           <Route path="/" exact element={currentUser ? <Review /> : <Home />} />
           <Route path="/about" exact element={<About />} />
           <Route path="/question" exact element={<Question />} />
+          <Route path="/test" exact element={<Test />} />
           <Route
             path="/question/search/:keyword"
             exact

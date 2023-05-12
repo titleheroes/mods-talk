@@ -23,6 +23,7 @@ const Navbar = ({ userData }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   const hideNavbar = [
+    "/test",
     "/signup",
     "/login",
     "/authenticate",
