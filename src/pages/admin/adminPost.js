@@ -422,6 +422,7 @@ const AdminPost = ({ userData }) => {
           ...reviewData,
           ...cmntReviewData,
           ...replyReviewData,
+          ...questionData,
           ...cmntQuestionData,
           ...replyQuestionData,
         ];
@@ -430,6 +431,7 @@ const AdminPost = ({ userData }) => {
           ...reviewData,
           ...cmntReviewData,
           ...replyReviewData,
+          ...questionData,
           ...cmntQuestionData,
           ...replyQuestionData,
         ];

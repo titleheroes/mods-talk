@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
+
+import algoliasearch from "algoliasearch/lite";
 import Dropdown from "react-bootstrap/Dropdown";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
@@ -15,12 +14,17 @@ import {
   doc,
   getDocs,
   onSnapshot,
-  orderBy,
   query,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
+const algoliaClient = algoliasearch(
+  "CTLNB6TYYG",
+  "c345b328cb536038044e0f07de93dd8c"
+);
+const algoliaIndex = algoliaClient.initIndex("question");
 
 function Qmodal() {
   const currentDate = new Date();
@@ -196,6 +200,8 @@ const Question_Search = () => {
   const navigate = useNavigate();
 
   const [all, setAll] = useState([]);
+  const [objectID, setObjectID] = useState("");
+
   const [active, setActive] = useState(true);
 
   const { keyword } = useParams();
@@ -238,31 +244,36 @@ const Question_Search = () => {
   //-----------
 
   useEffect(() => {
-    const q = query(
-      collection(db, "question"),
-      where("content", ">=", keyword),
-      where("content", "<=", keyword + "\uf8ff")
-    );
-
-    try {
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
-          console.log("Succesfully Loading Post");
-        });
-        setAll(itemsList);
+    const searchAlgolia = async () => {
+      const { hits } = await algoliaIndex.search(keyword, {
+        queryType: "prefixAll",
       });
 
-      return () => {
-        unsubscribe();
-      };
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+      console.log(hits);
+
+      const objectIDs = hits.map((hit) => hit.objectID);
+      setObjectID(objectIDs);
+    };
+    searchAlgolia();
+  }, [keyword]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const q = query(
+          collection(db, "question"),
+          where("__name__", "in", objectID)
+        );
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs.map((doc) => doc.data());
+        setAll(documents);
+      } catch (error) {
+        console.error("Error getting documents:", error);
+      }
+    };
+
+    fetchData();
+  }, [objectID]);
 
   return (
     <div>

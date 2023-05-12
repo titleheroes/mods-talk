@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/review.css";
+
+import algoliasearch from "algoliasearch/lite";
 import { Button, Dropdown, Modal } from "react-bootstrap";
 import { auth, db, storage } from "../../config";
 import {
@@ -9,7 +11,6 @@ import {
   collection,
   doc,
   getDoc,
-  onSnapshot,
   query,
   updateDoc,
   orderBy,
@@ -20,6 +21,12 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate, useParams } from "react-router-dom";
+
+const algoliaClient = algoliasearch(
+  "CTLNB6TYYG",
+  "c345b328cb536038044e0f07de93dd8c"
+);
+const algoliaIndex = algoliaClient.initIndex("review");
 
 function Rmodal() {
   const navigate = useNavigate();
@@ -319,6 +326,7 @@ const Review_Search = () => {
   const navigate = useNavigate();
 
   const [all, setAll] = useState([]);
+  const [objectID, setObjectID] = useState("");
 
   const { keyword } = useParams();
 
@@ -359,31 +367,36 @@ const Review_Search = () => {
   //-----------
 
   useEffect(() => {
-    const q = query(
-      collection(db, "review"),
-      where("header", ">=", keyword),
-      where("header", "<=", keyword + "\uf8ff")
-    );
-
-    try {
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const itemsList = [];
-        querySnapshot.forEach((doc) => {
-          const item = doc.data();
-          item.id = doc.id;
-          itemsList.push(item);
-          console.log("Succesfully Loading Post");
-        });
-        setAll(itemsList);
+    const searchAlgolia = async () => {
+      const { hits } = await algoliaIndex.search(keyword, {
+        queryType: "prefixAll",
       });
 
-      return () => {
-        unsubscribe();
-      };
-    } catch (error) {
-      console.error(error);
-    }
-  }, [selectedOption]);
+      console.log(hits);
+
+      const objectIDs = hits.map((hit) => hit.objectID);
+      setObjectID(objectIDs);
+    };
+    searchAlgolia();
+  }, [keyword]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const q = query(
+          collection(db, "review"),
+          where("__name__", "in", objectID)
+        );
+        const querySnapshot = await getDocs(q);
+        const documents = querySnapshot.docs.map((doc) => doc.data());
+        setAll(documents);
+      } catch (error) {
+        console.error("Error getting documents:", error);
+      }
+    };
+
+    fetchData();
+  }, [objectID]);
 
   return (
     <div>
