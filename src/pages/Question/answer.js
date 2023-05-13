@@ -26,10 +26,10 @@ function Qmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate
-    .getMinutes()
+  const formattedTime = `${currentDate
+    .getHours()
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function handleClose(event) {
     setShow(false);
@@ -200,10 +200,10 @@ const Answer = ({ userData }) => {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate
-    .getMinutes()
+  const formattedTime = `${currentDate
+    .getHours()
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   const [active, setActive] = useState(true);
 
@@ -702,10 +702,10 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate
-    .getMinutes()
+  const formattedTime = `${currentDate
+    .getHours()
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function checkInfo() {
     if (content === "" || content === null) {

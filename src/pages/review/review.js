@@ -35,10 +35,11 @@ function Rmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate
-    .getMinutes()
+
+  const formattedTime = `${currentDate
+    .getHours()
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function handleClose(event) {
     setShow(false);
