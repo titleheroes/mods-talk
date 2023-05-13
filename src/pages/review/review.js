@@ -114,16 +114,17 @@ function Rmodal() {
   }
 
   function checkInfo() {
-    if (
-      header === "" ||
-      content === "" ||
-      selectedOption === "เลือก" ||
-      tag === ""
-    ) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedHeader = header.trim();
+    const trimmedContent = content.trim();
+    const trimmedTag = tag.trim();
+
+    const hasValidLength =
+      trimmedHeader.length >= 6 &&
+      trimmedContent.length >= 8 &&
+      trimmedTag.length > 0 &&
+      selectedOption !== "เลือก";
+
+    setButtonStatus(!hasValidLength);
   }
 
   function handleUpload(event) {
@@ -141,7 +142,7 @@ function Rmodal() {
           report: 0,
           comment: 0,
           header: header,
-          content: content,
+          content: content.replace(/\n/g, "<br>"),
           tag: tag,
           type: selectedOption,
           member_id: currentUserId,
@@ -166,7 +167,7 @@ function Rmodal() {
               report: 0,
               comment: 0,
               header: header,
-              content: content,
+              content: content.replace(/\n/g, "<br>"),
               tag: tag,
               type: selectedOption,
               member_id: currentUserId,
@@ -476,9 +477,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",
@@ -594,9 +598,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",
@@ -714,9 +721,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",
@@ -834,9 +844,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",
@@ -954,9 +967,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",
@@ -1074,9 +1090,12 @@ const Review = () => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit body">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit body"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",

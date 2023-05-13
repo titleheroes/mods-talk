@@ -49,12 +49,15 @@ function Qmodal() {
   const [switchOn, setSwitchOn] = useState(false);
 
   function checkInfo() {
-    if (name === "" || content === "") {
-      setButtonStatus(true);
-    } else if (switchOn === true && content !== "") {
+    const trimmedName = name.trim();
+    const trimmedContent = content.trim();
+
+    const hasValidLength = trimmedName.length > 0 && trimmedContent.length >= 8;
+
+    if (hasValidLength && switchOn === true) {
       setButtonStatus(false);
     } else {
-      setButtonStatus(false);
+      setButtonStatus(!hasValidLength);
     }
   }
 
@@ -79,7 +82,7 @@ function Qmodal() {
         report: 0,
         comment: 0,
         name: "ผู้ไม่ประสงค์ออกนาม",
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
@@ -89,7 +92,7 @@ function Qmodal() {
         report: 0,
         comment: 0,
         name: name,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
@@ -215,11 +218,9 @@ const Answer = ({ userData }) => {
   const [buttonStatus, setButtonStatus] = useState(true);
 
   function checkInfo() {
-    if (content === "" || content === null) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedContent = content.trim(); // remove leading/trailing spaces
+    const hasValidLength = trimmedContent.length >= 8; // check length and newline
+    setButtonStatus(!hasValidLength);
   }
 
   const handleToggleVisibility = (id) => {
@@ -280,14 +281,14 @@ const Answer = ({ userData }) => {
   const commentSubmit = (event) => {
     const currentUserId = currentUser.uid;
 
-    if (content === "" || content === null) {
+    if (buttonStatus) {
     } else {
       event.preventDefault();
       const data = {
         post_id: id,
         report: 0,
         reply: 0,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         member_id: currentUserId,
         date: formattedDate,
         time: formattedTime,
@@ -367,7 +368,10 @@ const Answer = ({ userData }) => {
               <div className="left-content">
                 <div className="post-border">
                   <p className="homeHeader2 pb-3">{post.name}</p>
-                  <p className="pb-2 text">{post.content}</p>
+                  <p
+                    className="pb-2 text"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  ></p>
 
                   <div className="flex-container comment">
                     <div className="flex-1-comment">
@@ -423,19 +427,17 @@ const Answer = ({ userData }) => {
                         />
                       </div>
 
-                      <div className="flex-2">
-                        <input
-                          type="text"
-                          className="form-control "
-                          id="content"
-                          placeholder="เขียนความคิดเห็น..."
-                          value={content}
-                          onChange={(e) => {
-                            setContent(e.target.value);
-                            checkInfo();
-                          }}
-                        />
-                      </div>
+                      <textarea
+                        className="form-control"
+                        id="content"
+                        placeholder="เขียนความคิดเห็น..."
+                        value={content}
+                        onChange={(e) => {
+                          setContent(e.target.value);
+                          checkInfo();
+                        }}
+                        rows={1}
+                      />
 
                       <div className="flex-1-right">
                         <Button
@@ -496,9 +498,10 @@ const Answer = ({ userData }) => {
                               </div>
                             </div>
 
-                            <div className="pt-4">
-                              <span>{item.content}</span>
-                            </div>
+                            <div
+                              className="pt-4"
+                              dangerouslySetInnerHTML={{ __html: item.content }}
+                            />
 
                             <div
                               className="flex-container comment pt-2"
@@ -708,11 +711,9 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function checkInfo() {
-    if (content === "" || content === null) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedContent = content.trim(); // remove leading/trailing spaces
+    const hasValidLength = trimmedContent.length >= 8; // check length and newline
+    setButtonStatus(!hasValidLength);
   }
 
   // ดันข้อมูลคอมเมนท์
@@ -734,14 +735,14 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const replySubmit = (event) => {
     const currentUserId = currentUser.uid;
 
-    if (content === null) {
+    if (buttonStatus) {
     } else {
       event.preventDefault();
       const data = {
         post_id: postID,
         cmnt_id: cmntID,
         report: 0,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         member_id: currentUserId,
         date: formattedDate,
         time: formattedTime,
@@ -828,9 +829,10 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
                 </div>
               </div>
 
-              <div className="pt-4">
-                <span>{item.content}</span>
-              </div>
+              <div
+                className="pt-4"
+                dangerouslySetInnerHTML={{ __html: item.content }}
+              />
 
               <div className="flex-container comment pt-2" id="comment-reply">
                 <div className="pe-4">
@@ -858,18 +860,16 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
               />
             </div>
 
-            <div className="flex-2">
-              <input
-                type="text"
-                className="form-control "
-                id="content"
-                placeholder="เขียนความคิดเห็น..."
-                value={content}
-                onChange={(e) => {
-                  setContent(e.target.value);
-                }}
-              />
-            </div>
+            <textarea
+              className="form-control"
+              id="content"
+              placeholder="เขียนความคิดเห็น..."
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
+              rows={1}
+            />
 
             <div className="flex-1-right">
               <Button

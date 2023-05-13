@@ -117,16 +117,17 @@ function Rmodal() {
   }
 
   function checkInfo() {
-    if (
-      header === "" ||
-      content === "" ||
-      selectedOption === "เลือก" ||
-      tag === ""
-    ) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedHeader = header.trim();
+    const trimmedContent = content.trim();
+    const trimmedTag = tag.trim();
+
+    const hasValidLength =
+      trimmedHeader.length >= 6 &&
+      trimmedContent.length >= 8 &&
+      trimmedTag.length > 0 &&
+      selectedOption !== "เลือก";
+
+    setButtonStatus(!hasValidLength);
   }
 
   function handleUpload(event) {
@@ -144,7 +145,7 @@ function Rmodal() {
           report: 0,
           comment: 0,
           header: header,
-          content: content,
+          content: content.replace(/\n/g, "<br>"),
           tag: tag,
           type: selectedOption,
           member_id: currentUserId,
@@ -169,7 +170,7 @@ function Rmodal() {
               report: 0,
               comment: 0,
               header: header,
-              content: content,
+              content: content.replace(/\n/g, "<br>"),
               tag: tag,
               type: selectedOption,
               member_id: currentUserId,
@@ -349,6 +350,8 @@ function EditProfile({ userData }) {
   const [show, setShow] = useState(false);
   const [file, setFile] = useState(null);
 
+  const [preview, setPreview] = useState(null);
+
   const handleClose = () => {
     setShow(false);
     setFac(userData.fac);
@@ -367,6 +370,10 @@ function EditProfile({ userData }) {
 
   function handleUpload(event) {
     const file = event.target.files[0];
+    if (file && /image\/(jpeg|png)/.test(file.type)) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreview(imageUrl);
+    }
     setFile(file);
   }
 
@@ -438,6 +445,7 @@ function EditProfile({ userData }) {
     setId(userData.code);
     setFac(userData.fac);
     setPos(userData.pos);
+    setPreview(userData.profile);
   }, [userData]);
 
   return (
@@ -479,12 +487,11 @@ function EditProfile({ userData }) {
             <text className="modal-topic">แก้ไขรูปภาพ</text>
             <div className="row mt-3 mb-3">
               <div className="col-3">
+                {/* <div className="profile-image-data">
+                  <img src={preview} className="img-fluid" />
+                </div> */}
                 <div className="edit-profile-image">
-                  <img
-                    src={userData.profile}
-                    alt="main page png"
-                    className="img-fluid"
-                  />
+                  <img src={preview} className="img-fluid" />
                 </div>
               </div>
               <div
@@ -497,6 +504,7 @@ function EditProfile({ userData }) {
                     className="form-control mt-2 mb-3"
                     id="picture"
                     placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+                    accept="image/jpeg, image/png"
                     onChange={handleUpload}
                   />
 
@@ -521,7 +529,7 @@ function EditProfile({ userData }) {
                   type="text"
                   className="form-control mt-2 mb-3"
                   id="modal-input-box"
-                  placeholder={userData.fname}
+                  value={fullname}
                   onChange={(e) => {
                     setFname(e.target.value);
                   }}
@@ -533,7 +541,7 @@ function EditProfile({ userData }) {
                   type="text"
                   className="form-control mt-2 mb-3"
                   id="modal-input-box"
-                  placeholder={userData.lname}
+                  value={lastname}
                   onChange={(e) => {
                     setLname(e.target.value);
                   }}
@@ -547,13 +555,9 @@ function EditProfile({ userData }) {
                   <Dropdown.Toggle
                     className="form-control py-2"
                     style={{
-                      fontSize: "14px",
                       textAlign: "left",
                       backgroundColor: "transparent",
-                      color:
-                        faculty === userData.fac
-                          ? "rgba(79, 79, 79, 0.5)"
-                          : "rgba(79, 79, 79)",
+                      color: "rgba(79, 79, 79)",
                       borderColor: "rgba(79, 79, 79, 0.3)",
                       width: "100%",
                       whiteSpace: "nowrap", // prevent text from wrapping
@@ -614,8 +618,9 @@ function EditProfile({ userData }) {
                 <input
                   type="text"
                   className="form-control mt-2 mb-3"
+                  style={{ height: "42px" }}
                   id="modal-input-box"
-                  placeholder={userData.pos}
+                  value={position}
                   onChange={(e) => {
                     setPos(e.target.value);
                   }}
@@ -629,7 +634,7 @@ function EditProfile({ userData }) {
                   type="text"
                   className="form-control mt-2 mb-3"
                   id="modal-input-box"
-                  placeholder={userData.code}
+                  value={studentid}
                   onChange={(e) => {
                     setId(e.target.value);
                   }}
@@ -749,9 +754,12 @@ const Profile = ({ userData }) => {
                                     <div className="homeHeader2">
                                       {item.header}
                                     </div>
-                                    <div className="text-limit posttext">
-                                      {item.content}
-                                    </div>
+                                    <div
+                                      className="text-limit posttext"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></div>
                                     <div
                                       style={{
                                         paddingTop: "1rem",

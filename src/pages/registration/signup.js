@@ -26,26 +26,48 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      className="css-og50xi-MuiTypography-root"
-      style={{ fontFamily: "Kanit", color: "#132238" }}
-      {...props}
-    >
-      มีบัญชีผู้ใช้งานแล้วใช่หรือไม่? &nbsp;
-      <Link
-        to="/login"
-        style={{
-          fontWeight: "600",
-          color: "#132238",
-          textDecorationLine: "underline",
-        }}
+    <div>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        className="css-og50xi-MuiTypography-root"
+        style={{ fontFamily: "Kanit", color: "#132238" }}
+        {...props}
       >
-        เข้าสู่ระบบที่นี่
-      </Link>
-    </Typography>
+        มีบัญชีผู้ใช้งานแล้วใช่หรือไม่? &nbsp;
+        <Link
+          to="/login"
+          style={{
+            fontWeight: "600",
+            color: "#132238",
+            textDecorationLine: "underline",
+          }}
+        >
+          เข้าสู่ระบบที่นี่
+        </Link>
+      </Typography>
+
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        className="css-og50xi-MuiTypography-root pt-3"
+        style={{ fontFamily: "Kanit", color: "#132238" }}
+        {...props}
+      >
+        <Link
+          to="/"
+          style={{
+            fontWeight: "600",
+            color: "#132238",
+            textDecorationLine: "underline",
+          }}
+        >
+          กลับสู่หน้าหลัก
+        </Link>
+      </Typography>
+    </div>
   );
 }
 

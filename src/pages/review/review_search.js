@@ -18,6 +18,7 @@ import {
   deleteDoc,
   getDocs,
   limit,
+  onSnapshot,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -94,16 +95,17 @@ function Rmodal() {
   }
 
   function checkInfo() {
-    if (
-      header === "" ||
-      content === "" ||
-      selectedOption === "เลือก" ||
-      tag === ""
-    ) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedHeader = header.trim();
+    const trimmedContent = content.trim();
+    const trimmedTag = tag.trim();
+
+    const hasValidLength =
+      trimmedHeader.length >= 6 &&
+      trimmedContent.length >= 8 &&
+      trimmedTag.length > 0 &&
+      selectedOption !== "เลือก";
+
+    setButtonStatus(!hasValidLength);
   }
 
   function handleUpload(event) {
@@ -121,7 +123,7 @@ function Rmodal() {
           report: 0,
           comment: 0,
           header: header,
-          content: content,
+          content: content.replace(/\n/g, "<br>"),
           tag: tag,
           type: selectedOption,
           member_id: currentUserId,
@@ -146,7 +148,7 @@ function Rmodal() {
               report: 0,
               comment: 0,
               header: header,
-              content: content,
+              content: content.replace(/\n/g, "<br>"),
               tag: tag,
               type: selectedOption,
               member_id: currentUserId,
@@ -161,6 +163,7 @@ function Rmodal() {
     }
     setSelectedOption("เลือก");
     setFile(null);
+    navigate("/");
   };
 
   return (
@@ -323,8 +326,6 @@ function Rmodal() {
 }
 
 const Review_Search = () => {
-  const navigate = useNavigate();
-
   const [all, setAll] = useState([]);
   const [objectID, setObjectID] = useState("");
 
@@ -353,7 +354,6 @@ const Review_Search = () => {
     event.preventDefault();
     if (searchTextShow === false) {
       setSearchQuery("");
-      // navigate("/review/search/" + searchQuery);
       window.location.href = "/review/search/" + searchQuery;
     }
   }
@@ -382,21 +382,23 @@ const Review_Search = () => {
   }, [keyword]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const q = query(
-          collection(db, "review"),
-          where("__name__", "in", objectID)
-        );
-        const querySnapshot = await getDocs(q);
-        const documents = querySnapshot.docs.map((doc) => doc.data());
+    if (objectID && objectID.length > 0) {
+      const q = query(
+        collection(db, "review"),
+        where("__name__", "in", objectID)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const documents = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
         setAll(documents);
-      } catch (error) {
-        console.error("Error getting documents:", error);
-      }
-    };
+      });
 
-    fetchData();
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [objectID]);
 
   return (
@@ -476,9 +478,12 @@ const Review_Search = () => {
                               />
                               <div>
                                 <div className="homeHeader2">{item.header}</div>
-                                <div className="text-limit body">
-                                  {item.content}
-                                </div>
+                                <div
+                                  className="text-limit body"
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.content,
+                                  }}
+                                ></div>
                                 <div
                                   style={{
                                     paddingTop: "1rem",
@@ -863,11 +868,11 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
 
   return (
     <Dropdown.Menu>
-      <Dropdown.Item onClick={handleReportClick}>รายงานคอมเมนท์</Dropdown.Item>
+      <Dropdown.Item onClick={handleReportClick}>รายงานโพสต์</Dropdown.Item>
       {authorCheck ? (
         <div />
       ) : (
-        <Dropdown.Item onClick={handleDeleteClick}>ลบคอมเมนท์</Dropdown.Item>
+        <Dropdown.Item onClick={handleDeleteClick}>ลบโพสต์</Dropdown.Item>
       )}
     </Dropdown.Menu>
   );

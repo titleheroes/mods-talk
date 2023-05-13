@@ -470,8 +470,6 @@ const AdminPost = ({ userData }) => {
   }, []);
   // pull post
 
-  console.log(allData);
-
   return (
     <div className="adminpage">
       <Sidebar userData={userData} />
@@ -525,6 +523,9 @@ const AdminPost = ({ userData }) => {
                             data.category
                               .toLowerCase()
                               .includes(searchQuery.toLowerCase()) ||
+                            data.name
+                              ?.toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
                             (fullNames[data.id] &&
                               fullNames[data.id]
                                 .toLowerCase()
@@ -559,12 +560,13 @@ const AdminPost = ({ userData }) => {
                                   }))
                                 }
                               />
-                              {fullNames[data.id]}
+                              {data.name === undefined
+                                ? fullNames[data.id]
+                                : data.name}
                             </TableCell>
                             <TableCell align="left">{data.section}</TableCell>
                             <TableCell align="left">{data.category}</TableCell>
                             <TableCell align="left">
-                              {console.log(data.status)}
                               <h
                                 style={{
                                   color:
@@ -671,6 +673,9 @@ const AdminPost = ({ userData }) => {
                             data.category
                               .toLowerCase()
                               .includes(searchQuery.toLowerCase()) ||
+                            data.name
+                              ?.toLowerCase()
+                              .includes(searchQuery.toLowerCase()) ||
                             (fullNames[data.id] &&
                               fullNames[data.id]
                                 .toLowerCase()
@@ -705,13 +710,14 @@ const AdminPost = ({ userData }) => {
                                   }))
                                 }
                               />
-                              {fullNames[data.id]}
+                              {data.name === undefined
+                                ? fullNames[data.id]
+                                : data.name}
                             </TableCell>
                             <TableCell align="center">{data.report}</TableCell>
                             <TableCell align="left">{data.section}</TableCell>
                             <TableCell align="left">{data.category}</TableCell>
                             <TableCell align="left">
-                              {console.log(data.status)}
                               <h
                                 style={{
                                   color:
@@ -816,7 +822,7 @@ function MemberInfo({ memberID, onLoadFullName }) {
       const fullName = `${memberData.fname} ${memberData.lname}`;
       onLoadFullName(fullName);
     }
-  }, [memberData, onLoadFullName]);
+  }, [memberData]);
 
   return <></>;
 }

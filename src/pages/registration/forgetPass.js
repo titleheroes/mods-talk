@@ -22,26 +22,47 @@ import { auth } from "../../config.js";
 
 function Copyright(props) {
   return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      className="css-og50xi-MuiTypography-root"
-      style={{ fontFamily: "Kanit", color: "#132238" }}
-      {...props}
-    >
-      ต้องการกลับไปเข้าสู่ระบบ &nbsp;
-      <Link
-        to="/login"
-        style={{
-          fontWeight: "600",
-          color: "#132238",
-          textDecorationLine: "underline",
-        }}
+    <div>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        className="css-og50xi-MuiTypography-root"
+        style={{ fontFamily: "Kanit", color: "#132238" }}
+        {...props}
       >
-        คลิกที่นี่
-      </Link>
-    </Typography>
+        ต้องการกลับไปเข้าสู่ระบบ &nbsp;
+        <Link
+          to="/login"
+          style={{
+            fontWeight: "600",
+            color: "#132238",
+            textDecorationLine: "underline",
+          }}
+        >
+          คลิกที่นี่
+        </Link>
+      </Typography>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        align="center"
+        className="css-og50xi-MuiTypography-root pt-3"
+        style={{ fontFamily: "Kanit", color: "#132238" }}
+        {...props}
+      >
+        <Link
+          to="/"
+          style={{
+            fontWeight: "600",
+            color: "#132238",
+            textDecorationLine: "underline",
+          }}
+        >
+          กลับสู่หน้าหลัก
+        </Link>
+      </Typography>
+    </div>
   );
 }
 

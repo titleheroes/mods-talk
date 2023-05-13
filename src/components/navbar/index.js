@@ -8,8 +8,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Dropdown } from "react-bootstrap";
 import { signOut } from "firebase/auth";
-import { auth } from "../../config.js";
+import { auth, db } from "../../config.js";
 import { Nav, NavLink, Bars, Times, NavBtn, NavBtnLink } from "./NavbarElement";
+import { doc, getDoc } from "firebase/firestore";
 
 const Navbar = ({ userData }) => {
   const location = useLocation();
@@ -21,6 +22,8 @@ const Navbar = ({ userData }) => {
   const closeMobileMenu = () => setClick(false);
 
   const [currentUser, setCurrentUser] = useState(null);
+
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const hideNavbar = [
     "/signup",
@@ -43,6 +46,26 @@ const Navbar = ({ userData }) => {
     return unsubscribe;
   }, []);
 
+  // ดึงข้อมูลแอดมิน
+  useEffect(() => {
+    try {
+      const currentUser = auth.currentUser;
+      const currentUserId = currentUser.uid;
+      const docRef = doc(db, "admin", currentUserId);
+      getDoc(docRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const level = docSnap.data().level;
+          if (level === "superadmin" || level === "admin") {
+            setIsAdmin(true);
+          }
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+  // ดึงข้อมูลแอดมิน
+
   useEffect(() => {
     console.log(userData);
     if (currentUser) {
@@ -50,6 +73,10 @@ const Navbar = ({ userData }) => {
         if (userData === "Login But no Data") {
           window.location.href = "/datauser";
         }
+      } else if (
+        location.pathname === "/signup" ||
+        location.pathname === "/authenticate"
+      ) {
       }
     }
   }, [location.pathname, userData]);
@@ -190,6 +217,35 @@ const Navbar = ({ userData }) => {
 
                       <hr />
 
+                      {isAdmin ? (
+                        <div>
+                          <Dropdown.Item
+                            className="mt-1"
+                            as={Link}
+                            to={`/admin/user`}
+                            onClick={closeMobileMenu}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              fontSize: "14px",
+                            }}
+                          >
+                            <span>
+                              <img
+                                src={
+                                  require("../../images/icon/admin.svg").default
+                                }
+                                alt="user svg"
+                                style={{ width: "22px" }}
+                              />
+                            </span>
+                            &nbsp;&nbsp; แอดมิน
+                          </Dropdown.Item>
+
+                          <hr />
+                        </div>
+                      ) : null}
+
                       <Dropdown.Item
                         className="mb-2"
                         style={{
@@ -282,6 +338,7 @@ const Navbar = ({ userData }) => {
             </ul>
           )}
 
+          {/* PC User Profile */}
           {currentUser ? (
             <Dropdown
               className="mobile-size2"
@@ -343,6 +400,33 @@ const Navbar = ({ userData }) => {
 
                 <hr />
 
+                {isAdmin ? (
+                  <div>
+                    <Dropdown.Item
+                      className="mt-1"
+                      as={Link}
+                      to={`/admin/user`}
+                      onClick={closeMobileMenu}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <span>
+                        <img
+                          src={require("../../images/icon/admin.svg").default}
+                          alt="user svg"
+                          style={{ width: "22px" }}
+                        />
+                      </span>
+                      &nbsp;&nbsp; แอดมิน
+                    </Dropdown.Item>
+
+                    <hr />
+                  </div>
+                ) : null}
+
                 <Dropdown.Item
                   className="mb-2"
                   style={{
@@ -373,6 +457,7 @@ const Navbar = ({ userData }) => {
               </Link>
             </NavBtn>
           )}
+          {/* End of PC User Profile */}
         </Nav>
       </div>
     )

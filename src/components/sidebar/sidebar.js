@@ -44,9 +44,15 @@ const Sidebar = ({ userData }) => {
 
   return (
     <div className="sidebar">
-      <div className="top">
-        <img className="logo" src={require("../../images/logo2.png")} alt="" />
-      </div>
+      <Link to="/">
+        <div className="top">
+          <img
+            className="logo"
+            src={require("../../images/logo2.png")}
+            alt=""
+          />
+        </div>
+      </Link>
 
       <div className="center">
         <ul>

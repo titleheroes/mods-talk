@@ -50,12 +50,15 @@ function Qmodal() {
   const [switchOn, setSwitchOn] = useState(false);
 
   function checkInfo() {
-    if (name === "" || content === "") {
-      setButtonStatus(true);
-    } else if (switchOn === true && content !== "") {
+    const trimmedName = name.trim();
+    const trimmedContent = content.trim();
+
+    const hasValidLength = trimmedName.length > 0 && trimmedContent.length >= 8;
+
+    if (hasValidLength && switchOn === true) {
       setButtonStatus(false);
     } else {
-      setButtonStatus(false);
+      setButtonStatus(!hasValidLength);
     }
   }
 
@@ -80,7 +83,7 @@ function Qmodal() {
         report: 0,
         comment: 0,
         name: "ผู้ไม่ประสงค์ออกนาม",
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
@@ -90,7 +93,7 @@ function Qmodal() {
         report: 0,
         comment: 0,
         name: name,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
@@ -300,7 +303,12 @@ const Question = () => {
                             <div key={item.id}>
                               <div className="post-border">
                                 <p className="poster-name pb-3">{item.name}</p>
-                                <p className="pb-2 text">{item.content}</p>
+                                <p
+                                  className="pb-2 text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.content,
+                                  }}
+                                ></p>
 
                                 <div className="flex-container comment">
                                   <div className="flex-1-comment">
@@ -374,7 +382,12 @@ const Question = () => {
                             <div key={item.id}>
                               <div className="post-border">
                                 <p className="poster-name pb-3">{item.name}</p>
-                                <p className="pb-2 text">{item.content}</p>
+                                <p
+                                  className="pb-2 text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.content,
+                                  }}
+                                ></p>
 
                                 <div className="flex-container comment">
                                   <div className="flex-1-comment">

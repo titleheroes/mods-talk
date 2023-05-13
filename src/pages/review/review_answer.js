@@ -86,16 +86,17 @@ function Qmodal() {
   }
 
   function checkInfo() {
-    if (
-      header === "" ||
-      content === "" ||
-      selectedOption === "เลือก" ||
-      tag === ""
-    ) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedHeader = header.trim();
+    const trimmedContent = content.trim();
+    const trimmedTag = tag.trim();
+
+    const hasValidLength =
+      trimmedHeader.length >= 6 &&
+      trimmedContent.length >= 8 &&
+      trimmedTag.length > 0 &&
+      selectedOption !== "เลือก";
+
+    setButtonStatus(!hasValidLength);
   }
 
   function handleUpload(event) {
@@ -113,7 +114,7 @@ function Qmodal() {
           report: 0,
           comment: 0,
           header: header,
-          content: content,
+          content: content.replace(/\n/g, "<br>"),
           tag: tag,
           type: selectedOption,
           member_id: currentUserId,
@@ -138,7 +139,7 @@ function Qmodal() {
               report: 0,
               comment: 0,
               header: header,
-              content: content,
+              content: content.replace(/\n/g, "<br>"),
               tag: tag,
               type: selectedOption,
               member_id: currentUserId,
@@ -221,6 +222,7 @@ function Qmodal() {
               id="picture"
               placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
               onChange={handleUpload}
+              accept="image/jpeg, image/png"
             />
 
             <text className="modal-topic">แฮชแท็ก</text>
@@ -356,11 +358,9 @@ const Answer = ({ userData }) => {
   const [buttonStatus, setButtonStatus] = useState(true);
 
   function checkInfo() {
-    if (content === "" || content === null) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedContent = content.trim(); // remove leading/trailing spaces
+    const hasValidLength = trimmedContent.length >= 8; // check length and newline
+    setButtonStatus(!hasValidLength);
   }
 
   const handleToggleVisibility = (id) => {
@@ -399,7 +399,7 @@ const Answer = ({ userData }) => {
 
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
-    if (content === "" || content === null) {
+    if (buttonStatus) {
     } else {
       event.preventDefault();
       const data = {
@@ -407,7 +407,7 @@ const Answer = ({ userData }) => {
         like: 0,
         report: 0,
         reply: 0,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         member_id: currentUserId,
         date: formattedDate,
         time: formattedTime,
@@ -511,7 +511,10 @@ const Answer = ({ userData }) => {
                     />
                   </div>
 
-                  <p className="pt-3 text">{post.content}</p>
+                  <p
+                    className="pt-3 text"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
+                  ></p>
 
                   <div className="flex-container comment">
                     <div className="flex-1-comment">
@@ -583,19 +586,17 @@ const Answer = ({ userData }) => {
                       />
                     </div>
 
-                    <div className="flex-2">
-                      <input
-                        type="text"
-                        className="form-control "
-                        id="content"
-                        placeholder="เขียนความคิดเห็น..."
-                        value={content}
-                        onChange={(e) => {
-                          setContent(e.target.value);
-                          checkInfo();
-                        }}
-                      />
-                    </div>
+                    <textarea
+                      className="form-control"
+                      id="content"
+                      placeholder="เขียนความคิดเห็น..."
+                      value={content}
+                      onChange={(e) => {
+                        setContent(e.target.value);
+                        checkInfo();
+                      }}
+                      rows={1}
+                    />
 
                     <div className="flex-1-right">
                       <Button
@@ -653,9 +654,10 @@ const Answer = ({ userData }) => {
                             </div>
                           </div>
 
-                          <div className="pt-4">
-                            <span>{item.content}</span>
-                          </div>
+                          <div
+                            className="pt-4"
+                            dangerouslySetInnerHTML={{ __html: item.content }}
+                          />
 
                           <div
                             className="flex-container comment pt-2"
@@ -966,11 +968,9 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function checkInfo() {
-    if (content === "" || content === null) {
-      setButtonStatus(true);
-    } else {
-      setButtonStatus(false);
-    }
+    const trimmedContent = content.trim(); // remove leading/trailing spaces
+    const hasValidLength = trimmedContent.length >= 8; // check length and newline
+    setButtonStatus(!hasValidLength);
   }
 
   // ดันข้อมูลคอมเมนท์
@@ -990,7 +990,7 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   }
 
   const replySubmit = (event) => {
-    if (content === null) {
+    if (buttonStatus) {
     } else {
       event.preventDefault();
       const data = {
@@ -998,7 +998,7 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         cmnt_id: cmntID,
         like: 0,
         report: 0,
-        content: content,
+        content: content.replace(/\n/g, "<br>"),
         member_id: currentUserId,
         date: formattedDate,
         time: formattedTime,
@@ -1086,9 +1086,10 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
                 </div>
               </div>
 
-              <div className="pt-4">
-                <span>{item.content}</span>
-              </div>
+              <div
+                className="pt-4"
+                dangerouslySetInnerHTML={{ __html: item.content }}
+              />
 
               <div className="flex-container comment pt-2" id="comment-reply">
                 <div className="pe-4">
@@ -1123,18 +1124,17 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
             />
           </div>
 
-          <div className="flex-2">
-            <input
-              type="text"
-              className="form-control "
-              id="content"
-              placeholder="เขียนความคิดเห็น..."
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value);
-              }}
-            />
-          </div>
+          <textarea
+            className="form-control"
+            id="content"
+            placeholder="เขียนความคิดเห็น..."
+            value={content}
+            onChange={(e) => {
+              setContent(e.target.value);
+              checkInfo();
+            }}
+            rows={1}
+          />
 
           <div className="flex-1-right">
             <Button
