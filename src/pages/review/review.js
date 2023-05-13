@@ -32,6 +32,8 @@ function Rmodal() {
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const timestamp = Date.now();
+  
+  
 
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
@@ -63,6 +65,8 @@ function Rmodal() {
   const [headerResult, setHeaderResult] = useState(''); //sentiment result
   const [contentResult, setContentResult] = useState(''); //sentiment result
 
+  
+
   const sendHeaderToFlask = () => {
     axios.post('/api/sentiment', { string: header})
       .then(response => {
@@ -80,7 +84,7 @@ function Rmodal() {
       .then(response => {
         setContentResult(response.data.result); // Extract the result
         console.log('content => '+response.data.result);
-        finishClose();
+        handleSubmit();
       })
       .catch(error => {
         
@@ -101,6 +105,8 @@ function Rmodal() {
   }, [selectedOption]);
 
   async function createData(postData, tagName) {
+
+
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
       const tagDocRef = doc(db, "tag_ranked", tagName);
@@ -160,15 +166,20 @@ function Rmodal() {
     setFile(file);
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = ( event ) => {
     if (selectedOption === "เลือก") {
     } else {
       event.preventDefault();
+
+      
+      
+
       if (file === null) {
         const data = {
           like: 0,
           report: 0,
           comment: 0,
+          
           header: header,
           content: content,
           tag: tag,
@@ -179,6 +190,14 @@ function Rmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
+
+       
+        if (headerResult === 'NEG' ) {
+          data = { ...data, status: 1};
+        } else if (contentResult === 'NEG' ) {
+          data = { ...data, status: 1};
+        } 
+
         createData(data, tag);
       } else {
         const storageRef = ref(
@@ -196,6 +215,7 @@ function Rmodal() {
               comment: 0,
               header: header,
               content: content,
+              
               tag: tag,
               type: selectedOption,
               member_id: currentUserId,
@@ -203,6 +223,12 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
+            
+            if (headerResult === 'NEG' ) {
+              data = { ...data, status: 1};
+            } else if (contentResult === 'NEG' ) {
+              data = { ...data, status: 1};
+            } 
             createData(data, tag);
           });
         });
@@ -230,7 +256,7 @@ function Rmodal() {
         keyboard={false}
         className="question-modal"
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={sendHeaderToFlask}>
           <div className="modal-header question-modal-header pt-4">
             <h1
               className="modal-title question-modal-title fs-5 ps-2 "
@@ -360,7 +386,7 @@ function Rmodal() {
               type="submit"
               disabled={buttonStatus}
               className="btn post-question-btn mx-auto mt-0 "
-              onClick={sendHeaderToFlask}
+              
             >
               เริ่มต้นการเขียนโพสต์
             </button>
