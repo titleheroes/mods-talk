@@ -90,6 +90,8 @@ function Qmodal() {
   }
 
   function handleSubmit(event) {
+
+    
     event.preventDefault();
     if (switchOn === true) {
       const data = {
@@ -225,8 +227,12 @@ const Answer = ({ userData }) => {
   const [active, setActive] = useState(true);
 
   const [post, setPost] = useState(null);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); //input text
   const [comment, setComment] = useState([]);
+
+  const [contentResult, setContentResult] = useState(''); //sentiment result
+
+  
 
   const [visibility, setVisibility] = useState({});
   const [buttonStatus, setButtonStatus] = useState(true);
@@ -293,6 +299,19 @@ const Answer = ({ userData }) => {
     }
   }
 
+  const sendContentStringToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setContentResult(response.data.result); // Extract the result
+        console.log(response.data.result);
+        
+      })
+      .catch(error => {
+        
+      });
+      
+  };
+
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
     const currentUserId = currentUser.uid;
@@ -309,6 +328,9 @@ const Answer = ({ userData }) => {
         date: formattedDate,
         time: formattedTime,
       };
+
+      sendContentStringToFlask()
+
       createData(data)
         .then(() => {
           console.log("create data success");
@@ -459,6 +481,7 @@ const Answer = ({ userData }) => {
                           className="sent-comment"
                           disabled={buttonStatus}
                           type="submit"
+                          
                           
                         >
                           <img

@@ -6,6 +6,9 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import "../../styles/review.css";
+
+import axios from 'axios';
+
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   addDoc,
@@ -62,6 +65,35 @@ function Qmodal() {
   const [header, setHeader] = useState("");
   const [content, setContent] = useState("");
   const [tag, setTag] = useState("");
+
+  const [headerResult, setHeaderResult] = useState(''); //sentiment result
+  const [contentResult, setContentResult] = useState(''); //sentiment result
+
+
+  const sendHeaderToFlask = () => {
+    axios.post('/api/sentiment', { string: header})
+      .then(response => {
+        setHeaderResult(response.data.result); // Extract the result
+        console.log('header => '+ response.data.result);
+        sendContentToFlask()
+      })
+      .catch(error => {
+        
+      });
+  };
+  
+  const sendContentToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setContentResult(response.data.result); // Extract the result
+        console.log('content => '+response.data.result);
+        finishClose();
+      })
+      .catch(error => {
+        
+      });
+      finishClose();
+  };
 
   const [buttonStatus, setButtonStatus] = useState(true);
 
@@ -303,7 +335,7 @@ function Qmodal() {
               type="submit"
               disabled={buttonStatus}
               className="btn post-question-btn mx-auto mt-0 "
-              onClick={finishClose}
+              onClick={sendHeaderToFlask}
             >
               เริ่มต้นการเขียนโพสต์
             </button>
@@ -351,6 +383,8 @@ const Answer = ({ userData }) => {
   const [content, setContent] = useState("");
   const [comment, setComment] = useState([]);
 
+  const [contentResult, setContentResult] = useState(''); //sentiment result
+
   const [visibility, setVisibility] = useState({});
   const [buttonStatus, setButtonStatus] = useState(true);
 
@@ -396,6 +430,19 @@ const Answer = ({ userData }) => {
     }
   }
 
+  const sendContentStringToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setContentResult(response.data.result); // Extract the result
+        console.log(response.data.result);
+        
+      })
+      .catch(error => {
+        
+      });
+      
+  };
+
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
     if (content === "" || content === null) {
@@ -411,6 +458,9 @@ const Answer = ({ userData }) => {
         date: formattedDate,
         time: formattedTime,
       };
+
+      sendContentStringToFlask()
+
       createData(data)
         .then(() => {
           console.log("create data success");
@@ -952,6 +1002,8 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   const [reply, setReply] = useState([]);
   const [buttonStatus, setButtonStatus] = useState(true);
 
+  const [contentResult, setContentResult] = useState(''); //sentiment result
+
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
@@ -988,6 +1040,20 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     }
   }
 
+
+  const sendContentStringToFlask = () => {
+    axios.post('/api/sentiment', { string: content})
+      .then(response => {
+        setContentResult(response.data.result); // Extract the result
+        console.log(response.data.result);
+        
+      })
+      .catch(error => {
+        
+      });
+      
+  };
+
   const replySubmit = (event) => {
     if (content === null) {
     } else {
@@ -1002,6 +1068,8 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         date: formattedDate,
         time: formattedTime,
       };
+
+      sendContentStringToFlask();
       createData(data)
         .then(() => {
           console.log("create data success");
