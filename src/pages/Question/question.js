@@ -73,6 +73,9 @@ function Qmodal() {
       console.log("This Post has been created", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
+    } finally {
+      setName("");
+      setContent("");
     }
   }
 
@@ -234,8 +237,13 @@ const Question = () => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      navigate("/question/search/" + searchQuery);
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/question/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -302,7 +310,38 @@ const Question = () => {
                           {all.map((item) => (
                             <div key={item.id}>
                               <div className="post-border">
-                                <p className="poster-name pb-3">{item.name}</p>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <p className="poster-name pb-3">
+                                    {item.name}
+                                  </p>
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      variant="link"
+                                      id="question-dropdown"
+                                    >
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </Dropdown.Toggle>
+
+                                    <Rep_Click
+                                      postID={item.id}
+                                      rep_count={item.report}
+                                    />
+                                  </Dropdown>
+                                </div>
+
                                 <p
                                   className="pb-2 text"
                                   dangerouslySetInnerHTML={{
@@ -319,7 +358,7 @@ const Question = () => {
                                     </span>
                                   </div>
 
-                                  <div className="flex-2-comment">
+                                  <div className="flex-2-comment pb-3">
                                     <Link
                                       to={"/question/post/" + item.id}
                                       style={{ paddingRight: "0.5rem" }}
@@ -335,29 +374,6 @@ const Question = () => {
                                     <span style={{ paddingRight: "1rem" }}>
                                       {item.comment}
                                     </span>
-                                  </div>
-
-                                  <div className="flex-1-comment-right">
-                                    <Dropdown>
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="question-dropdown"
-                                      >
-                                        <img
-                                          className="menu-dropdown"
-                                          src={
-                                            require("../../images/question/three_dots.svg")
-                                              .default
-                                          }
-                                          alt=""
-                                        />
-                                      </Dropdown.Toggle>
-
-                                      <Rep_Click
-                                        postID={item.id}
-                                        rep_count={item.report}
-                                      />
-                                    </Dropdown>
                                   </div>
                                 </div>
                               </div>
@@ -381,7 +397,37 @@ const Question = () => {
                           {noAns.map((item) => (
                             <div key={item.id}>
                               <div className="post-border">
-                                <p className="poster-name pb-3">{item.name}</p>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <p className="poster-name pb-3">
+                                    {item.name}
+                                  </p>
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      variant="link"
+                                      id="question-dropdown"
+                                    >
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </Dropdown.Toggle>
+
+                                    <Rep_Click
+                                      postID={item.id}
+                                      rep_count={item.report}
+                                    />
+                                  </Dropdown>
+                                </div>
                                 <p
                                   className="pb-2 text"
                                   dangerouslySetInnerHTML={{
@@ -398,7 +444,7 @@ const Question = () => {
                                     </span>
                                   </div>
 
-                                  <div className="flex-2-comment">
+                                  <div className="flex-2-comment pb-3">
                                     <Link
                                       to={"/question/post/" + item.id}
                                       style={{ paddingRight: "0.5rem" }}
@@ -414,29 +460,6 @@ const Question = () => {
                                     <span style={{ paddingRight: "1rem" }}>
                                       {item.comment}
                                     </span>
-                                  </div>
-
-                                  <div className="flex-1-comment-right">
-                                    <Dropdown>
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="question-dropdown"
-                                      >
-                                        <img
-                                          className="menu-dropdown"
-                                          src={
-                                            require("../../images/question/three_dots.svg")
-                                              .default
-                                          }
-                                          alt=""
-                                        />
-                                      </Dropdown.Toggle>
-
-                                      <Rep_Click
-                                        postID={item.id}
-                                        rep_count={item.report}
-                                      />
-                                    </Dropdown>
                                   </div>
                                 </div>
                               </div>

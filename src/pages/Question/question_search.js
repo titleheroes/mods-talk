@@ -77,6 +77,9 @@ function Qmodal() {
       console.log("This Post has been created", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
+    } finally {
+      setName("");
+      setContent("");
     }
   }
 
@@ -200,8 +203,6 @@ function Qmodal() {
 }
 
 const Question_Search = () => {
-  const navigate = useNavigate();
-
   const [all, setAll] = useState([]);
   const [objectID, setObjectID] = useState("");
 
@@ -240,8 +241,13 @@ const Question_Search = () => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      navigate("/question/search/" + searchQuery);
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/question/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -261,21 +267,23 @@ const Question_Search = () => {
   }, [keyword]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const q = query(
-          collection(db, "question"),
-          where("__name__", "in", objectID)
-        );
-        const querySnapshot = await getDocs(q);
-        const documents = querySnapshot.docs.map((doc) => doc.data());
+    if (objectID && objectID.length > 0) {
+      const q = query(
+        collection(db, "question"),
+        where("__name__", "in", objectID)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const documents = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
         setAll(documents);
-      } catch (error) {
-        console.error("Error getting documents:", error);
-      }
-    };
+      });
 
-    fetchData();
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [objectID]);
 
   return (
@@ -302,7 +310,7 @@ const Question_Search = () => {
                   </ol>
                 </nav>
 
-                <span className="qTitle">ถาม-ตอบ</span>
+                <div className="reviewSearch_Title">ค้นหาจาก "{keyword}"</div>
 
                 <div className="pt-4">
                   <div>
@@ -311,7 +319,36 @@ const Question_Search = () => {
                         {all.map((item) => (
                           <div key={item.id}>
                             <div className="post-border">
-                              <p className="poster-name pb-3">{item.name}</p>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <p className="poster-name pb-3">{item.name}</p>
+
+                                <Dropdown>
+                                  <Dropdown.Toggle
+                                    variant="link"
+                                    id="question-dropdown"
+                                  >
+                                    <img
+                                      className="menu-dropdown"
+                                      src={
+                                        require("../../images/question/three_dots.svg")
+                                          .default
+                                      }
+                                      alt=""
+                                    />
+                                  </Dropdown.Toggle>
+
+                                  <Rep_Click
+                                    postID={item.id}
+                                    rep_count={item.report}
+                                  />
+                                </Dropdown>
+                              </div>
                               <p
                                 className="pb-2 text"
                                 dangerouslySetInnerHTML={{
@@ -328,7 +365,7 @@ const Question_Search = () => {
                                   </span>
                                 </div>
 
-                                <div className="flex-2-comment">
+                                <div className="flex-2-comment pb-3">
                                   <Link
                                     to={"/answer/post/" + item.id}
                                     style={{ paddingRight: "0.5rem" }}
@@ -344,29 +381,6 @@ const Question_Search = () => {
                                   <span style={{ paddingRight: "1rem" }}>
                                     {item.comment}
                                   </span>
-                                </div>
-
-                                <div className="flex-1-comment-right">
-                                  <Dropdown>
-                                    <Dropdown.Toggle
-                                      variant="link"
-                                      id="question-dropdown"
-                                    >
-                                      <img
-                                        className="menu-dropdown"
-                                        src={
-                                          require("../../images/question/three_dots.svg")
-                                            .default
-                                        }
-                                        alt=""
-                                      />
-                                    </Dropdown.Toggle>
-
-                                    <Rep_Click
-                                      postID={item.id}
-                                      rep_count={item.report}
-                                    />
-                                  </Dropdown>
                                 </div>
                               </div>
                             </div>

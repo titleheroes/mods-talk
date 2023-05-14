@@ -31,6 +31,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -179,8 +180,64 @@ const rows = [
   ),
 ];
 
-function AlertDialogSlide({ id, header, section, category, suspended }) {
-  let docRef;
+function AlertDialogSlide({
+  id,
+  post_id,
+  cmnt_id,
+  header,
+  name,
+  section,
+  category,
+  suspended,
+}) {
+  async function deleteProc(docRef, docRefValue) {
+    try {
+      await deleteDoc(docRef);
+      try {
+        const docSnapshot = await getDoc(docRefValue);
+        if (category === "คอมเมนท์") {
+          try {
+            if (docSnapshot.exists()) {
+              if (suspended === undefined) {
+                const data = docSnapshot.data();
+                await updateDoc(docRefValue, {
+                  comment: data.comment - 1,
+                });
+              }
+              console.log("Comment count decremented successfully!");
+            }
+          } catch (e) {
+            console.error("Error updating document: ", e);
+          }
+        } else if (category === "ตอบกลับ") {
+          try {
+            if (docSnapshot.exists()) {
+              if (suspended === undefined) {
+                const data = docSnapshot.data();
+                await updateDoc(docRefValue, {
+                  reply: data.comment - 1,
+                });
+              }
+              console.log("Reply count decremented successfully!");
+            }
+          } catch (e) {
+            console.error("Error updating document: ", e);
+          }
+        }
+      } catch (error) {
+        console.error("Error getting document: ", error);
+      } finally {
+        if (section === "รีวิว") {
+          alert(`${category} ${header} ได้ถูกลบแล้ว`);
+        } else if (section === "ถาม-ตอบ") {
+          alert(`${category} ของคุณ ${name} ได้ถูกลบแล้ว`);
+        }
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+    }
+  }
 
   const handleDelete = (event) => {
     event.preventDefault();
@@ -188,35 +245,95 @@ function AlertDialogSlide({ id, header, section, category, suspended }) {
       `คุณยืนยันที่ต้องการจะลบ${category}นี้ใช่หรือไม่ ?`
     );
     if (confirmed) {
-      if (section === "รีวิว") {
-        if (category === "โพสต์") {
-          const docRef = doc(db, "review", id);
-        } else if (category === "คอมเมนท์") {
-          const docRef = doc(db, "cmnt_review", id);
-        } else if (category === "ตอบกลับ") {
-          const docRef = doc(db, "reply_review", id);
-        }
-      } else if (section === "ถาม-ตอบ") {
-        if (category === "โพสต์") {
-          const docRef = doc(db, "question", id);
-        } else if (category === "คอมเมนท์") {
-          const docRef = doc(db, "cmnt_question", id);
-        } else if (category === "ตอบกลับ") {
-          const docRef = doc(db, "reply_question", id);
-        }
-      }
-
       try {
-        deleteDoc(docRef).then(() => {
-          alert(`${category} ${header} ได้ถูกลบแล้ว`);
-        });
+        if (section === "รีวิว") {
+          if (category === "โพสต์") {
+            const docRef = doc(db, "review", id);
+            deleteProc(docRef);
+          } else if (category === "คอมเมนท์") {
+            const docRef = doc(db, "cmnt_review", id);
+            const docRefValue = doc(db, "review", post_id);
+            deleteProc(docRef, docRefValue);
+          } else if (category === "ตอบกลับ") {
+            const docRef = doc(db, "reply_review", id);
+            const docRefValue = doc(db, "cmnt_review", cmnt_id);
+            deleteProc(docRef, docRefValue);
+          }
+        } else if (section === "ถาม-ตอบ") {
+          if (category === "โพสต์") {
+            const docRef = doc(db, "question", id);
+            deleteProc(docRef);
+          } else if (category === "คอมเมนท์") {
+            const docRef = doc(db, "cmnt_question", id);
+            const docRefValue = doc(db, "question", post_id);
+            deleteProc(docRef, docRefValue);
+          } else if (category === "ตอบกลับ") {
+            const docRef = doc(db, "reply_question", id);
+            const docRefValue = doc(db, "cmnt_question", cmnt_id);
+            deleteProc(docRef, docRefValue);
+          }
+        }
       } catch (error) {
-        console.error("Error adding document: ", error);
+        console.error("Error deleting document: ", error);
       }
     }
   };
 
-  const handleSuspended = async (event) => {
+  async function suspendedProc(docRef, docRefValue) {
+    try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists() && docSnap.data().status) {
+        alert(`${category}ได้ถูกระงับอยู่แล้ว`);
+      } else {
+        await updateDoc(docRef, {
+          status: 1,
+        });
+        try {
+          const docSnapshot = await getDoc(docRefValue);
+          if (category === "คอมเมนท์") {
+            try {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                updateDoc(docRefValue, {
+                  comment: data.comment - 1,
+                });
+                console.log("Comment count decremented successfully!");
+              }
+            } catch (e) {
+              console.error("Error updating document: ", e);
+            }
+          } else if (category === "ตอบกลับ") {
+            try {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                updateDoc(docRefValue, {
+                  reply: data.comment - 1,
+                });
+                console.log("Reply count decremented successfully!");
+              }
+            } catch (e) {
+              console.error("Error updating document: ", e);
+            }
+          }
+        } catch (error) {
+          console.error("Error getting document: ", error);
+        } finally {
+          if (section === "รีวิว") {
+            alert(`${category} ${header} ได้ถูกลบแล้ว`);
+          } else if (section === "ถาม-ตอบ") {
+            alert(`${category} ของคุณ ${name} ได้ถูกลบแล้ว`);
+          }
+          window.location.reload();
+        }
+        console.log("Suspended :", docRef.id);
+      }
+    } catch (error) {
+      alert("เกิดข้อผิดพลาดในการระงับ");
+      console.error("Error Suspended : ", error);
+    }
+  }
+
+  const handleSuspended = (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
       `คุณยืนยันที่ต้องการจะระงับ${category}นี้ใช่หรือไม่ ?`
@@ -226,80 +343,118 @@ function AlertDialogSlide({ id, header, section, category, suspended }) {
       if (section === "รีวิว") {
         if (category === "โพสต์") {
           const docRef = doc(db, "review", id);
+          suspendedProc(docRef);
         } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_review", id);
+          const docRefValue = doc(db, "review", post_id);
+          suspendedProc(docRef, docRefValue);
         } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_review", id);
+          const docRefValue = doc(db, "cmnt_review", cmnt_id);
+          suspendedProc(docRef, docRefValue);
         }
       } else if (section === "ถาม-ตอบ") {
         if (category === "โพสต์") {
           const docRef = doc(db, "question", id);
+          suspendedProc(docRef);
         } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_question", id);
+          const docRefValue = doc(db, "question", post_id);
+          suspendedProc(docRef, docRefValue);
         } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_question", id);
+          const docRefValue = doc(db, "cmnt_question", cmnt_id);
+          suspendedProc(docRef, docRefValue);
         }
-      }
-
-      try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().status) {
-          alert(`${category}ได้ถูกระงับอยู่แล้ว`);
-        } else {
-          await updateDoc(docRef, {
-            status: 1,
-          });
-          alert(`คุณระงับ${category} ${header} แล้ว`);
-          console.log("Suspended :", docRef.id);
-          window.location.reload();
-        }
-      } catch (error) {
-        alert("เกิดข้อผิดพลาดในการระงับ");
-        console.error("Error Suspended : ", error);
       }
     }
   };
+
+  async function unsuspendedProc(docRef, docRefValue) {
+    try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists() && docSnap.data().status) {
+        await updateDoc(docRef, {
+          status: deleteField(),
+        });
+        try {
+          const docSnapshot = await getDoc(docRefValue);
+          if (category === "คอมเมนท์") {
+            try {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                await updateDoc(docRefValue, {
+                  comment: data.comment + 1,
+                });
+                console.log("Comment count incremented successfully!");
+              }
+            } catch (e) {
+              console.error("Error updating document: ", e);
+            }
+          } else if (category === "ตอบกลับ") {
+            try {
+              if (docSnapshot.exists()) {
+                const data = docSnapshot.data();
+                await updateDoc(docRefValue, {
+                  reply: data.comment + 1,
+                });
+                console.log("Reply count incremented successfully!");
+              }
+            } catch (e) {
+              console.error("Error updating document: ", e);
+            }
+          }
+        } catch (error) {
+          console.error("Error getting document: ", error);
+        } finally {
+          if (section === "รีวิว") {
+            alert(`คุณระงับ ${category} ${header} แล้ว`);
+          } else if (section === "ถาม-ตอบ") {
+            alert(`คุณระงับ ${category} ของคุณ ${name} แล้ว`);
+          }
+          window.location.reload();
+        }
+      } else {
+        alert(`${category}ได้รับการอนุมัติอยู่แล้ว`);
+      }
+    } catch (error) {
+      alert("เกิดข้อผิดพลาดในการอนุมัติ");
+      console.error("Error Approved : ", error);
+    }
+  }
 
   const handleUnsuspended = async (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
       `คุณยืนยันที่ต้องการจะอนุมัติ${category}นี้ใช่หรือไม่ ?`
     );
-
     if (confirmed) {
       if (section === "รีวิว") {
         if (category === "โพสต์") {
           const docRef = doc(db, "review", id);
+          unsuspendedProc(docRef);
         } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_review", id);
+          const docRefValue = doc(db, "review", post_id);
+          unsuspendedProc(docRef, docRefValue);
         } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_review", id);
+          const docRefValue = doc(db, "cmnt_review", cmnt_id);
+          unsuspendedProc(docRef, docRefValue);
         }
       } else if (section === "ถาม-ตอบ") {
         if (category === "โพสต์") {
           const docRef = doc(db, "question", id);
+          unsuspendedProc(docRef);
         } else if (category === "คอมเมนท์") {
           const docRef = doc(db, "cmnt_question", id);
+          const docRefValue = doc(db, "question", post_id);
+          unsuspendedProc(docRef, docRefValue);
         } else if (category === "ตอบกลับ") {
           const docRef = doc(db, "reply_question", id);
+          const docRefValue = doc(db, "cmnt_question", cmnt_id);
+          unsuspendedProc(docRef, docRefValue);
         }
-      }
-
-      try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().status) {
-          await updateDoc(docRef, {
-            status: null,
-          });
-          alert(`คุณอนุมัติ${category} ${header} แล้ว`);
-          console.log("Approved :", docRef.id);
-          window.location.reload();
-        } else {
-          alert(`${category}ได้รับการอนุมัติอยู่แล้ว`);
-        }
-      } catch (error) {
-        alert("เกิดข้อผิดพลาดในการอนุมัติ");
-        console.error("Error Approved : ", error);
       }
     }
   };
@@ -326,13 +481,13 @@ function AlertDialogSlide({ id, header, section, category, suspended }) {
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item onClick={handleDelete}>ลบ{category}</Dropdown.Item>
-          {suspended === 0 || 1 ? (
-            <Dropdown.Item onClick={handleUnsuspended}>
-              อนุมัติ{category}
-            </Dropdown.Item>
-          ) : (
+          {suspended === undefined ? (
             <Dropdown.Item onClick={handleSuspended}>
               ระงับ{category}
+            </Dropdown.Item>
+          ) : (
+            <Dropdown.Item onClick={handleUnsuspended}>
+              อนุมัติ{category}
             </Dropdown.Item>
           )}
         </Dropdown.Menu>
@@ -588,7 +743,10 @@ const AdminPost = ({ userData }) => {
                             <TableCell align="center">
                               <AlertDialogSlide
                                 id={data.id}
+                                post_id={data.post_id}
+                                cmnt_id={data.cmnt_id}
                                 header={data.header}
+                                name={fullNames[data.id]}
                                 section={data.section}
                                 category={data.category}
                                 suspended={data.status}
@@ -739,7 +897,10 @@ const AdminPost = ({ userData }) => {
                             <TableCell align="center">
                               <AlertDialogSlide
                                 id={data.id}
+                                post_id={data.post_id}
+                                cmnt_id={data.cmnt_id}
                                 header={data.header}
+                                name={fullNames[data.id]}
                                 section={data.section}
                                 category={data.category}
                                 suspended={data.status}

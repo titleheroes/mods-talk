@@ -254,8 +254,13 @@ const Navbar = ({ userData }) => {
                           fontSize: "14px",
                         }}
                         onClick={() => {
-                          signOut(auth);
-                          window.location.href = "/";
+                          const confirmed = window.confirm(
+                            "คุณยืนยันที่ต้องการจะออกจากระบบใช่หรือไม่ ?"
+                          );
+                          if (confirmed) {
+                            signOut(auth);
+                            window.location.href = "/";
+                          }
                         }}
                       >
                         <span>
@@ -358,7 +363,6 @@ const Navbar = ({ userData }) => {
                   display: "flex",
                   alignItems: "center",
                 }}
-                className=""
               >
                 {userData ? (
                   <div className="mx-3" style={{ color: "black" }}>
@@ -379,8 +383,8 @@ const Navbar = ({ userData }) => {
 
               <Dropdown.Menu>
                 <Dropdown.Item
-                  className="mt-1"
-                  as={Link}
+                  className="mt-1 profile-dropdown"
+                  // as={Link}
                   to={`/profile/${userData.id}`}
                   style={{
                     display: "flex",
@@ -435,8 +439,13 @@ const Navbar = ({ userData }) => {
                     fontSize: "14px",
                   }}
                   onClick={() => {
-                    signOut(auth);
-                    window.location.href = "/";
+                    const confirmed = window.confirm(
+                      "คุณยืนยันที่ต้องการจะออกจากระบบใช่หรือไม่ ?"
+                    );
+                    if (confirmed) {
+                      signOut(auth);
+                      window.location.href = "/";
+                    }
                   }}
                 >
                   <span>

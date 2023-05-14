@@ -14,9 +14,13 @@ const Sidebar = ({ userData }) => {
   const { pathname } = useLocation();
 
   const handleSignOut = () => {
-    alert("ออกจากระบบสำเร็จ");
-    signOut(auth);
-    window.location.href = "/";
+    const confirmed = window.confirm(
+      "คุณยืนยันที่ต้องการจะออกจากระบบใช่หรือไม่ ?"
+    );
+    if (confirmed) {
+      signOut(auth);
+      window.location.href = "/";
+    }
   };
 
   // ดึงข้อมูลแอดมิน

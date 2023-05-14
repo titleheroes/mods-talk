@@ -39,7 +39,6 @@ function App() {
   const [userData, setUserData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoading2, setIsLoading2] = useState(true);
 
   // pull userData
   useEffect(() => {

@@ -17,6 +17,7 @@ import {
   deleteDoc,
   getDocs,
   limit,
+  setDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -34,6 +35,7 @@ function Rmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
+
   const formattedTime = `${currentDate
     .getHours()
     .toString()
@@ -69,20 +71,49 @@ function Rmodal() {
     checkInfo();
   }, [selectedOption]);
 
-  function checkLogin() {
-    if (currentUser === null) {
-      navigate("/");
-    }
-  }
-
-  async function createData(postData) {
+  async function createData(postData, tagName) {
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
+      const tagDocRef = doc(db, "tag_ranked", tagName);
+      getDoc(tagDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const tagCount = docSnap.data().count;
+          updateDoc(tagDocRef, {
+            count: tagCount + 1,
+          })
+            .then(() => {
+              console.log("Document updated with new count value");
+            })
+            .catch((error) => {
+              console.error("Error updating document: ", error);
+            });
+        } else {
+          const reviewsCollectionRef = collection(db, "tag_ranked");
+          const newReviewDocRef = doc(reviewsCollectionRef, tagName);
+
+          const newReview = {
+            count: 1,
+          };
+
+          setDoc(newReviewDocRef, newReview)
+            .then(() => {
+              console.log("Document written with ID: ", newReviewDocRef.id);
+            })
+            .catch((error) => {
+              console.error("Error adding document: ", error);
+            });
+        }
+      });
+
       console.log("This Post has been created", docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
+    } finally {
+      setHeader("");
+      setContent("");
+      setTag("");
     }
   }
 
@@ -124,7 +155,7 @@ function Rmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data);
+        createData(data, tag);
       } else {
         const storageRef = ref(
           storage,
@@ -148,7 +179,7 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data);
+            createData(data, tag);
           });
         });
       }
@@ -345,9 +376,13 @@ const Review_Tag = () => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      // navigate("/review/search/" + searchQuery);
-      window.location.href = "/review/search/" + searchQuery;
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/review/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -453,11 +488,48 @@ const Review_Tag = () => {
                         <div key={item.id}>
                           <div className="row flex-wrap">
                             <div className="col-sm-9">
-                              <MemberInfo
-                                memberID={item.member_id}
-                                time={item.time}
-                                date={item.date}
-                              />
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                }}
+                              >
+                                <MemberInfo
+                                  memberID={item.member_id}
+                                  time={item.time}
+                                  date={item.date}
+                                />
+                                <Dropdown drop="down">
+                                  <Dropdown.Toggle
+                                    variant="link"
+                                    id="dropdown-basic"
+                                    style={{
+                                      border: "none",
+                                      boxShadow: "none",
+                                      color: "transparent",
+                                    }}
+                                  >
+                                    <span style={{ color: "black" }}>
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </span>
+                                  </Dropdown.Toggle>
+                                  <Rep_Del_Click
+                                    postID={item.id}
+                                    rep_users={item.rep_users}
+                                    rep_count={item.report}
+                                    tagName={item.tag}
+                                    member_id={item.member_id}
+                                  />
+                                </Dropdown>
+                              </div>
                               <div>
                                 <div className="homeHeader2">{item.header}</div>
                                 <div
@@ -507,35 +579,6 @@ const Review_Tag = () => {
                                           like_count={item.like}
                                         />
                                       </div>
-                                      <Dropdown drop="down">
-                                        <Dropdown.Toggle
-                                          variant="link"
-                                          id="dropdown-basic"
-                                          style={{
-                                            border: "none",
-                                            boxShadow: "none",
-                                            color: "transparent",
-                                          }}
-                                        >
-                                          <span style={{ color: "black" }}>
-                                            <img
-                                              className="menu-dropdown"
-                                              src={
-                                                require("../../images/question/three_dots.svg")
-                                                  .default
-                                              }
-                                              alt=""
-                                            />
-                                          </span>
-                                        </Dropdown.Toggle>
-                                        <Rep_Del_Click
-                                          postID={item.id}
-                                          rep_users={item.rep_users}
-                                          rep_count={item.report}
-                                          tagName={item.tag}
-                                          member_id={item.member_id}
-                                        />
-                                      </Dropdown>
                                     </div>
                                   </div>
                                 </div>
@@ -543,7 +586,22 @@ const Review_Tag = () => {
                             </div>
 
                             <div className="col-sm-3 pt-3">
-                              <img src={item.picture} className="img-fluid" />
+                              <div
+                                style={{
+                                  width: "200px",
+                                  height: "200px",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <img
+                                  src={item.picture}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </div>
                             </div>
                             <div style={{ paddingTop: "1rem" }}>
                               <hr />

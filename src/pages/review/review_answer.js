@@ -20,13 +20,14 @@ import {
   onSnapshot,
   orderBy,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
 import { auth, db, storage } from "../../config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-function Qmodal() {
+function Rmodal() {
   const navigate = useNavigate();
 
   const currentUser = auth.currentUser;
@@ -39,6 +40,7 @@ function Qmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
+
   const formattedTime = `${currentDate
     .getHours()
     .toString()
@@ -74,14 +76,49 @@ function Qmodal() {
     checkInfo();
   }, [selectedOption]);
 
-  async function createData(postData) {
+  async function createData(postData, tagName) {
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
+      const tagDocRef = doc(db, "tag_ranked", tagName);
+      getDoc(tagDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const tagCount = docSnap.data().count;
+          updateDoc(tagDocRef, {
+            count: tagCount + 1,
+          })
+            .then(() => {
+              console.log("Document updated with new count value");
+            })
+            .catch((error) => {
+              console.error("Error updating document: ", error);
+            });
+        } else {
+          const reviewsCollectionRef = collection(db, "tag_ranked");
+          const newReviewDocRef = doc(reviewsCollectionRef, tagName);
+
+          const newReview = {
+            count: 1,
+          };
+
+          setDoc(newReviewDocRef, newReview)
+            .then(() => {
+              console.log("Document written with ID: ", newReviewDocRef.id);
+            })
+            .catch((error) => {
+              console.error("Error adding document: ", error);
+            });
+        }
+      });
+
       console.log("This Post has been created", docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
+    } finally {
+      setHeader("");
+      setContent("");
+      setTag("");
     }
   }
 
@@ -123,7 +160,7 @@ function Qmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data);
+        createData(data, tag);
       } else {
         const storageRef = ref(
           storage,
@@ -147,7 +184,7 @@ function Qmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data);
+            createData(data, tag);
           });
         });
       }
@@ -222,7 +259,6 @@ function Qmodal() {
               id="picture"
               placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
               onChange={handleUpload}
-              accept="image/jpeg, image/png"
             />
 
             <text className="modal-topic">แฮชแท็ก</text>
@@ -341,9 +377,13 @@ const Answer = ({ userData }) => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      // navigate("/review/search/" + searchQuery);
-      window.location.href = "/review/search/" + searchQuery;
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/review/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -483,11 +523,48 @@ const Answer = ({ userData }) => {
             <div className="col-md-8">
               <div className="left-content">
                 <div className="post-border">
-                  <MemberHost
-                    memberID={post.member_id}
-                    time={post.time}
-                    date={post.date}
-                  />
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <MemberHost
+                      memberID={post.member_id}
+                      time={post.time}
+                      date={post.date}
+                    />
+                    <Dropdown drop="down">
+                      <Dropdown.Toggle
+                        variant="link"
+                        id="dropdown-basic"
+                        style={{
+                          border: "none",
+                          boxShadow: "none",
+                          color: "transparent",
+                        }}
+                      >
+                        <span style={{ color: "black" }}>
+                          <img
+                            className="menu-dropdown"
+                            src={
+                              require("../../images/question/three_dots.svg")
+                                .default
+                            }
+                            alt=""
+                          />
+                        </span>
+                      </Dropdown.Toggle>
+                      <Rep_Del_Click
+                        postID={id}
+                        rep_users={post.rep_users}
+                        rep_count={post.report}
+                        tagName={post.tag}
+                        member_id={post.member_id}
+                      />
+                    </Dropdown>
+                  </div>
 
                   <div className="pt-2 homeHeader2">{post.header}</div>
 
@@ -537,38 +614,6 @@ const Answer = ({ userData }) => {
                     </div>
 
                     <div className="flex-2-comment"></div>
-
-                    <div className="flex-1-comment-right">
-                      <Dropdown drop="down">
-                        <Dropdown.Toggle
-                          variant="link"
-                          id="dropdown-basic"
-                          style={{
-                            border: "none",
-                            boxShadow: "none",
-                            color: "transparent",
-                          }}
-                        >
-                          <span style={{ color: "black" }}>
-                            <img
-                              className="menu-dropdown"
-                              src={
-                                require("../../images/question/three_dots.svg")
-                                  .default
-                              }
-                              alt=""
-                            />
-                          </span>
-                        </Dropdown.Toggle>
-                        <Rep_Del_Click
-                          postID={id}
-                          rep_users={post.rep_users}
-                          rep_count={post.report}
-                          tagName={post.tag}
-                          member_id={post.member_id}
-                        />
-                      </Dropdown>
-                    </div>
                   </div>
                 </div>
 
@@ -576,14 +621,12 @@ const Answer = ({ userData }) => {
                 <form onSubmit={commentSubmit}>
                   <div className="flex-container comment" id="comment-2">
                     <div
-                      className="profile-image"
+                      className="box-reply-profile-image"
                       style={{ marginRight: "1rem" }}
                     >
-                      <img
-                        src={userData.profile}
-                        alt="main page png"
-                        className="img-fluid"
-                      />
+                      <div className="reply-profile-image">
+                        <img src={userData.profile} className="img-fluid" />
+                      </div>
                     </div>
 
                     <textarea
@@ -720,7 +763,7 @@ const Answer = ({ userData }) => {
               <div className="vertical-line"></div>
             </div>
             <div className="col-md-3">
-              <Qmodal />
+              <Rmodal />
 
               <div className="searchBar">
                 <div className="search-container">
@@ -1116,12 +1159,13 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
       {/* เขียนคอมเมนท์                           */}
       <form className="pt-3 pb-1" onSubmit={replySubmit}>
         <div className="flex-container comment" id="comment-2">
-          <div className="profile-image" style={{ marginRight: "1rem" }}>
-            <img
-              src={userData.profile}
-              alt="main page png"
-              className="img-fluid"
-            />
+          <div
+            className="box-reply-profile-image"
+            style={{ marginRight: "1rem" }}
+          >
+            <div className="reply-profile-image">
+              <img src={userData.profile} className="img-fluid" />
+            </div>
           </div>
 
           <textarea

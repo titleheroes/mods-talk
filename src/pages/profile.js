@@ -487,9 +487,6 @@ function EditProfile({ userData }) {
             <text className="modal-topic">แก้ไขรูปภาพ</text>
             <div className="row mt-3 mb-3">
               <div className="col-3">
-                {/* <div className="profile-image-data">
-                  <img src={preview} className="img-fluid" />
-                </div> */}
                 <div className="edit-profile-image">
                   <img src={preview} className="img-fluid" />
                 </div>
@@ -498,7 +495,7 @@ function EditProfile({ userData }) {
                 className="col-9"
                 style={{ display: "flex", alignItems: "center" }}
               >
-                <div>
+                <div style={{ paddingLeft: "10px" }}>
                   <input
                     type="file"
                     className="form-control mt-2 mb-3"
@@ -875,9 +872,13 @@ const Profile = ({ userData }) => {
 
                 <EditProfile userData={userData} />
 
-                <div className="box-profile-image-data">
-                  <div className="profile-image-data">
-                    <img src={userData.profile} className="img-fluid" />
+                <div className="box mt-5">
+                  <div className="profile-main">
+                    <img
+                      src={userData.profile}
+                      alt="main page png"
+                      className="img-fluid"
+                    />
                   </div>
                 </div>
 

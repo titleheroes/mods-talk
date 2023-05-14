@@ -72,6 +72,9 @@ function Qmodal() {
       console.log("This Post has been created", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
+    } finally {
+      setName("");
+      setContent("");
     }
   }
 
@@ -256,8 +259,13 @@ const Answer = ({ userData }) => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      navigate("/question/search/" + searchQuery);
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/question/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -367,7 +375,30 @@ const Answer = ({ userData }) => {
             <div className="col-md-8">
               <div className="left-content">
                 <div className="post-border">
-                  <p className="homeHeader2 pb-3">{post.name}</p>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <p className="homeHeader2 pb-3">{post.name}</p>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="link" id="question-dropdown">
+                        <img
+                          className="menu-dropdown"
+                          src={
+                            require("../../images/question/three_dots.svg")
+                              .default
+                          }
+                          alt=""
+                        />
+                      </Dropdown.Toggle>
+
+                      <Rep_Click postID={post.id} rep_count={post.report} />
+                    </Dropdown>
+                  </div>
+
                   <p
                     className="pb-2 text"
                     dangerouslySetInnerHTML={{ __html: post.content }}
@@ -392,23 +423,6 @@ const Answer = ({ userData }) => {
                         {post.comment}
                       </span>
                     </div>
-
-                    <div className="flex-1-comment-right">
-                      <Dropdown>
-                        <Dropdown.Toggle variant="link" id="question-dropdown">
-                          <img
-                            className="menu-dropdown"
-                            src={
-                              require("../../images/question/three_dots.svg")
-                                .default
-                            }
-                            alt=""
-                          />
-                        </Dropdown.Toggle>
-
-                        <Rep_Click postID={post.id} rep_count={post.report} />
-                      </Dropdown>
-                    </div>
                   </div>
                 </div>
 
@@ -417,14 +431,12 @@ const Answer = ({ userData }) => {
                   <form className="post-border" onSubmit={commentSubmit}>
                     <div className="flex-container comment" id="comment-2">
                       <div
-                        className="profile-image"
+                        className="box-reply-profile-image"
                         style={{ marginRight: "1rem" }}
                       >
-                        <img
-                          src={userData.profile}
-                          alt="main page png"
-                          className="img-fluid"
-                        />
+                        <div className="reply-profile-image">
+                          <img src={userData.profile} className="img-fluid" />
+                        </div>
                       </div>
 
                       <textarea
@@ -852,12 +864,13 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
       {currentUser ? (
         <form className="pt-3 pb-1" onSubmit={replySubmit}>
           <div className="flex-container comment" id="comment-2">
-            <div className="profile-image" style={{ marginRight: "1rem" }}>
-              <img
-                src={userData.profile}
-                alt="main page png"
-                className="img-fluid"
-              />
+            <div
+              className="box-reply-profile-image"
+              style={{ marginRight: "1rem" }}
+            >
+              <div className="reply-profile-image">
+                <img src={userData.profile} className="img-fluid" />
+              </div>
             </div>
 
             <textarea

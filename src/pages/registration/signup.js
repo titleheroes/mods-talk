@@ -329,13 +329,16 @@ export default function SignUp() {
                     </div>
 
                     <div
+                      className="pt-3"
                       style={{
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                       }}
                     >
-                      {confirmPasswordError && <p>{confirmPasswordError}</p>}
+                      {confirmPasswordError && (
+                        <p style={{ color: "red" }}>{confirmPasswordError}</p>
+                      )}
                     </div>
 
                     <div

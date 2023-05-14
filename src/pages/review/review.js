@@ -110,6 +110,10 @@ function Rmodal() {
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
+    } finally {
+      setHeader("");
+      setContent("");
+      setTag("");
     }
   }
 
@@ -344,8 +348,6 @@ function Rmodal() {
 }
 
 const Review = () => {
-  const navigate = useNavigate();
-
   //Search Bar
   const [searchQuery, setSearchQuery] = useState("");
   const [searchTextShow, setSearchTextShow] = useState(true);
@@ -368,9 +370,13 @@ const Review = () => {
   function handleSearchSubmit(event) {
     event.preventDefault();
     if (searchTextShow === false) {
-      setSearchQuery("");
-      // navigate("/review/search/" + searchQuery);
-      window.location.href = "/review/search/" + searchQuery;
+      const trimmedSearchQuery = searchQuery.trim();
+      if (trimmedSearchQuery === "") {
+        alert("กรุณากรอกข้อความก่อนค้นหา");
+      } else {
+        setSearchQuery("");
+        window.location.href = "/review/search/" + searchQuery;
+      }
     }
   }
   //-----------
@@ -468,11 +474,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -527,35 +570,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-                                            <Rep_Del_Click
-                                              postID={item.id}
-                                              rep_users={item.rep_users}
-                                              rep_count={item.report}
-                                              tagName={item.tag}
-                                              member_id={item.member_id}
-                                            />
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -563,10 +577,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3 pt-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -589,11 +615,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -647,38 +710,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Rep_Del_Click
-                                                postID={item.id}
-                                                rep_users={item.rep_users}
-                                                rep_count={item.report}
-                                                tagName={item.tag}
-                                                member_id={item.member_id}
-                                              />
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -686,10 +717,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3 pt-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -712,11 +755,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -770,38 +850,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Rep_Del_Click
-                                                postID={item.id}
-                                                rep_users={item.rep_users}
-                                                rep_count={item.report}
-                                                tagName={item.tag}
-                                                member_id={item.member_id}
-                                              />
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -809,10 +857,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3 pt-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -835,11 +895,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -893,38 +990,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Rep_Del_Click
-                                                postID={item.id}
-                                                rep_users={item.rep_users}
-                                                rep_count={item.report}
-                                                tagName={item.tag}
-                                                member_id={item.member_id}
-                                              />
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -932,10 +997,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3 pt-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -958,11 +1035,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -1016,38 +1130,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Rep_Del_Click
-                                                postID={item.id}
-                                                rep_users={item.rep_users}
-                                                rep_count={item.report}
-                                                tagName={item.tag}
-                                                member_id={item.member_id}
-                                              />
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -1055,10 +1137,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -1081,11 +1175,48 @@ const Review = () => {
                             <div key={item.id}>
                               <div className="row flex-wrap">
                                 <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <MemberInfo
+                                      memberID={item.member_id}
+                                      time={item.time}
+                                      date={item.date}
+                                    />
+                                    <Dropdown drop="down">
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="dropdown-basic"
+                                        style={{
+                                          border: "none",
+                                          boxShadow: "none",
+                                          color: "transparent",
+                                        }}
+                                      >
+                                        <span style={{ color: "black" }}>
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </span>
+                                      </Dropdown.Toggle>
+                                      <Rep_Del_Click
+                                        postID={item.id}
+                                        rep_users={item.rep_users}
+                                        rep_count={item.report}
+                                        tagName={item.tag}
+                                        member_id={item.member_id}
+                                      />
+                                    </Dropdown>
+                                  </div>
                                   <div>
                                     <div className="homeHeader2">
                                       {item.header}
@@ -1139,38 +1270,6 @@ const Review = () => {
                                               like_count={item.like}
                                             />
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
-                                                />
-                                              </span>
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu>
-                                              <Rep_Del_Click
-                                                postID={item.id}
-                                                rep_users={item.rep_users}
-                                                rep_count={item.report}
-                                                tagName={item.tag}
-                                                member_id={item.member_id}
-                                              />
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
@@ -1178,10 +1277,22 @@ const Review = () => {
                                 </div>
 
                                 <div className="col-sm-3 pt-3">
-                                  <img
-                                    src={item.picture}
-                                    className="img-fluid"
-                                  />
+                                  <div
+                                    style={{
+                                      width: "200px",
+                                      height: "200px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src={item.picture}
+                                      style={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
