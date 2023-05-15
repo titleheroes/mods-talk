@@ -43,13 +43,16 @@ const MyComponent = () => {
  
   return (
     <div>
-        <div>
-          <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} />
+        <div >
+          <textarea className='form-control mb-3' rows="3" type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} />
+
           <button onClick={TestsendDataToFlask}>Send to Flask</button>
-          <p>Response from Flask: {result}</p>
+          
         </div>
 
-
+        <div>
+          <p>Response from Flask: {result}</p>
+        </div>
       
       
     </div>
