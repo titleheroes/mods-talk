@@ -23,6 +23,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate } from "react-router-dom";
 
 import axios from 'axios';
+const api_address = 'http://jakkapatkan.pythonanywhere.com/api/sentiment'
 
 function Rmodal() {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ function Rmodal() {
   const [contentResult, setContentResult] = useState(''); //sentiment result
 
   
-
+  
   const sendHeaderToFlask = () => {
     axios.post('/api/sentiment', { string: header})
       .then(response => {

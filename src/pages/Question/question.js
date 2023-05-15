@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
-
+const api_address = 'http://jakkapatkan.pythonanywhere.com/api/sentiment'
 
 function Qmodal() {
   const currentDate = new Date();
@@ -51,21 +51,27 @@ function Qmodal() {
   const [show, setShow] = useState(false);
 
   const [name, setName] = useState("");
+
   const [content, setContent] = useState(""); //input text
+
   const [result, setResult] = useState(''); //sentiment result
 
-  const sendStringToFlask = () => {
-    axios.post('/api/sentiment', { string: content})
-      .then(response => {
-        setResult(response.data.result); // Extract the result
-        console.log(response.data.result).then(finishClose());
-        
-      })
-      .catch(error => {
-        
+  const sendStringToFlask = async () => {
+    try {
+      const response = await axios.post(api_address, {
+        text: content,
+
       });
-      finishClose();
+      setResult(response.data.result);
+      console.log('result => '+response.data.result);
+    } catch (error) {
+      console.error(error);
+    }
+    finishClose();
   };
+
+
+
 
   const finishClose = () => setShow(false);
   const handleShow = () => setShow(true);
