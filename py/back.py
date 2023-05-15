@@ -14,6 +14,13 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 
+@app.route('/')
+def test():
+
+
+    return "Hello mod's talk"
+
+
 @app.route('/api/sentiment', methods=['POST'])
 def index():
 
