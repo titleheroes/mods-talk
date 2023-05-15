@@ -5,10 +5,6 @@ import axios from 'axios';
 const api_address = 'http://jakkapatkan.pythonanywhere.com/api/sentiment'
 
 const MyComponent = () => {
-  
-  
-
-
   /*----------------------- Old Version --------------------*/
   /*
   const [inputValue, setInputValue] = useState('');
@@ -53,7 +49,7 @@ const MyComponent = () => {
         </div>
 
         <div>
-          <p>Response from Flask: {result}</p>
+          <p>Response from Flask Server: {result}</p>
         </div>
       
       
