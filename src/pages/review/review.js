@@ -66,31 +66,40 @@ function Rmodal() {
   const [headerResult, setHeaderResult] = useState(''); //sentiment result
   const [contentResult, setContentResult] = useState(''); //sentiment result
 
-  
-  
-  const sendHeaderToFlask = () => {
-    axios.post('/api/sentiment', { string: header})
-      .then(response => {
-        setHeaderResult(response.data.result); // Extract the result
-        console.log('header => '+ response.data.result);
-        sendContentToFlask()
-      })
-      .catch(error => {
-        
+  const sendHeaderToFlask = async () => {
+    try {
+      const response = await axios.post(api_address, {
+        text: header,
+
       });
+      setHeaderResult(response.data.result);
+      console.log('Header result => '+response.data.result);
+      sendContentStringToFlask()
+    } catch (error) {
+      console.error(error);
+    }
+   
   };
-  
-  const sendContentToFlask = () => {
-    axios.post('/api/sentiment', { string: content})
-      .then(response => {
-        setContentResult(response.data.result); // Extract the result
-        console.log('content => '+response.data.result);
-        handleSubmit();
-      })
-      .catch(error => {
-        
+
+  const sendContentStringToFlask = async () => {
+    try {
+      const response = await axios.post(api_address, {
+        text: content,
+
       });
+      setContentResult(response.data.result);
+      console.log('content result => '+response.data.result);
+      
+    } catch (error) {
+      console.error(error);
+    }
+    handleSubmit();
+    finishClose();
   };
+
+  
+
+  
 
   const [tag, setTag] = useState("");
 
