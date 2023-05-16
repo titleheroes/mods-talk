@@ -31,4 +31,4 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 export const api_address =
-  "http://jakkapatkan.pythonanywhere.com/api/sentiment";
+  "https://jakkapatkan.pythonanywhere.com/api/sentiment";

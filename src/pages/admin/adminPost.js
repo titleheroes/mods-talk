@@ -134,123 +134,134 @@ function AlertDialogSlide({
 
       if (section === "รีวิว") {
         if (category === "โพสต์") {
-          // Create a query to get all comments for the post
-          const commentQuery = query(
-            collection(db, "cmnt_review"),
-            where("post_id", "==", post_id)
-          );
-
-          // Create a query to get all replies for the post
-          const replyQuery = query(
-            collection(db, "reply_review"),
-            where("post_id", "==", post_id)
-          );
-
-          // Use Promise.all() to execute both queries in parallel
-          const [commentSnapshot, replySnapshot] = await Promise.all([
-            getDocs(commentQuery),
-            getDocs(replyQuery),
-          ]);
-
-          // Delete all comment documents
-          commentSnapshot.forEach(async (commentDoc) => {
-            const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
-            await deleteDoc(commentDocRef);
-          });
-
-          // Delete all reply documents
-          replySnapshot.forEach(async (replyDoc) => {
-            const replyDocRef = doc(db, "reply_review", replyDoc.id);
-            await deleteDoc(replyDocRef);
-          });
-
-          // Clear Tag
-          if (suspended === undefined) {
-            const tagDocRef = doc(db, "tag_ranked", tag);
-            getDoc(tagDocRef).then((docSnap) => {
-              if (docSnap.exists()) {
-                const tagCount = docSnap.data().count;
-                if (tagCount - 1 === 0) {
-                  deleteDoc(tagDocRef);
-                } else {
-                  updateDoc(tagDocRef, {
-                    count: tagCount - 1,
-                  })
-                    .then(() => {
-                      console.log("Document updated with new count value");
-                    })
-                    .catch((error) => {
-                      console.error("Error updating document: ", error);
-                    });
-                }
-              }
+          try {
+            // Create a query to get all comments for the post
+            const commentQuery = query(
+              collection(db, "cmnt_review"),
+              where("post_id", "==", id)
+            );
+            // Create a query to get all replies for the post
+            const replyQuery = query(
+              collection(db, "reply_review"),
+              where("post_id", "==", id)
+            );
+            // Use Promise.all() to execute both queries in parallel
+            const [commentSnapshot, replySnapshot] = await Promise.all([
+              getDocs(commentQuery),
+              getDocs(replyQuery),
+            ]);
+            // Delete all comment documents
+            commentSnapshot.forEach(async (commentDoc) => {
+              const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+              await deleteDoc(commentDocRef);
             });
+            // Delete all reply documents
+            replySnapshot.forEach(async (replyDoc) => {
+              const replyDocRef = doc(db, "reply_review", replyDoc.id);
+              await deleteDoc(replyDocRef);
+            });
+            // Clear Tag
+            if (suspended === undefined) {
+              const tagDocRef = doc(db, "tag_ranked", tag);
+              getDoc(tagDocRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                  const tagCount = docSnap.data().count;
+                  if (tagCount - 1 === 0) {
+                    deleteDoc(tagDocRef);
+                  } else {
+                    updateDoc(tagDocRef, {
+                      count: tagCount - 1,
+                    })
+                      .then(() => {
+                        console.log("Document updated with new count value");
+                      })
+                      .catch((error) => {
+                        console.error("Error updating document: ", error);
+                      });
+                  }
+                }
+              });
+            }
+          } catch (error) {
+            console.error(error);
           }
         } else if (category === "คอมเมนท์") {
-          // Create a query to get all replies for the post
-          const replyQuery = query(
-            collection(db, "reply_review"),
-            where("cmnt_id", "==", id)
-          );
+          try {
+            // Create a query to get all replies for the post
+            const replyQuery = query(
+              collection(db, "reply_review"),
+              where("cmnt_id", "==", id)
+            );
 
-          // Use Promise.all() to execute both queries in parallel
-          const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
+            // Use Promise.all() to execute both queries in parallel
+            const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
 
-          // Delete all reply documents
-          replySnapshot.forEach(async (replyDoc) => {
-            const replyDocRef = doc(db, "reply_review", replyDoc.id);
-            await deleteDoc(replyDocRef);
-          });
+            // Delete all reply documents
+            replySnapshot.forEach(async (replyDoc) => {
+              const replyDocRef = doc(db, "reply_review", replyDoc.id);
+              await deleteDoc(replyDocRef);
+            });
 
-          console.log("Comments, and replies deleted successfully.");
-          alert("ลบคอมเมนท์สำเร็จ");
+            console.log("Comments, and replies deleted successfully.");
+            alert("ลบคอมเมนท์สำเร็จ");
+          } catch (error) {
+            console.error(error);
+          }
         }
       } else if (section === "ถาม-ตอบ") {
         if (category === "โพสต์") {
-          // Create a query to get all comments for the post
-          const commentQuery = query(
-            collection(db, "cmnt_question"),
-            where("post_id", "==", post_id)
-          );
+          try {
+            // Create a query to get all comments for the post
+            const commentQuery = query(
+              collection(db, "cmnt_question"),
+              where("post_id", "==", id)
+            );
 
-          // Create a query to get all replies for the post
-          const replyQuery = query(
-            collection(db, "reply_question"),
-            where("post_id", "==", post_id)
-          );
+            // Create a query to get all replies for the post
+            const replyQuery = query(
+              collection(db, "reply_question"),
+              where("post_id", "==", id)
+            );
 
-          // Use Promise.all() to execute both queries in parallel
-          const [commentSnapshot, replySnapshot] = await Promise.all([
-            getDocs(commentQuery),
-            getDocs(replyQuery),
-          ]);
+            // Use Promise.all() to execute both queries in parallel
+            const [commentSnapshot, replySnapshot] = await Promise.all([
+              getDocs(commentQuery),
+              getDocs(replyQuery),
+            ]);
 
-          // Delete all comment documents
-          commentSnapshot.forEach(async (commentDoc) => {
-            const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
-            await deleteDoc(commentDocRef);
-          });
+            // Delete all comment documents
+            commentSnapshot.forEach(async (commentDoc) => {
+              const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+              await deleteDoc(commentDocRef);
+            });
 
-          // Delete all reply documents
-          replySnapshot.forEach(async (replyDoc) => {
-            const replyDocRef = doc(db, "reply_question", replyDoc.id);
-            await deleteDoc(replyDocRef);
-          });
+            // Delete all reply documents
+            replySnapshot.forEach(async (replyDoc) => {
+              const replyDocRef = doc(db, "reply_question", replyDoc.id);
+              await deleteDoc(replyDocRef);
+            });
+          } catch (error) {
+            console.error(error);
+          }
         } else if (category === "คอมเมนท์") {
-          // Create a query to get all replies for the post
-          const replyQuery = query(
-            collection(db, "reply_question"),
-            where("cmnt_id", "==", id)
-          );
+          try {
+            // Create a query to get all replies for the post
+            const replyQuery = query(
+              collection(db, "reply_question"),
+              where("cmnt_id", "==", id)
+            );
 
-          // Use Promise.all() to execute both queries in parallel
-          const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
+            // Use Promise.all() to execute both queries in parallel
+            const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
 
-          // Delete all reply documents
-          replySnapshot.forEach(async (replyDoc) => {
-            const replyDocRef = doc(db, "reply_question", replyDoc.id);
-            await deleteDoc(replyDocRef);
-          });
+            // Delete all reply documents
+            replySnapshot.forEach(async (replyDoc) => {
+              const replyDocRef = doc(db, "reply_question", replyDoc.id);
+              await deleteDoc(replyDocRef);
+            });
+          } catch (error) {
+            console.error(error);
+          }
         }
       }
 
@@ -290,10 +301,11 @@ function AlertDialogSlide({
       } finally {
         if (section === "รีวิว") {
           alert(`${category} ${header} ได้ถูกลบแล้ว`);
+          window.location.reload();
         } else if (section === "ถาม-ตอบ") {
           alert(`${category} ของคุณ ${name} ได้ถูกลบแล้ว`);
+          window.location.reload();
         }
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error deleting document: ", error);
@@ -996,7 +1008,16 @@ const AdminPost = ({ userData }) => {
                             >
                               {data.date}
                             </TableCell>
-                            <TableCell align="left">{data.content}</TableCell>
+                            <TableCell align="left">
+                              <div
+                                style={{
+                                  wordWrap: "break-word",
+                                  maxWidth: "300px",
+                                }}
+                              >
+                                {data.content}
+                              </div>
+                            </TableCell>
                             <TableCell align="left">
                               <MemberInfo
                                 memberID={data.member_id}

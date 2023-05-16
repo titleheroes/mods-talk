@@ -287,7 +287,7 @@ const Navbar = ({ userData }) => {
           <ul className={click ? "nav-menu active" : "nav-menu"}>
             <li className="nav-item-mobile">
               <NavLink
-                to="/"
+                to={currentUser ? "/review" : "/"}
                 className={({ isActive }) =>
                   "nav-links" + (isActive ? " activated" : "")
                 }
