@@ -88,7 +88,7 @@ export default function DataUser() {
     };
     createData(currentUserId, data)
       .then(() => {
-        window.location.href = "/";
+        window.location.href = "/review";
       })
       .catch((error) => {
         console.error(error);

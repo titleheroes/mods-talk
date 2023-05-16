@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import "../../styles/question.css";
-import { auth, db } from "../../config";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { api_address, auth, db } from "../../config";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   addDoc,
   collection,
@@ -20,6 +18,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import axios from "axios";
 
 function Qmodal() {
   const currentDate = new Date();
@@ -48,6 +47,43 @@ function Qmodal() {
   const [buttonStatus, setButtonStatus] = useState(true);
   const [switchOn, setSwitchOn] = useState(false);
 
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data) {
+    setLoadingPost(true);
+    try {
+      const responseName = await axios.post(api_address, {
+        text: name,
+      });
+
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("name => " + responseName.data.result);
+      console.log("content => " + responseContent.data.result);
+
+      if (
+        responseName.data.result === "NEG" ||
+        responseContent.data.result === "NEG"
+      ) {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      createData(data);
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างโพสต์สำเร็จ");
+      } else {
+        alert("โพสต์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
+
   function checkInfo() {
     const trimmedName = name.trim();
     const trimmedContent = content.trim();
@@ -68,7 +104,6 @@ function Qmodal() {
   async function createData(postData) {
     try {
       const docRef = await addDoc(collection(db, "question"), postData);
-
       console.log("This Post has been created", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -80,18 +115,19 @@ function Qmodal() {
 
   function handleSubmit(event) {
     event.preventDefault();
+
     if (switchOn === true) {
-      const data = {
+      let data = {
         report: 0,
         comment: 0,
-        name: "ผู้ไม่ประสงค์ออกนาม",
+        name: "สมาชิกที่ไม่ระบุตัวตน",
         content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data);
+      SendDataToFlask(data);
     } else {
-      const data = {
+      let data = {
         report: 0,
         comment: 0,
         name: name,
@@ -99,20 +135,44 @@ function Qmodal() {
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data);
+      SendDataToFlask(data);
     }
   }
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
-        onClick={handleShow}
-        style={{ width: "100%" }}
-      >
-        เริ่มต้นการเขียนโพสต์
-      </button>
+      {loadingPost ? (
+        <button
+          disabled
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="px-3">กำลังโพสต์</span>
+            <div
+              className="spinner-border"
+              style={{ width: "1rem", height: "1rem" }}
+            />
+          </div>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          เริ่มต้นการเขียนโพสต์
+        </button>
+      )}
 
       <Modal
         show={show}
@@ -185,7 +245,7 @@ function Qmodal() {
             <button
               type="submit"
               disabled={buttonStatus}
-              className="btn post-question-btn mx-auto mt-0 "
+              className="btn post-question-btn mx-auto mt-0"
               onClick={finishClose}
             >
               เริ่มต้นการเขียนโพสต์
@@ -270,13 +330,46 @@ const Answer = ({ userData }) => {
   }
   //-----------
 
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data) {
+    setLoadingPost(true);
+
+    try {
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("content => " + responseContent.data.result);
+
+      if (responseContent.data.result === "NEG") {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      createData(data);
+      setContent("");
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างคอมเมนท์สำเร็จ");
+      } else {
+        alert("คอมเมนท์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
+
   async function createData(postData) {
     try {
       const docRef = await addDoc(collection(db, "cmnt_question"), postData);
-      const docRef2 = doc(db, "question", id);
-      updateDoc(docRef2, {
-        comment: post.comment + 1,
-      });
+      if (postData.status === undefined) {
+        const docRef2 = doc(db, "question", id);
+        updateDoc(docRef2, {
+          comment: post.comment + 1,
+        });
+      }
       console.log("This Comment has been created", docRef.id);
       return docRef.id;
     } catch (error) {
@@ -288,11 +381,10 @@ const Answer = ({ userData }) => {
   // ดันข้อมูลคอมเมนท์
   const commentSubmit = (event) => {
     const currentUserId = currentUser.uid;
-
     if (buttonStatus) {
     } else {
       event.preventDefault();
-      const data = {
+      let data = {
         post_id: id,
         report: 0,
         reply: 0,
@@ -301,14 +393,7 @@ const Answer = ({ userData }) => {
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data)
-        .then(() => {
-          console.log("create data success");
-          setContent("");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      SendDataToFlask(data);
     }
   };
 
@@ -440,6 +525,7 @@ const Answer = ({ userData }) => {
                       </div>
 
                       <textarea
+                        disabled={loadingPost}
                         className="form-control"
                         id="content"
                         placeholder="เขียนความคิดเห็น..."
@@ -452,20 +538,29 @@ const Answer = ({ userData }) => {
                       />
 
                       <div className="flex-1-right">
-                        <Button
-                          className="sent-comment"
-                          disabled={buttonStatus}
-                          type="submit"
-                        >
-                          <img
-                            className="menu-pic pe-3"
-                            src={
-                              require("../../images/question/sent_1.svg")
-                                .default
-                            }
-                            alt=""
-                          />
-                        </Button>
+                        {loadingPost ? (
+                          <div className="px-4">
+                            <div
+                              className="spinner-border"
+                              style={{ width: "1.8rem", height: "1.8rem" }}
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            className="sent-comment px-3"
+                            disabled={buttonStatus}
+                            type="submit"
+                          >
+                            <img
+                              className="menu-pic pe-3"
+                              src={
+                                require("../../images/question/sent_1.svg")
+                                  .default
+                              }
+                              alt=""
+                            />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </form>
@@ -479,85 +574,88 @@ const Answer = ({ userData }) => {
                     <div>
                       {comment.map((item) => (
                         <div key={item.id}>
-                          <div className="post-border pb-3">
-                            <div className="flex-container comment pt-3">
-                              <MemberInfo memberID={item.member_id} />
+                          {item.status === undefined ? (
+                            <div className="post-border pb-3">
+                              <div className="flex-container comment pt-3">
+                                <MemberInfo memberID={item.member_id} />
 
-                              <div className="flex-1-right">
-                                <Dropdown>
-                                  <Dropdown.Toggle
-                                    variant="link"
-                                    id="question-dropdown"
-                                  >
-                                    <img
-                                      className="menu-dropdown"
-                                      src={
-                                        require("../../images/question/three_dots.svg")
-                                          .default
-                                      }
-                                      alt=""
+                                <div className="flex-1-right">
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      variant="link"
+                                      id="question-dropdown"
+                                    >
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </Dropdown.Toggle>
+
+                                    <Rep_Del_Comment_Click
+                                      postID={id}
+                                      cmnt_count={post.comment}
+                                      cmnt_id={item.id}
+                                      rep_count={item.report}
+                                      member_id={item.member_id}
                                     />
-                                  </Dropdown.Toggle>
+                                  </Dropdown>
+                                </div>
+                              </div>
 
-                                  <Rep_Del_Comment_Click
+                              <div
+                                className="pt-4"
+                                dangerouslySetInnerHTML={{
+                                  __html: item.content,
+                                }}
+                              />
+
+                              <div
+                                className="flex-container comment pt-2"
+                                id="comment-reply"
+                              >
+                                <div className="pe-4">
+                                  <span className="post-date">
+                                    {formattedDate === item.date
+                                      ? item.time
+                                      : item.date}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <Button
+                                    className="reply-button"
+                                    onClick={() =>
+                                      handleToggleVisibility(item.id)
+                                    }
+                                  >
+                                    <text id="reply-text">
+                                      ตอบกลับ
+                                      <span>
+                                        {" ("}
+                                        {item.reply}
+                                        {")"}
+                                      </span>
+                                    </text>
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {visibility[item.id] && (
+                                <div className="container">
+                                  <ReplyLoad
+                                    userData={userData}
                                     postID={id}
-                                    cmnt_count={post.comment}
-                                    cmnt_id={item.id}
-                                    rep_count={item.report}
-                                    member_id={item.member_id}
+                                    cmntID={item.id}
+                                    replyCount={item.reply}
                                   />
-                                </Dropdown>
-                              </div>
+                                </div>
+                              )}
                             </div>
-
-                            <div
-                              className="pt-4"
-                              dangerouslySetInnerHTML={{ __html: item.content }}
-                            />
-
-                            <div
-                              className="flex-container comment pt-2"
-                              id="comment-reply"
-                            >
-                              <div className="pe-4">
-                                <span className="post-date">
-                                  {formattedDate === item.date
-                                    ? item.time
-                                    : item.date}
-                                </span>
-                              </div>
-
-                              <div>
-                                <Button
-                                  className="reply-button"
-                                  onClick={() =>
-                                    handleToggleVisibility(item.id)
-                                  }
-                                >
-                                  <text id="reply-text">
-                                    ตอบกลับ
-                                    <span>
-                                      {" ("}
-                                      {item.reply}
-                                      {")"}
-                                    </span>
-                                  </text>
-                                </Button>
-                              </div>
-                            </div>
-
-                            {visibility[item.id] && (
-                              <div className="container">
-                                <hr />
-                                <ReplyLoad
-                                  userData={userData}
-                                  postID={id}
-                                  cmntID={item.id}
-                                  replyCount={item.reply}
-                                />
-                              </div>
-                            )}
-                          </div>
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -728,16 +826,47 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     setButtonStatus(!hasValidLength);
   }
 
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data) {
+    setLoadingPost(true);
+
+    try {
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("content => " + responseContent.data.result);
+
+      if (responseContent.data.result === "NEG") {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      createData(data);
+      setContent("");
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างตอบกลับสำเร็จ");
+      } else {
+        alert("ตอบกลับของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
+
   // ดันข้อมูลคอมเมนท์
   async function createData(postData) {
     try {
-      const docRef = await addDoc(collection(db, "reply_question"), postData);
-      const docRef2 = doc(db, "cmnt_question", cmntID);
-      updateDoc(docRef2, {
-        reply: replyCount + 1,
-      });
-      console.log("This Comment has been created", docRef.id);
-      return docRef.id;
+      if (postData.status === undefined) {
+        const docRef2 = doc(db, "cmnt_question", cmntID);
+        updateDoc(docRef2, {
+          reply: replyCount + 1,
+        });
+      }
+      console.log("This Comment has been created");
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
@@ -759,14 +888,7 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data)
-        .then(() => {
-          console.log("create data success");
-          setContent("");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      SendDataToFlask(data);
     }
   };
 
@@ -805,55 +927,63 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         <div>
           {reply.map((item) => (
             <div key={item.id}>
-              <div className="flex-container comment pt-3">
-                <MemberInfo memberID={item.member_id} />
+              {item.status === undefined ? (
+                <>
+                  <hr />
+                  <div className="flex-container comment pt-3">
+                    <MemberInfo memberID={item.member_id} />
 
-                <div className="flex-1-right">
-                  <Dropdown drop="down">
-                    <Dropdown.Toggle
-                      variant="link"
-                      id="dropdown-basic"
-                      style={{
-                        border: "none",
-                        boxShadow: "none",
-                        color: "transparent",
-                      }}
-                    >
-                      <span style={{ color: "black" }}>
-                        <img
-                          className="menu-dropdown"
-                          src={
-                            require("../../images/question/three_dots.svg")
-                              .default
-                          }
-                          alt=""
+                    <div className="flex-1-right">
+                      <Dropdown drop="down">
+                        <Dropdown.Toggle
+                          variant="link"
+                          id="dropdown-basic"
+                          style={{
+                            border: "none",
+                            boxShadow: "none",
+                            color: "transparent",
+                          }}
+                        >
+                          <span style={{ color: "black" }}>
+                            <img
+                              className="menu-dropdown"
+                              src={
+                                require("../../images/question/three_dots.svg")
+                                  .default
+                              }
+                              alt=""
+                            />
+                          </span>
+                        </Dropdown.Toggle>
+                        <Rep_Del_Reply_Click
+                          cmnt_id={cmntID}
+                          reply_count={replyCount}
+                          reply_id={item.id}
+                          rep_count={item.report}
+                          member_id={item.member_id}
                         />
+                      </Dropdown>
+                    </div>
+                  </div>
+
+                  <div
+                    className="pt-4"
+                    dangerouslySetInnerHTML={{ __html: item.content }}
+                  />
+
+                  <div
+                    className="flex-container comment pt-2"
+                    id="comment-reply"
+                  >
+                    <div className="pe-4">
+                      <span className="post-date">
+                        {formattedDate === item.date ? item.time : item.date}
                       </span>
-                    </Dropdown.Toggle>
-                    <Rep_Del_Reply_Click
-                      cmnt_id={cmntID}
-                      reply_count={replyCount}
-                      reply_id={item.id}
-                      rep_count={item.report}
-                      member_id={item.member_id}
-                    />
-                  </Dropdown>
-                </div>
-              </div>
-
-              <div
-                className="pt-4"
-                dangerouslySetInnerHTML={{ __html: item.content }}
-              />
-
-              <div className="flex-container comment pt-2" id="comment-reply">
-                <div className="pe-4">
-                  <span className="post-date">
-                    {formattedDate === item.date ? item.time : item.date}
-                  </span>
-                </div>
-              </div>
-              <hr />
+                    </div>
+                  </div>
+                  <hr />
+                </>
+              ) : null}
             </div>
           ))}
         </div>
@@ -885,17 +1015,26 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
             />
 
             <div className="flex-1-right">
-              <Button
-                className="sent-comment"
-                disabled={buttonStatus}
-                type="submit"
-              >
-                <img
-                  className="menu-pic pe-3"
-                  src={require("../../images/question/sent_1.svg").default}
-                  alt=""
-                />
-              </Button>
+              {loadingPost ? (
+                <div className="px-4">
+                  <div
+                    className="spinner-border"
+                    style={{ width: "1.8rem", height: "1.8rem" }}
+                  />
+                </div>
+              ) : (
+                <button
+                  className="sent-comment px-3"
+                  disabled={buttonStatus}
+                  type="submit"
+                >
+                  <img
+                    className="menu-pic pe-3"
+                    src={require("../../images/question/sent_1.svg").default}
+                    alt=""
+                  />
+                </button>
+              )}
             </div>
           </div>
         </form>

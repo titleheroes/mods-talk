@@ -35,10 +35,10 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
-  orderBy,
   query,
+  setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { auth, db } from "../../config";
 
@@ -117,69 +117,6 @@ const theme = createTheme({
   },
 });
 
-function createData(id, msg, fullname, post_date, post_status, report_count) {
-  return { id, msg, fullname, post_date, post_status, report_count };
-}
-
-const rows = [
-  createData(
-    "0001",
-    "เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร...",
-    "เมริสา อินทรเกียรติ",
-    "15/10/2022",
-    "อนุมัติโพสต์แล้ว",
-    "10"
-  ),
-  createData(
-    "0002",
-    "เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร...",
-    "เมริสา อินทรเกียรติ",
-    "15/10/2022",
-    "อนุมัติโพสต์แล้ว",
-    "5"
-  ),
-  createData(
-    "0003",
-    "ที่ถามเพราะหิวแสงหรอ ที่ถามเพราะหิวแสงหรอ ที่ถามเพราะหิวแสงหรอ ที่ถามเพราะหิวแสงหรอ",
-    "แก้วขวัญ ปิติทัศน์",
-    "15/10/2022",
-    "รอการอนุมัติ",
-    "6"
-  ),
-  createData(
-    "0004",
-    "อยากได้การบ้านเยอะๆ ก็เอา ผมหนี อยากได้การบ้านเยอะๆ ก็เอา ผมหนี อยากได้การบ้านเยอะๆ ก็เอา ผมหนี",
-    "แก้วขวัญ ปิติทัศน์",
-    "15/10/2022",
-    "อนุมัติโพสต์แล้ว",
-    "0"
-  ),
-  createData(
-    "0005",
-    "เบื่อว่ะ เรียนไปได้อะไรเลย เบื่อว่ะ เรียนไปได้อะไรเลย เบื่อว่ะ เรียนไปได้อะไรเลย",
-    "ธนารีย์ อรุณรุ่ง",
-    "15/10/2022",
-    "รอการอนุมัติ",
-    "7"
-  ),
-  createData(
-    "0006",
-    "อยากได้การบ้านเยอะๆ ก็เอา ผมหนี อยากได้การบ้านเยอะๆ ก็เอา ผมหนี อยากได้การบ้านเยอะๆ ก็เอา ผมหนี",
-    "ธนารีย์ อรุณรุ่ง",
-    "15/10/2022",
-    "อนุมัติโพสต์แล้ว",
-    "2"
-  ),
-  createData(
-    "0007",
-    "เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร เรียนไปก็มีแต่ทำให้เกรดตก แย่โคตร...",
-    "ธนารีย์ อรุณรุ่ง",
-    "15/10/2022",
-    "อนุมัติโพสต์แล้ว",
-    "18"
-  ),
-];
-
 function AlertDialogSlide({
   id,
   post_id,
@@ -189,10 +126,134 @@ function AlertDialogSlide({
   section,
   category,
   suspended,
+  tag,
 }) {
   async function deleteProc(docRef, docRefValue) {
     try {
       await deleteDoc(docRef);
+
+      if (section === "รีวิว") {
+        if (category === "โพสต์") {
+          // Create a query to get all comments for the post
+          const commentQuery = query(
+            collection(db, "cmnt_review"),
+            where("post_id", "==", post_id)
+          );
+
+          // Create a query to get all replies for the post
+          const replyQuery = query(
+            collection(db, "reply_review"),
+            where("post_id", "==", post_id)
+          );
+
+          // Use Promise.all() to execute both queries in parallel
+          const [commentSnapshot, replySnapshot] = await Promise.all([
+            getDocs(commentQuery),
+            getDocs(replyQuery),
+          ]);
+
+          // Delete all comment documents
+          commentSnapshot.forEach(async (commentDoc) => {
+            const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+            await deleteDoc(commentDocRef);
+          });
+
+          // Delete all reply documents
+          replySnapshot.forEach(async (replyDoc) => {
+            const replyDocRef = doc(db, "reply_review", replyDoc.id);
+            await deleteDoc(replyDocRef);
+          });
+
+          // Clear Tag
+          if (suspended === undefined) {
+            const tagDocRef = doc(db, "tag_ranked", tag);
+            getDoc(tagDocRef).then((docSnap) => {
+              if (docSnap.exists()) {
+                const tagCount = docSnap.data().count;
+                if (tagCount - 1 === 0) {
+                  deleteDoc(tagDocRef);
+                } else {
+                  updateDoc(tagDocRef, {
+                    count: tagCount - 1,
+                  })
+                    .then(() => {
+                      console.log("Document updated with new count value");
+                    })
+                    .catch((error) => {
+                      console.error("Error updating document: ", error);
+                    });
+                }
+              }
+            });
+          }
+        } else if (category === "คอมเมนท์") {
+          // Create a query to get all replies for the post
+          const replyQuery = query(
+            collection(db, "reply_review"),
+            where("cmnt_id", "==", id)
+          );
+
+          // Use Promise.all() to execute both queries in parallel
+          const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
+
+          // Delete all reply documents
+          replySnapshot.forEach(async (replyDoc) => {
+            const replyDocRef = doc(db, "reply_review", replyDoc.id);
+            await deleteDoc(replyDocRef);
+          });
+
+          console.log("Comments, and replies deleted successfully.");
+          alert("ลบคอมเมนท์สำเร็จ");
+        }
+      } else if (section === "ถาม-ตอบ") {
+        if (category === "โพสต์") {
+          // Create a query to get all comments for the post
+          const commentQuery = query(
+            collection(db, "cmnt_question"),
+            where("post_id", "==", post_id)
+          );
+
+          // Create a query to get all replies for the post
+          const replyQuery = query(
+            collection(db, "reply_question"),
+            where("post_id", "==", post_id)
+          );
+
+          // Use Promise.all() to execute both queries in parallel
+          const [commentSnapshot, replySnapshot] = await Promise.all([
+            getDocs(commentQuery),
+            getDocs(replyQuery),
+          ]);
+
+          // Delete all comment documents
+          commentSnapshot.forEach(async (commentDoc) => {
+            const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+            await deleteDoc(commentDocRef);
+          });
+
+          // Delete all reply documents
+          replySnapshot.forEach(async (replyDoc) => {
+            const replyDocRef = doc(db, "reply_question", replyDoc.id);
+            await deleteDoc(replyDocRef);
+          });
+        } else if (category === "คอมเมนท์") {
+          // Create a query to get all replies for the post
+          const replyQuery = query(
+            collection(db, "reply_question"),
+            where("cmnt_id", "==", id)
+          );
+
+          // Use Promise.all() to execute both queries in parallel
+          const [replySnapshot] = await Promise.all([getDocs(replyQuery)]);
+
+          // Delete all reply documents
+          replySnapshot.forEach(async (replyDoc) => {
+            const replyDocRef = doc(db, "reply_question", replyDoc.id);
+            await deleteDoc(replyDocRef);
+          });
+        }
+      }
+
       try {
         const docSnapshot = await getDoc(docRefValue);
         if (category === "คอมเมนท์") {
@@ -215,7 +276,7 @@ function AlertDialogSlide({
               if (suspended === undefined) {
                 const data = docSnapshot.data();
                 await updateDoc(docRefValue, {
-                  reply: data.comment - 1,
+                  reply: data.reply - 1,
                 });
               }
               console.log("Reply count decremented successfully!");
@@ -282,7 +343,7 @@ function AlertDialogSlide({
   async function suspendedProc(docRef, docRefValue) {
     try {
       const docSnap = await getDoc(docRef);
-      if (docSnap.exists() && docSnap.data().status) {
+      if (docSnap.exists() && docSnap.data().status !== undefined) {
         alert(`${category}ได้ถูกระงับอยู่แล้ว`);
       } else {
         await updateDoc(docRef, {
@@ -307,7 +368,7 @@ function AlertDialogSlide({
               if (docSnapshot.exists()) {
                 const data = docSnapshot.data();
                 updateDoc(docRefValue, {
-                  reply: data.comment - 1,
+                  reply: data.reply - 1,
                 });
                 console.log("Reply count decremented successfully!");
               }
@@ -315,13 +376,39 @@ function AlertDialogSlide({
               console.error("Error updating document: ", e);
             }
           }
+
+          // Check Tag
+          if (section === "รีวิว" && category === "โพสต์") {
+            const tagDocRef = doc(db, "tag_ranked", tag);
+            getDoc(tagDocRef).then((docSnap) => {
+              if (docSnap.exists()) {
+                const tagCount = docSnap.data().count;
+                if (tagCount - 1 === 0) {
+                  deleteDoc(tagDocRef);
+                } else {
+                  updateDoc(tagDocRef, {
+                    count: tagCount - 1,
+                  })
+                    .then(() => {
+                      console.log("Document updated with new count value");
+                    })
+                    .catch((error) => {
+                      console.error("Error updating document: ", error);
+                    });
+                }
+              } else {
+                alert("ไม่มีแท็กนี้อยู่ในระบบ");
+              }
+            });
+          }
+          // End of Check Tag
         } catch (error) {
           console.error("Error getting document: ", error);
         } finally {
           if (section === "รีวิว") {
-            alert(`${category} ${header} ได้ถูกลบแล้ว`);
+            alert(`${category} ${header} ได้ถูกระงับแล้ว`);
           } else if (section === "ถาม-ตอบ") {
-            alert(`${category} ของคุณ ${name} ได้ถูกลบแล้ว`);
+            alert(`${category} ของคุณ ${name} ได้ถูกระงับแล้ว`);
           }
           window.location.reload();
         }
@@ -373,7 +460,7 @@ function AlertDialogSlide({
   async function unsuspendedProc(docRef, docRefValue) {
     try {
       const docSnap = await getDoc(docRef);
-      if (docSnap.exists() && docSnap.data().status) {
+      if (docSnap.exists() && docSnap.data().status !== undefined) {
         await updateDoc(docRef, {
           status: deleteField(),
         });
@@ -396,7 +483,7 @@ function AlertDialogSlide({
               if (docSnapshot.exists()) {
                 const data = docSnapshot.data();
                 await updateDoc(docRefValue, {
-                  reply: data.comment + 1,
+                  reply: data.reply + 1,
                 });
                 console.log("Reply count incremented successfully!");
               }
@@ -404,13 +491,51 @@ function AlertDialogSlide({
               console.error("Error updating document: ", e);
             }
           }
+
+          // Check Tag
+          if (section === "รีวิว" && category === "โพสต์") {
+            const tagDocRef = doc(db, "tag_ranked", tag);
+            getDoc(tagDocRef).then((docSnap) => {
+              if (docSnap.exists()) {
+                const tagCount = docSnap.data().count;
+                updateDoc(tagDocRef, {
+                  count: tagCount + 1,
+                })
+                  .then(() => {
+                    console.log("Document updated with new count value");
+                  })
+                  .catch((error) => {
+                    console.error("Error updating document: ", error);
+                  });
+              } else {
+                const reviewsCollectionRef = collection(db, "tag_ranked");
+                const newReviewDocRef = doc(reviewsCollectionRef, tag);
+
+                const newReview = {
+                  count: 1,
+                };
+
+                setDoc(newReviewDocRef, newReview)
+                  .then(() => {
+                    console.log(
+                      "Document written with ID: ",
+                      newReviewDocRef.id
+                    );
+                  })
+                  .catch((error) => {
+                    console.error("Error adding document: ", error);
+                  });
+              }
+            });
+          }
+          // End of Check Tag
         } catch (error) {
           console.error("Error getting document: ", error);
         } finally {
           if (section === "รีวิว") {
-            alert(`คุณระงับ ${category} ${header} แล้ว`);
+            alert(`คุณอนุมัติ ${category} ${header} แล้ว`);
           } else if (section === "ถาม-ตอบ") {
-            alert(`คุณระงับ ${category} ของคุณ ${name} แล้ว`);
+            alert(`คุณอนุมัติ ${category} ของคุณ ${name} แล้ว`);
           }
           window.location.reload();
         }
@@ -704,7 +829,16 @@ const AdminPost = ({ userData }) => {
                             >
                               {data.date}
                             </TableCell>
-                            <TableCell align="left">{data.content}</TableCell>
+                            <TableCell align="left">
+                              <div
+                                style={{
+                                  wordWrap: "break-word",
+                                  maxWidth: "300px",
+                                }}
+                              >
+                                {data.content}
+                              </div>
+                            </TableCell>
                             <TableCell align="left">
                               <MemberInfo
                                 memberID={data.member_id}
@@ -725,16 +859,16 @@ const AdminPost = ({ userData }) => {
                               <h
                                 style={{
                                   color:
-                                    data.status === 0
+                                    data.status === 1
                                       ? "#ed3419"
-                                      : data.status === 1
+                                      : data.status === 0
                                       ? "#f7be3a"
                                       : "#17BF5F",
                                 }}
                               >
-                                {data.status === 0
+                                {data.status === 1
                                   ? "ถูกระงับ"
-                                  : data.status === 1
+                                  : data.status === 0
                                   ? "รอการอนุมัติ"
                                   : "อนุมัติแล้ว"}
                                 {/* ตอนนี้ใช้แบบนี้ไปก่อน เพราะยังไม่ได้ทำ text sentiment ถ้ามีค่อยใส่ค่า status เพิ่มตอนโพสต์ */}
@@ -746,10 +880,15 @@ const AdminPost = ({ userData }) => {
                                 post_id={data.post_id}
                                 cmnt_id={data.cmnt_id}
                                 header={data.header}
-                                name={fullNames[data.id]}
+                                name={
+                                  data.name === undefined
+                                    ? fullNames[data.id]
+                                    : data.name
+                                }
                                 section={data.section}
                                 category={data.category}
                                 suspended={data.status}
+                                tag={data.tag}
                               />
                             </TableCell>
                           </TableRow>
@@ -777,7 +916,7 @@ const AdminPost = ({ userData }) => {
                             30,
                             { label: "ทั้งหมด", value: -1 },
                           ]}
-                          count={rows.length}
+                          count={allData.length}
                           rowsPerPage={rowsPerPage}
                           page={page}
                           SelectProps={{
@@ -879,16 +1018,16 @@ const AdminPost = ({ userData }) => {
                               <h
                                 style={{
                                   color:
-                                    data.status === 0
+                                    data.status === 1
                                       ? "#ed3419"
-                                      : data.status === 1
+                                      : data.status === 0
                                       ? "#f7be3a"
                                       : "#17BF5F",
                                 }}
                               >
-                                {data.status === 0
+                                {data.status === 1
                                   ? "ถูกระงับ"
-                                  : data.status === 1
+                                  : data.status === 0
                                   ? "รอการอนุมัติ"
                                   : "อนุมัติแล้ว"}
                                 {/* ตอนนี้ใช้แบบนี้ไปก่อน เพราะยังไม่ได้ทำ text sentiment ถ้ามีค่อยใส่ค่า status เพิ่มตอนโพสต์ */}
@@ -900,10 +1039,15 @@ const AdminPost = ({ userData }) => {
                                 post_id={data.post_id}
                                 cmnt_id={data.cmnt_id}
                                 header={data.header}
-                                name={fullNames[data.id]}
+                                name={
+                                  data.name === undefined
+                                    ? fullNames[data.id]
+                                    : data.name
+                                }
                                 section={data.section}
                                 category={data.category}
                                 suspended={data.status}
+                                tag={data.tag}
                               />
                             </TableCell>
                           </TableRow>
@@ -931,7 +1075,7 @@ const AdminPost = ({ userData }) => {
                             20,
                             { label: "ทั้งหมด", value: -1 },
                           ]}
-                          count={rows.length}
+                          count={reportData.length}
                           rowsPerPage={rowsPerPage}
                           page={page}
                           SelectProps={{

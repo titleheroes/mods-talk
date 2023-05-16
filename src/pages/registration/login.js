@@ -102,7 +102,7 @@ export default function SignInSide() {
           .then((userCredential) => {
             const isEmailVerified = userCredential.user.emailVerified;
             if (isEmailVerified) {
-              window.location.href = "/";
+              window.location.href = "/review";
             } else {
               signOut(auth);
               alert("คุณยังไม่ได้ยืนยันอีเมลล์");

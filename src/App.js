@@ -6,11 +6,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import Home from "./pages/home";
 import About from "./pages/about";
 
-import AdminLogin from "./pages/admin/login";
 import AdminUser from "./pages/admin/adminUser";
 import AdminPost from "./pages/admin/adminPost";
-import AdminForgetPass from "./pages/admin/adminforgetPass";
-import AdminForgetPassSent from "./pages/admin/adminforgetPassSent";
 
 import Login from "./pages/registration/login";
 import SignUp from "./pages/registration/signup";
@@ -20,7 +17,6 @@ import Authenticate from "./pages/registration/authenticate";
 import DataUser from "./pages/registration/datauser";
 
 import Review from "./pages/review/review";
-import Post from "./pages/review/post";
 import Review_Answer from "./pages/review/review_answer";
 import Review_Search from "./pages/review/review_search";
 import Review_Tag from "./pages/review/review_tag";
@@ -106,17 +102,6 @@ function App() {
           <Route path="/login" exact element={<Login />} />
           <Route path="/signup" exact element={<SignUp />} />
           <Route path="/forgetpassword" exact element={<ForgetPass />} />
-          {/* <Route path="/admin/login" exact element={<AdminLogin />} />
-            <Route
-              path="/admin/forgetpassword"
-              exact
-              element={<AdminForgetPass />}
-            />
-            <Route
-              path="/admin/forgetpasswordsent"
-              exact
-              element={<AdminForgetPassSent />}
-            /> */}
 
           <Route
             path="/admin/user"
@@ -136,7 +121,6 @@ function App() {
           />
           <Route path="/authenticate" exact element={<Authenticate />} />
           <Route path="/datauser" exact element={<DataUser />} />
-          <Route path="/post" exact element={<Post />} />
           <Route
             path="/profile/:id"
             exact

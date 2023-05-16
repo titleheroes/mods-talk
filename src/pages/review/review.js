@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/review.css";
 import { Tabs, Tab, Dropdown, Modal, Button } from "react-bootstrap";
-import { auth, db, storage } from "../../config";
+import { api_address, auth, db, storage } from "../../config";
 import {
   addDoc,
   arrayRemove,
@@ -21,6 +21,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Rmodal() {
   const navigate = useNavigate();
@@ -66,44 +67,83 @@ function Rmodal() {
     try {
       setCurrentUserId(currentUser.uid);
     } catch (e) {
-      navigate("/");
+      navigate("/review");
     }
     checkInfo();
   }, [selectedOption]);
+
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data, tag) {
+    setLoadingPost(true);
+    try {
+      const responseHeader = await axios.post(api_address, {
+        text: header,
+      });
+
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("name => " + responseHeader.data.result);
+      console.log("content => " + responseContent.data.result);
+
+      if (
+        responseHeader.data.result === "NEG" ||
+        responseContent.data.result === "NEG"
+      ) {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await createData(data, tag);
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างโพสต์สำเร็จ");
+      } else {
+        alert("โพสต์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
 
   async function createData(postData, tagName) {
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
       const tagDocRef = doc(db, "tag_ranked", tagName);
-      getDoc(tagDocRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const tagCount = docSnap.data().count;
-          updateDoc(tagDocRef, {
-            count: tagCount + 1,
-          })
-            .then(() => {
-              console.log("Document updated with new count value");
+      if (postData.status === undefined) {
+        getDoc(tagDocRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const tagCount = docSnap.data().count;
+            updateDoc(tagDocRef, {
+              count: tagCount + 1,
             })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
-        } else {
-          const reviewsCollectionRef = collection(db, "tag_ranked");
-          const newReviewDocRef = doc(reviewsCollectionRef, tagName);
+              .then(() => {
+                console.log("Document updated with new count value");
+              })
+              .catch((error) => {
+                console.error("Error updating document: ", error);
+              });
+          } else {
+            const reviewsCollectionRef = collection(db, "tag_ranked");
+            const newReviewDocRef = doc(reviewsCollectionRef, tagName);
 
-          const newReview = {
-            count: 1,
-          };
+            const newReview = {
+              count: 1,
+            };
 
-          setDoc(newReviewDocRef, newReview)
-            .then(() => {
-              console.log("Document written with ID: ", newReviewDocRef.id);
-            })
-            .catch((error) => {
-              console.error("Error adding document: ", error);
-            });
-        }
-      });
+            setDoc(newReviewDocRef, newReview)
+              .then(() => {
+                console.log("Document written with ID: ", newReviewDocRef.id);
+              })
+              .catch((error) => {
+                console.error("Error adding document: ", error);
+              });
+          }
+        });
+      }
 
       console.log("This Post has been created", docRef.id);
       return docRef.id;
@@ -141,7 +181,7 @@ function Rmodal() {
     } else {
       event.preventDefault();
       if (file === null) {
-        const data = {
+        let data = {
           like: 0,
           report: 0,
           comment: 0,
@@ -155,7 +195,7 @@ function Rmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data, tag);
+        SendDataToFlask(data, tag);
       } else {
         const storageRef = ref(
           storage,
@@ -166,7 +206,7 @@ function Rmodal() {
           console.log("File uploaded successfully");
           getDownloadURL(storageRef).then((url) => {
             console.log("Download URL:", url);
-            const data = {
+            let data = {
               like: 0,
               report: 0,
               comment: 0,
@@ -179,7 +219,7 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data, tag);
+            SendDataToFlask(data, tag);
           });
         });
       }
@@ -190,14 +230,38 @@ function Rmodal() {
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
-        onClick={handleShow}
-        style={{ width: "100%" }}
-      >
-        เริ่มต้นการเขียนโพสต์
-      </button>
+      {loadingPost ? (
+        <button
+          disabled
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="px-3">กำลังโพสต์</span>
+            <div
+              className="spinner-border"
+              style={{ width: "1rem", height: "1rem" }}
+            />
+          </div>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          เริ่มต้นการเขียนโพสต์
+        </button>
+      )}
 
       <Modal
         show={show}
@@ -382,7 +446,7 @@ const Review = () => {
   //-----------
 
   //Sorting
-  const [selectedOption, setSelectedOption] = useState("ทั้งหมด");
+  const [selectedOption, setSelectedOption] = useState("ล่าสุด");
 
   const handleOptionSelect = (optionName) => {
     setSelectedOption(optionName);
@@ -465,7 +529,7 @@ const Review = () => {
                   <Tab
                     className="pt-4 tab-detail"
                     eventKey="all"
-                    title="ทั้งหมด"
+                    title="ล่าสุด"
                   >
                     <div>
                       {all ? (
@@ -527,25 +591,23 @@ const Review = () => {
                                       }}
                                     ></div>
                                     <div
+                                      className="row"
                                       style={{
                                         paddingTop: "1rem",
                                         width: "100%",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
+                                      <div className="col">
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                      </div>
 
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
+                                      <div className="col">
+                                        <div className="row float-end pt-2 cmnt-like">
+                                          <div className="col">
                                             <Link
                                               to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
@@ -558,12 +620,9 @@ const Review = () => {
                                                 alt="chat svg"
                                               />
                                             </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
-
+                                            <span>{item.comment}</span>
+                                          </div>
+                                          <div className="col">
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -1323,9 +1382,9 @@ const Review = () => {
 
                     <Dropdown.Menu>
                       <Dropdown.Item
-                        onClick={() => handleOptionSelect("ทั้งหมด")}
+                        onClick={() => handleOptionSelect("ล่าสุด")}
                       >
-                        ทั้งหมด
+                        ล่าสุด
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => handleOptionSelect("ยอดนิยม")}
@@ -1568,6 +1627,9 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
       // Create a reference to the post document
       const docRef = doc(db, "review", postID);
 
+      // Delete the post document
+      await deleteDoc(docRef);
+
       // Create a query to get all comments for the post
       const commentQuery = query(
         collection(db, "cmnt_review"),
@@ -1585,9 +1647,6 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
         getDocs(commentQuery),
         getDocs(replyQuery),
       ]);
-
-      // Delete the post document
-      await deleteDoc(docRef);
 
       // Delete all comment documents
       commentSnapshot.forEach(async (commentDoc) => {
@@ -1712,7 +1771,11 @@ function LikeCheck({ postID, users, like_count }) {
           <img src={likeURL} alt="like svg" style={{ fill: "transparent" }} />
         </button>
       </span>
-      <span style={{ paddingRight: "1rem" }}>{like_count}</span>
+      <span
+      // style={{ paddingRight: "1rem" }}
+      >
+        {like_count}
+      </span>
     </span>
   );
 }

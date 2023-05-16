@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
 import "../../styles/question.css";
-import { db } from "../../config";
+import { api_address, db } from "../../config";
 import {
   addDoc,
   collection,
@@ -18,7 +18,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 
 const algoliaClient = algoliasearch(
   "CTLNB6TYYG",
@@ -53,6 +54,43 @@ function Qmodal() {
   const [buttonStatus, setButtonStatus] = useState(true);
   const [switchOn, setSwitchOn] = useState(false);
 
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data) {
+    setLoadingPost(true);
+    try {
+      const responseName = await axios.post(api_address, {
+        text: name,
+      });
+
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("name => " + responseName.data.result);
+      console.log("content => " + responseContent.data.result);
+
+      if (
+        responseName.data.result === "NEG" ||
+        responseContent.data.result === "NEG"
+      ) {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      createData(data);
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างโพสต์สำเร็จ");
+      } else {
+        alert("โพสต์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
+
   function checkInfo() {
     const trimmedName = name.trim();
     const trimmedContent = content.trim();
@@ -73,7 +111,6 @@ function Qmodal() {
   async function createData(postData) {
     try {
       const docRef = await addDoc(collection(db, "question"), postData);
-
       console.log("This Post has been created", docRef.id);
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -85,18 +122,19 @@ function Qmodal() {
 
   function handleSubmit(event) {
     event.preventDefault();
+
     if (switchOn === true) {
-      const data = {
+      let data = {
         report: 0,
         comment: 0,
-        name: "ผู้ไม่ประสงค์ออกนาม",
+        name: "สมาชิกที่ไม่ระบุตัวตน",
         content: content.replace(/\n/g, "<br>"),
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data);
+      SendDataToFlask(data);
     } else {
-      const data = {
+      let data = {
         report: 0,
         comment: 0,
         name: name,
@@ -104,20 +142,44 @@ function Qmodal() {
         date: formattedDate,
         time: formattedTime,
       };
-      createData(data);
+      SendDataToFlask(data);
     }
   }
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
-        onClick={handleShow}
-        style={{ width: "100%" }}
-      >
-        เริ่มต้นการเขียนโพสต์
-      </button>
+      {loadingPost ? (
+        <button
+          disabled
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="px-3">กำลังโพสต์</span>
+            <div
+              className="spinner-border"
+              style={{ width: "1rem", height: "1rem" }}
+            />
+          </div>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          เริ่มต้นการเขียนโพสต์
+        </button>
+      )}
 
       <Modal
         show={show}
@@ -318,72 +380,76 @@ const Question_Search = () => {
                       <div>
                         {all.map((item) => (
                           <div key={item.id}>
-                            <div className="post-border">
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                <p className="poster-name pb-3">{item.name}</p>
+                            {item.status === undefined ? (
+                              <div className="post-border">
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <p className="poster-name pb-3">
+                                    {item.name}
+                                  </p>
 
-                                <Dropdown>
-                                  <Dropdown.Toggle
-                                    variant="link"
-                                    id="question-dropdown"
-                                  >
-                                    <img
-                                      className="menu-dropdown"
-                                      src={
-                                        require("../../images/question/three_dots.svg")
-                                          .default
-                                      }
-                                      alt=""
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      variant="link"
+                                      id="question-dropdown"
+                                    >
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </Dropdown.Toggle>
+
+                                    <Rep_Click
+                                      postID={item.id}
+                                      rep_count={item.report}
                                     />
-                                  </Dropdown.Toggle>
-
-                                  <Rep_Click
-                                    postID={item.id}
-                                    rep_count={item.report}
-                                  />
-                                </Dropdown>
-                              </div>
-                              <p
-                                className="pb-2 text"
-                                dangerouslySetInnerHTML={{
-                                  __html: item.content,
-                                }}
-                              ></p>
-
-                              <div className="flex-container comment">
-                                <div className="flex-1-comment">
-                                  <span className="post-date">
-                                    {formattedDate === item.date
-                                      ? item.time
-                                      : item.date}
-                                  </span>
+                                  </Dropdown>
                                 </div>
+                                <p
+                                  className="pb-2 text"
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.content,
+                                  }}
+                                ></p>
 
-                                <div className="flex-2-comment pb-3">
-                                  <Link
-                                    to={"/answer/post/" + item.id}
-                                    style={{ paddingRight: "0.5rem" }}
-                                  >
-                                    <img
-                                      src={
-                                        require("../../images/icon/chat.svg")
-                                          .default
-                                      }
-                                      alt="chat svg"
-                                    />
-                                  </Link>
-                                  <span style={{ paddingRight: "1rem" }}>
-                                    {item.comment}
-                                  </span>
+                                <div className="flex-container comment">
+                                  <div className="flex-1-comment">
+                                    <span className="post-date">
+                                      {formattedDate === item.date
+                                        ? item.time
+                                        : item.date}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex-2-comment pb-3">
+                                    <Link
+                                      to={"/answer/post/" + item.id}
+                                      style={{ paddingRight: "0.5rem" }}
+                                    >
+                                      <img
+                                        src={
+                                          require("../../images/icon/chat.svg")
+                                            .default
+                                        }
+                                        alt="chat svg"
+                                      />
+                                    </Link>
+                                    <span style={{ paddingRight: "1rem" }}>
+                                      {item.comment}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            ) : null}
                           </div>
                         ))}
                       </div>

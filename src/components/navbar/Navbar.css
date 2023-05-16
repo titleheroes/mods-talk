@@ -4,6 +4,13 @@
   padding: 0;
 }
 
+.nav-at-top {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  /* Add any additional styles for the navbar */
+}
+
 .dropdown-item.active {
   background-color: orange !important;
   color: white;

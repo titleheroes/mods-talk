@@ -3,7 +3,7 @@ import "../../styles/review.css";
 
 import algoliasearch from "algoliasearch/lite";
 import { Button, Dropdown, Modal } from "react-bootstrap";
-import { auth, db, storage } from "../../config";
+import { api_address, auth, db, storage } from "../../config";
 import {
   addDoc,
   arrayRemove,
@@ -23,6 +23,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const algoliaClient = algoliasearch(
   "CTLNB6TYYG",
@@ -74,44 +75,83 @@ function Rmodal() {
     try {
       setCurrentUserId(currentUser.uid);
     } catch (e) {
-      navigate("/");
+      navigate("/review");
     }
     checkInfo();
   }, [selectedOption]);
+
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data, tag) {
+    setLoadingPost(true);
+    try {
+      const responseHeader = await axios.post(api_address, {
+        text: header,
+      });
+
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("name => " + responseHeader.data.result);
+      console.log("content => " + responseContent.data.result);
+
+      if (
+        responseHeader.data.result === "NEG" ||
+        responseContent.data.result === "NEG"
+      ) {
+        data = { ...data, status: 0 };
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await createData(data, tag);
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างโพสต์สำเร็จ");
+      } else {
+        alert("โพสต์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
 
   async function createData(postData, tagName) {
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
       const tagDocRef = doc(db, "tag_ranked", tagName);
-      getDoc(tagDocRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const tagCount = docSnap.data().count;
-          updateDoc(tagDocRef, {
-            count: tagCount + 1,
-          })
-            .then(() => {
-              console.log("Document updated with new count value");
+      if (postData.status === undefined) {
+        getDoc(tagDocRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const tagCount = docSnap.data().count;
+            updateDoc(tagDocRef, {
+              count: tagCount + 1,
             })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
-        } else {
-          const reviewsCollectionRef = collection(db, "tag_ranked");
-          const newReviewDocRef = doc(reviewsCollectionRef, tagName);
+              .then(() => {
+                console.log("Document updated with new count value");
+              })
+              .catch((error) => {
+                console.error("Error updating document: ", error);
+              });
+          } else {
+            const reviewsCollectionRef = collection(db, "tag_ranked");
+            const newReviewDocRef = doc(reviewsCollectionRef, tagName);
 
-          const newReview = {
-            count: 1,
-          };
+            const newReview = {
+              count: 1,
+            };
 
-          setDoc(newReviewDocRef, newReview)
-            .then(() => {
-              console.log("Document written with ID: ", newReviewDocRef.id);
-            })
-            .catch((error) => {
-              console.error("Error adding document: ", error);
-            });
-        }
-      });
+            setDoc(newReviewDocRef, newReview)
+              .then(() => {
+                console.log("Document written with ID: ", newReviewDocRef.id);
+              })
+              .catch((error) => {
+                console.error("Error adding document: ", error);
+              });
+          }
+        });
+      }
 
       console.log("This Post has been created", docRef.id);
       return docRef.id;
@@ -149,7 +189,7 @@ function Rmodal() {
     } else {
       event.preventDefault();
       if (file === null) {
-        const data = {
+        let data = {
           like: 0,
           report: 0,
           comment: 0,
@@ -163,7 +203,7 @@ function Rmodal() {
           picture:
             "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data, tag);
+        SendDataToFlask(data, tag);
       } else {
         const storageRef = ref(
           storage,
@@ -174,7 +214,7 @@ function Rmodal() {
           console.log("File uploaded successfully");
           getDownloadURL(storageRef).then((url) => {
             console.log("Download URL:", url);
-            const data = {
+            let data = {
               like: 0,
               report: 0,
               comment: 0,
@@ -187,7 +227,7 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data, tag);
+            SendDataToFlask(data, tag);
           });
         });
       }
@@ -198,14 +238,38 @@ function Rmodal() {
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
-        onClick={handleShow}
-        style={{ width: "100%" }}
-      >
-        เริ่มต้นการเขียนโพสต์
-      </button>
+      {loadingPost ? (
+        <button
+          disabled
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="px-3">กำลังโพสต์</span>
+            <div
+              className="spinner-border"
+              style={{ width: "1rem", height: "1rem" }}
+            />
+          </div>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          เริ่มต้นการเขียนโพสต์
+        </button>
+      )}
 
       <Modal
         show={show}
@@ -395,7 +459,7 @@ const Review_Search = () => {
   //-----------
 
   //Sorting
-  const [selectedOption, setSelectedOption] = useState("ทั้งหมด");
+  const [selectedOption, setSelectedOption] = useState("ล่าสุด");
 
   const handleOptionSelect = (optionName) => {
     setSelectedOption(optionName);
@@ -447,7 +511,7 @@ const Review_Search = () => {
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                       <li className="breadcrumb-item">
-                        <Link to="/">มดส์-ทอล์ค</Link>
+                        <Link to="/review">มดส์-ทอล์ค</Link>
                       </li>
                       <li
                         className="breadcrumb-item active"
@@ -487,9 +551,9 @@ const Review_Search = () => {
 
                     <Dropdown.Menu>
                       <Dropdown.Item
-                        onClick={() => handleOptionSelect("ทั้งหมด")}
+                        onClick={() => handleOptionSelect("ล่าสุด")}
                       >
-                        ทั้งหมด
+                        ล่าสุด
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => handleOptionSelect("ยอดนิยม")}
