@@ -237,7 +237,16 @@ const Home = () => {
             {/* คำถามบ่อยที่ 1 */}
             <div>
               <div className="row">
-                <div className="homeHeader3 col">
+                <div
+                  className="homeHeader3 col"
+                  onClick={() =>
+                    handleToggleVisibility("element1") &
+                    toggleActive("element1")
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
                   สมัครอีเมลสกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th ได้จากไหน ?
                 </div>
                 <div className="col-1">
@@ -287,7 +296,16 @@ const Home = () => {
             {/* คำถามบ่อยที่ 2 */}
             <div style={{ marginTop: "2%" }}>
               <div className="row">
-                <div className="homeHeader3 col">
+                <div
+                  className="homeHeader3 col"
+                  onClick={() =>
+                    handleToggleVisibility("element2") &
+                    toggleActive("element2")
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
                   ในส่วนของรีวิวมีหมวดหมู่อะไรบ้าง ?
                 </div>
                 <div className="col-1">
@@ -337,7 +355,16 @@ const Home = () => {
             {/* คำถามบ่อยที่ 3 */}
             <div style={{ marginTop: "2%" }}>
               <div className="row">
-                <div className="homeHeader3 col">
+                <div
+                  className="homeHeader3 col"
+                  onClick={() =>
+                    handleToggleVisibility("element3") &
+                    toggleActive("element3")
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
                   คนที่มาตอบคำถามนั้นเชื่อถือได้มากแค่ไหน ?
                 </div>
                 <div className="col-1">
@@ -387,7 +414,16 @@ const Home = () => {
             {/* คำถามบ่อยที่ 4 */}
             <div style={{ marginTop: "2%" }}>
               <div className="row">
-                <div className="homeHeader3 col">
+                <div
+                  className="homeHeader3 col"
+                  onClick={() =>
+                    handleToggleVisibility("element4") &
+                    toggleActive("element4")
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
                   ถ้าอยากเข้าไปเขียนรีวิวในเว็บไซต์ต้องเริ่มอย่างไร ?
                 </div>
                 <div className="col-1">
@@ -437,7 +473,16 @@ const Home = () => {
             {/* คำถามบ่อยที่ 5 */}
             <div style={{ marginTop: "2%", paddingBottom: "1.5%" }}>
               <div className="row">
-                <div className="homeHeader3 col">
+                <div
+                  className="homeHeader3 col"
+                  onClick={() =>
+                    handleToggleVisibility("element5") &
+                    toggleActive("element5")
+                  }
+                  style={{
+                    cursor: "pointer",
+                  }}
+                >
                   สามารถติดต่อแอดมินของเว็บไซต์ได้จากที่ไหน ?
                 </div>
                 <div className="col-1">

@@ -428,3 +428,19 @@ textarea::-webkit-scrollbar-thumb:hover {
 .sent-comment:disabled {
   opacity: 0.3;
 }
+
+.postButton {
+  padding: 3% 3% 3% 3%;
+  width: 100%;
+  font-size: 14px;
+  color: white;
+  background-color: #f04e22;
+  border: 0;
+  border-radius: 5px;
+}
+
+@media (min-width: 1024px) {
+  .postButton {
+    font-size: 15px;
+  }
+}

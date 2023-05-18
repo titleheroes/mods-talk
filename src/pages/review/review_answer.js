@@ -283,12 +283,7 @@ function Rmodal() {
           </div>
         </button>
       ) : (
-        <button
-          type="button"
-          className="button"
-          onClick={handleShow}
-          style={{ width: "100%" }}
-        >
+        <button type="button" className="postButton" onClick={handleShow}>
           เริ่มต้นการเขียนโพสต์
         </button>
       )}

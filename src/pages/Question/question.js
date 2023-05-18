@@ -191,12 +191,7 @@ function Qmodal() {
           </div>
         </button>
       ) : (
-        <button
-          type="button"
-          className="button"
-          onClick={handleShow}
-          style={{ width: "100%" }}
-        >
+        <button type="button" className="postButton" onClick={handleShow}>
           เริ่มต้นการเขียนโพสต์
         </button>
       )}
@@ -483,7 +478,7 @@ const Question = () => {
                   <Tab
                     className="pt-4"
                     eventKey="no-ans"
-                    title="คำถามที่ไม่มีคำตอบ"
+                    title={`คำถามที่ไม่มีคำตอบ (${noAns.length})`}
                   >
                     <div>
                       {noAns ? (
