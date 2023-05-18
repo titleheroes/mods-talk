@@ -116,16 +116,17 @@ function Rmodal() {
         "กู",
         "กุ",
       ];
-      for (let i = 0; i < badWords.length; i++) {
-        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
 
-        if (badWordRegex.test(content)) {
-          data = { ...data, status: 0 };
-          break; // Exit the function if a bad word is found
-        }
+      const concatenatedBadWordRegex = new RegExp(
+        `(${badWords.join("|")})`,
+        "i"
+      );
+
+      // Check for bad words in the content
+      if (concatenatedBadWordRegex.test(content)) {
+        data = { ...data, status: 0 };
       }
       // End of Hard Code
-      //
     } catch (error) {
       console.error(error);
     } finally {
@@ -223,8 +224,6 @@ function Rmodal() {
           member_id: currentUserId,
           date: formattedDate,
           time: formattedTime,
-          picture:
-            "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
         SendDataToFlask(data, tag);
       } else {
@@ -318,54 +317,10 @@ function Rmodal() {
             ></button>
           </div>
 
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">เนื้อหาโพสต์</text>
-            <input
-              type="text"
-              className="form-control mt-2 mb-3"
-              id="header"
-              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
-              onChange={(e) => {
-                setHeader(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <textarea
-              class="form-control mt-2 mb-3 question-modal-input"
-              id="content"
-              placeholder="เขียนคำบรรยายเพิ่มเติม..."
-              rows="6"
-              onChange={(e) => {
-                setContent(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <text className="modal-topic">รูปภาพประกอบ :</text>
-            <input
-              type="file"
-              className="form-control mt-2 mb-3"
-              id="picture"
-              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
-              onChange={handleUpload}
-            />
-
-            <text className="modal-topic">แฮชแท็ก</text>
-            <input
-              type="text"
-              className="form-control mt-2"
-              id="tag"
-              placeholder="#แฮชแท็ก"
-              onChange={(e) => {
-                setTag(e.target.value);
-                checkInfo();
-              }}
-            />
-          </div>
-
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">หมวดหมู่</text>
+          <div className="modal-body question-modal-body px-4">
+            <text className="modal-topic ">
+              หมวดหมู่ <span style={{ color: "red", fontSize: "12px" }}>*</span>
+            </text>
             <div className="form-control mt-2 mb-3">
               <Dropdown>
                 <Dropdown.Toggle
@@ -424,6 +379,54 @@ function Rmodal() {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
+            <text className="modal-topic ">
+              เนื้อหาโพสต์
+              <span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2 mb-3"
+              id="header"
+              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
+              onChange={(e) => {
+                setHeader(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <textarea
+              class="form-control mt-2 mb-3 question-modal-input"
+              id="content"
+              placeholder="เขียนคำบรรยายเพิ่มเติม..."
+              rows="6"
+              onChange={(e) => {
+                setContent(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <text className="modal-topic">รูปภาพประกอบ :</text>
+            <input
+              type="file"
+              className="form-control mt-2 mb-3"
+              id="picture"
+              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+              onChange={handleUpload}
+            />
+
+            <text className="modal-topic">
+              แฮชแท็ก<span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2"
+              id="tag"
+              placeholder="#แฮชแท็ก"
+              onChange={(e) => {
+                setTag(e.target.value);
+                checkInfo();
+              }}
+            />
           </div>
 
           <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
@@ -694,7 +697,7 @@ const Answer = ({ userData }) => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      height: "400px",
+                      height: post.picture === undefined ? null : "400px",
                     }}
                   >
                     <img
@@ -793,90 +796,98 @@ const Answer = ({ userData }) => {
                     <div>
                       {comment.map((item) => (
                         <div className="post-border" key={item.id}>
-                          <div className="flex-container comment pt-3">
-                            <MemberInfo memberID={item.member_id} />
+                          {item.status === undefined ? (
+                            <>
+                              <div className="flex-container comment pt-3">
+                                <MemberInfo memberID={item.member_id} />
 
-                            <div className="flex-1-right">
-                              <Dropdown>
-                                <Dropdown.Toggle
-                                  variant="link"
-                                  id="question-dropdown"
-                                >
-                                  <img
-                                    className="menu-dropdown"
-                                    src={
-                                      require("../../images/question/three_dots.svg")
-                                        .default
-                                    }
-                                    alt=""
-                                  />
-                                </Dropdown.Toggle>
+                                <div className="flex-1-right">
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      variant="link"
+                                      id="question-dropdown"
+                                    >
+                                      <img
+                                        className="menu-dropdown"
+                                        src={
+                                          require("../../images/question/three_dots.svg")
+                                            .default
+                                        }
+                                        alt=""
+                                      />
+                                    </Dropdown.Toggle>
 
-                                <Rep_Del_Comment_Click
-                                  postID={id}
-                                  cmnt_count={post.comment}
-                                  cmnt_id={item.id}
-                                  rep_users={item.rep_users}
-                                  rep_count={item.report}
-                                  member_id={item.member_id}
-                                />
-                              </Dropdown>
-                            </div>
-                          </div>
+                                    <Rep_Del_Comment_Click
+                                      postID={id}
+                                      cmnt_count={post.comment}
+                                      cmnt_id={item.id}
+                                      rep_users={item.rep_users}
+                                      rep_count={item.report}
+                                      member_id={item.member_id}
+                                    />
+                                  </Dropdown>
+                                </div>
+                              </div>
 
-                          <div
-                            className="pt-4"
-                            dangerouslySetInnerHTML={{ __html: item.content }}
-                          />
+                              <div
+                                className="pt-4"
+                                dangerouslySetInnerHTML={{
+                                  __html: item.content,
+                                }}
+                              />
 
-                          <div
-                            className="flex-container comment pt-2"
-                            id="comment-reply"
-                          >
-                            <div className="pe-4">
-                              <span className="post-date">
-                                {formattedDate === item.date
-                                  ? item.time
-                                  : item.date}
-                              </span>
-                            </div>
-
-                            <div>
-                              <Button
-                                className="reply-button"
-                                onClick={() => handleToggleVisibility(item.id)}
+                              <div
+                                className="flex-container comment pt-2"
+                                id="comment-reply"
                               >
-                                <text id="reply-text">
-                                  ตอบกลับ
-                                  <span>
-                                    {" ("}
-                                    {item.reply}
-                                    {")"}
+                                <div className="pe-4">
+                                  <span className="post-date">
+                                    {formattedDate === item.date
+                                      ? item.time
+                                      : item.date}
                                   </span>
-                                </text>
-                              </Button>
-                            </div>
+                                </div>
 
-                            <div className="flex-1-right px-4">
-                              <LikeCommentCheck
-                                postID={item.id}
-                                users={item.users}
-                                like_count={item.like}
-                              />
-                            </div>
-                          </div>
+                                <div>
+                                  <Button
+                                    className="reply-button"
+                                    onClick={() =>
+                                      handleToggleVisibility(item.id)
+                                    }
+                                  >
+                                    <text id="reply-text">
+                                      ตอบกลับ
+                                      <span>
+                                        {" ("}
+                                        {item.reply}
+                                        {")"}
+                                      </span>
+                                    </text>
+                                  </Button>
+                                </div>
 
-                          {visibility[item.id] && (
-                            <div className="container">
-                              <hr />
-                              <ReplyLoad
-                                userData={userData}
-                                postID={id}
-                                cmntID={item.id}
-                                replyCount={item.reply}
-                              />
-                            </div>
-                          )}
+                                <div className="flex-1-right px-4">
+                                  <LikeCommentCheck
+                                    postID={item.id}
+                                    users={item.users}
+                                    like_count={item.like}
+                                  />
+                                </div>
+                              </div>
+
+                              {visibility[item.id] && (
+                                <div className="container">
+                                  <hr />
+                                  <ReplyLoad
+                                    userData={userData}
+                                    postID={id}
+                                    cmntID={item.id}
+                                    replyCount={item.reply}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          ) : null}
                         </div>
                       ))}
                     </div>

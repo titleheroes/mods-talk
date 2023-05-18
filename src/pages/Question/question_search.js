@@ -93,16 +93,17 @@ function Qmodal() {
         "กู",
         "กุ",
       ];
-      for (let i = 0; i < badWords.length; i++) {
-        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
 
-        if (badWordRegex.test(content)) {
-          data = { ...data, status: 0 };
-          break; // Exit the function if a bad word is found
-        }
+      const concatenatedBadWordRegex = new RegExp(
+        `(${badWords.join("|")})`,
+        "i"
+      );
+
+      // Check for bad words in the content
+      if (concatenatedBadWordRegex.test(content)) {
+        data = { ...data, status: 0 };
       }
       // End of Hard Code
-      //
     } catch (error) {
       console.error(error);
     } finally {

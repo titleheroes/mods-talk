@@ -111,16 +111,17 @@ function Rmodal() {
         "กู",
         "กุ",
       ];
-      for (let i = 0; i < badWords.length; i++) {
-        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
 
-        if (badWordRegex.test(content)) {
-          data = { ...data, status: 0 };
-          break; // Exit the function if a bad word is found
-        }
+      const concatenatedBadWordRegex = new RegExp(
+        `(${badWords.join("|")})`,
+        "i"
+      );
+
+      // Check for bad words in the content
+      if (concatenatedBadWordRegex.test(content)) {
+        data = { ...data, status: 0 };
       }
       // End of Hard Code
-      //
     } catch (error) {
       console.error(error);
     } finally {
@@ -218,8 +219,6 @@ function Rmodal() {
           member_id: currentUserId,
           date: formattedDate,
           time: formattedTime,
-          picture:
-            "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
         SendDataToFlask(data, tag);
       } else {
@@ -313,54 +312,10 @@ function Rmodal() {
             ></button>
           </div>
 
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">เนื้อหาโพสต์</text>
-            <input
-              type="text"
-              className="form-control mt-2 mb-3"
-              id="header"
-              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
-              onChange={(e) => {
-                setHeader(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <textarea
-              class="form-control mt-2 mb-3 question-modal-input"
-              id="content"
-              placeholder="เขียนคำบรรยายเพิ่มเติม..."
-              rows="6"
-              onChange={(e) => {
-                setContent(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <text className="modal-topic">รูปภาพประกอบ :</text>
-            <input
-              type="file"
-              className="form-control mt-2 mb-3"
-              id="picture"
-              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
-              onChange={handleUpload}
-            />
-
-            <text className="modal-topic">แฮชแท็ก</text>
-            <input
-              type="text"
-              className="form-control mt-2"
-              id="tag"
-              placeholder="#แฮชแท็ก"
-              onChange={(e) => {
-                setTag(e.target.value);
-                checkInfo();
-              }}
-            />
-          </div>
-
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">หมวดหมู่</text>
+          <div className="modal-body question-modal-body px-4">
+            <text className="modal-topic ">
+              หมวดหมู่ <span style={{ color: "red", fontSize: "12px" }}>*</span>
+            </text>
             <div className="form-control mt-2 mb-3">
               <Dropdown>
                 <Dropdown.Toggle
@@ -419,6 +374,54 @@ function Rmodal() {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
+            <text className="modal-topic ">
+              เนื้อหาโพสต์
+              <span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2 mb-3"
+              id="header"
+              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
+              onChange={(e) => {
+                setHeader(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <textarea
+              class="form-control mt-2 mb-3 question-modal-input"
+              id="content"
+              placeholder="เขียนคำบรรยายเพิ่มเติม..."
+              rows="6"
+              onChange={(e) => {
+                setContent(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <text className="modal-topic">รูปภาพประกอบ :</text>
+            <input
+              type="file"
+              className="form-control mt-2 mb-3"
+              id="picture"
+              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+              onChange={handleUpload}
+            />
+
+            <text className="modal-topic">
+              แฮชแท็ก<span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2"
+              id="tag"
+              placeholder="#แฮชแท็ก"
+              onChange={(e) => {
+                setTag(e.target.value);
+                checkInfo();
+              }}
+            />
           </div>
 
           <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
@@ -562,126 +565,132 @@ const Review = () => {
                         <div>
                           {all.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      className="row"
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <div className="col">
-                                        <a href={`/review/tag/${item.tag}`}>
-                                          <Button className="hit-tag">
-                                            {item.tag}
-                                          </Button>
-                                        </a>
-                                      </div>
-
-                                      <div className="col">
-                                        <div className="row float-end pt-2 cmnt-like">
-                                          <div className="col">
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span>{item.comment}</span>
-                                          </div>
-                                          <div className="col">
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
+                                          style={{
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
+                                          }}
+                                        >
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
                                             />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        className="row"
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div className="col">
+                                          <a href={`/review/tag/${item.tag}`}>
+                                            <Button className="hit-tag">
+                                              {item.tag}
+                                            </Button>
+                                          </a>
+                                        </div>
+
+                                        <div className="col">
+                                          <div className="row float-end pt-2 cmnt-like">
+                                            <div className="col">
+                                              <Link
+                                                to={"/review/post/" + item.id}
+                                                style={{
+                                                  paddingRight: "0.5rem",
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    require("../../images/icon/chat.svg")
+                                                      .default
+                                                  }
+                                                  alt="chat svg"
+                                                />
+                                              </Link>
+                                              <span>{item.comment}</span>
+                                            </div>
+                                            <div className="col">
+                                              <LikeCheck
+                                                postID={item.id}
+                                                users={item.users}
+                                                like_count={item.like}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -697,126 +706,132 @@ const Review = () => {
                         <div>
                           {subject.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      className="row"
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <div className="col">
-                                        <a href={`/review/tag/${item.tag}`}>
-                                          <Button className="hit-tag">
-                                            {item.tag}
-                                          </Button>
-                                        </a>
-                                      </div>
-
-                                      <div className="col">
-                                        <div className="row float-end pt-2 cmnt-like">
-                                          <div className="col">
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span>{item.comment}</span>
-                                          </div>
-                                          <div className="col">
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
+                                          style={{
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
+                                          }}
+                                        >
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
                                             />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        className="row"
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div className="col">
+                                          <a href={`/review/tag/${item.tag}`}>
+                                            <Button className="hit-tag">
+                                              {item.tag}
+                                            </Button>
+                                          </a>
+                                        </div>
+
+                                        <div className="col">
+                                          <div className="row float-end pt-2 cmnt-like">
+                                            <div className="col">
+                                              <Link
+                                                to={"/review/post/" + item.id}
+                                                style={{
+                                                  paddingRight: "0.5rem",
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    require("../../images/icon/chat.svg")
+                                                      .default
+                                                  }
+                                                  alt="chat svg"
+                                                />
+                                              </Link>
+                                              <span>{item.comment}</span>
+                                            </div>
+                                            <div className="col">
+                                              <LikeCheck
+                                                postID={item.id}
+                                                users={item.users}
+                                                like_count={item.like}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -832,126 +847,132 @@ const Review = () => {
                         <div>
                           {teacher.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      className="row"
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <div className="col">
-                                        <a href={`/review/tag/${item.tag}`}>
-                                          <Button className="hit-tag">
-                                            {item.tag}
-                                          </Button>
-                                        </a>
-                                      </div>
-
-                                      <div className="col">
-                                        <div className="row float-end pt-2 cmnt-like">
-                                          <div className="col">
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span>{item.comment}</span>
-                                          </div>
-                                          <div className="col">
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
+                                          style={{
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
+                                          }}
+                                        >
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
                                             />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        className="row"
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div className="col">
+                                          <a href={`/review/tag/${item.tag}`}>
+                                            <Button className="hit-tag">
+                                              {item.tag}
+                                            </Button>
+                                          </a>
+                                        </div>
+
+                                        <div className="col">
+                                          <div className="row float-end pt-2 cmnt-like">
+                                            <div className="col">
+                                              <Link
+                                                to={"/review/post/" + item.id}
+                                                style={{
+                                                  paddingRight: "0.5rem",
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    require("../../images/icon/chat.svg")
+                                                      .default
+                                                  }
+                                                  alt="chat svg"
+                                                />
+                                              </Link>
+                                              <span>{item.comment}</span>
+                                            </div>
+                                            <div className="col">
+                                              <LikeCheck
+                                                postID={item.id}
+                                                users={item.users}
+                                                like_count={item.like}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -967,126 +988,132 @@ const Review = () => {
                         <div>
                           {restaurant.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      className="row"
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <div className="col">
-                                        <a href={`/review/tag/${item.tag}`}>
-                                          <Button className="hit-tag">
-                                            {item.tag}
-                                          </Button>
-                                        </a>
-                                      </div>
-
-                                      <div className="col">
-                                        <div className="row float-end pt-2 cmnt-like">
-                                          <div className="col">
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span>{item.comment}</span>
-                                          </div>
-                                          <div className="col">
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
+                                          style={{
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
+                                          }}
+                                        >
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
                                             />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        className="row"
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div className="col">
+                                          <a href={`/review/tag/${item.tag}`}>
+                                            <Button className="hit-tag">
+                                              {item.tag}
+                                            </Button>
+                                          </a>
+                                        </div>
+
+                                        <div className="col">
+                                          <div className="row float-end pt-2 cmnt-like">
+                                            <div className="col">
+                                              <Link
+                                                to={"/review/post/" + item.id}
+                                                style={{
+                                                  paddingRight: "0.5rem",
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    require("../../images/icon/chat.svg")
+                                                      .default
+                                                  }
+                                                  alt="chat svg"
+                                                />
+                                              </Link>
+                                              <span>{item.comment}</span>
+                                            </div>
+                                            <div className="col">
+                                              <LikeCheck
+                                                postID={item.id}
+                                                users={item.users}
+                                                like_count={item.like}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -1102,126 +1129,133 @@ const Review = () => {
                         <div>
                           {dorm.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
+                              {" "}
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      className="row"
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <div className="col">
-                                        <a href={`/review/tag/${item.tag}`}>
-                                          <Button className="hit-tag">
-                                            {item.tag}
-                                          </Button>
-                                        </a>
-                                      </div>
-
-                                      <div className="col">
-                                        <div className="row float-end pt-2 cmnt-like">
-                                          <div className="col">
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span>{item.comment}</span>
-                                          </div>
-                                          <div className="col">
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
+                                          style={{
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
+                                          }}
+                                        >
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
                                             />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        className="row"
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <div className="col">
+                                          <a href={`/review/tag/${item.tag}`}>
+                                            <Button className="hit-tag">
+                                              {item.tag}
+                                            </Button>
+                                          </a>
+                                        </div>
+
+                                        <div className="col">
+                                          <div className="row float-end pt-2 cmnt-like">
+                                            <div className="col">
+                                              <Link
+                                                to={"/review/post/" + item.id}
+                                                style={{
+                                                  paddingRight: "0.5rem",
+                                                }}
+                                              >
+                                                <img
+                                                  src={
+                                                    require("../../images/icon/chat.svg")
+                                                      .default
+                                                  }
+                                                  alt="chat svg"
+                                                />
+                                              </Link>
+                                              <span>{item.comment}</span>
+                                            </div>
+                                            <div className="col">
+                                              <LikeCheck
+                                                postID={item.id}
+                                                users={item.users}
+                                                like_count={item.like}
+                                              />
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -1237,112 +1271,119 @@ const Review = () => {
                         <div>
                           {work.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "space-between",
-                                    }}
-                                  >
-                                    <MemberInfo
-                                      memberID={item.member_id}
-                                      time={item.time}
-                                      date={item.date}
-                                    />
-                                    <Dropdown drop="down">
-                                      <Dropdown.Toggle
-                                        variant="link"
-                                        id="dropdown-basic"
-                                        style={{
-                                          border: "none",
-                                          boxShadow: "none",
-                                          color: "transparent",
-                                        }}
-                                      >
-                                        <span style={{ color: "black" }}>
-                                          <img
-                                            className="menu-dropdown"
-                                            src={
-                                              require("../../images/question/three_dots.svg")
-                                                .default
-                                            }
-                                            alt=""
-                                          />
-                                        </span>
-                                      </Dropdown.Toggle>
-                                      <Rep_Del_Click
-                                        postID={item.id}
-                                        rep_users={item.rep_users}
-                                        rep_count={item.report}
-                                        tagName={item.tag}
-                                        member_id={item.member_id}
-                                      />
-                                    </Dropdown>
-                                  </div>
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
-                                    <div
-                                      className="text-limit body"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
+                              {" "}
+                              {item.status === undefined ? (
+                                <div className="row flex-wrap">
+                                  <div className="col-sm-9">
                                     <div
                                       style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
-                                      <div className="box float-end">
-                                        <div
-                                          className="row"
+                                      <MemberInfo
+                                        memberID={item.member_id}
+                                        time={item.time}
+                                        date={item.date}
+                                      />
+                                      <Dropdown drop="down">
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="dropdown-basic"
                                           style={{
-                                            paddingTop: "1rem",
-                                            width: "100%",
+                                            border: "none",
+                                            boxShadow: "none",
+                                            color: "transparent",
                                           }}
                                         >
-                                          <div className="col">
-                                            <a href={`/review/tag/${item.tag}`}>
-                                              <Button className="hit-tag">
-                                                {item.tag}
-                                              </Button>
-                                            </a>
-                                          </div>
+                                          <span style={{ color: "black" }}>
+                                            <img
+                                              className="menu-dropdown"
+                                              src={
+                                                require("../../images/question/three_dots.svg")
+                                                  .default
+                                              }
+                                              alt=""
+                                            />
+                                          </span>
+                                        </Dropdown.Toggle>
+                                        <Rep_Del_Click
+                                          postID={item.id}
+                                          rep_users={item.rep_users}
+                                          rep_count={item.report}
+                                          tagName={item.tag}
+                                          member_id={item.member_id}
+                                        />
+                                      </Dropdown>
+                                    </div>
+                                    <div>
+                                      <div className="homeHeader2">
+                                        {item.header}
+                                      </div>
+                                      <div
+                                        className="text-limit body"
+                                        dangerouslySetInnerHTML={{
+                                          __html: item.content,
+                                        }}
+                                      ></div>
+                                      <div
+                                        style={{
+                                          paddingTop: "1rem",
+                                          width: "100%",
+                                        }}
+                                      >
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                        <div className="box float-end">
+                                          <div
+                                            className="row"
+                                            style={{
+                                              paddingTop: "1rem",
+                                              width: "100%",
+                                            }}
+                                          >
+                                            <div className="col">
+                                              <a
+                                                href={`/review/tag/${item.tag}`}
+                                              >
+                                                <Button className="hit-tag">
+                                                  {item.tag}
+                                                </Button>
+                                              </a>
+                                            </div>
 
-                                          <div className="col">
-                                            <div className="row float-end pt-2 cmnt-like">
-                                              <div className="col">
-                                                <Link
-                                                  to={"/review/post/" + item.id}
-                                                  style={{
-                                                    paddingRight: "0.5rem",
-                                                  }}
-                                                >
-                                                  <img
-                                                    src={
-                                                      require("../../images/icon/chat.svg")
-                                                        .default
+                                            <div className="col">
+                                              <div className="row float-end pt-2 cmnt-like">
+                                                <div className="col">
+                                                  <Link
+                                                    to={
+                                                      "/review/post/" + item.id
                                                     }
-                                                    alt="chat svg"
+                                                    style={{
+                                                      paddingRight: "0.5rem",
+                                                    }}
+                                                  >
+                                                    <img
+                                                      src={
+                                                        require("../../images/icon/chat.svg")
+                                                          .default
+                                                      }
+                                                      alt="chat svg"
+                                                    />
+                                                  </Link>
+                                                  <span>{item.comment}</span>
+                                                </div>
+                                                <div className="col">
+                                                  <LikeCheck
+                                                    postID={item.id}
+                                                    users={item.users}
+                                                    like_count={item.like}
                                                   />
-                                                </Link>
-                                                <span>{item.comment}</span>
-                                              </div>
-                                              <div className="col">
-                                                <LikeCheck
-                                                  postID={item.id}
-                                                  users={item.users}
-                                                  like_count={item.like}
-                                                />
+                                                </div>
                                               </div>
                                             </div>
                                           </div>
@@ -1350,29 +1391,31 @@ const Review = () => {
                                       </div>
                                     </div>
                                   </div>
-                                </div>
 
-                                <div
-                                  className="col-sm-3 pt-3"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center", // Horizontally center the image
-                                    alignItems: "center", // Vertically center the image
-                                  }}
-                                >
-                                  <img
-                                    src={item.picture}
+                                  <div
+                                    className="col-sm-3 pt-3"
                                     style={{
-                                      width: "200px",
-                                      height: "200px",
-                                      objectFit: "cover",
+                                      display: "flex",
+                                      justifyContent: "center", // Horizontally center the image
+                                      alignItems: "center", // Vertically center the image
                                     }}
-                                  />
+                                  >
+                                    {item.picture === undefined ? null : (
+                                      <img
+                                        src={item.picture}
+                                        style={{
+                                          width: "200px",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                        }}
+                                      />
+                                    )}
+                                  </div>
+                                  <div style={{ paddingTop: "1rem" }}>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
