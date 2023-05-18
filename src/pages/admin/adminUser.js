@@ -34,7 +34,6 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
 
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -187,7 +186,15 @@ function AlertDialogSlide({ id, fullname, suspended }) {
     }
   };
 
-  const handleShowDel = async (event) => {
+  // async function suspendedProc(docRef, docRefValue) {
+  //   try {
+  //   } catch (error) {
+  //     alert("เกิดข้อผิดพลาดในการระงับ");
+  //     console.error("Error Suspended : ", error);
+  //   }
+  // }
+
+  const handleShowSuspended = async (event) => {
     event.preventDefault();
     const confirmed = window.confirm(
       "คุณยืนยันที่ต้องการจะระงับสมาชิกคนนี้ใช่หรือไม่ ?"
@@ -204,7 +211,7 @@ function AlertDialogSlide({ id, fullname, suspended }) {
       if (docSnap.exists()) {
         const level = docSnap.data().level;
         if (level === "superadmin" && !isSuperAdmin) {
-          alert("คุณไม่สามารถระงับบัญชีซูเปอร์แอดมินได้");
+          alert("คุณไม่สามารถระบัญชีซูเปอร์แอดมินได้");
         } else {
           try {
             const memberDocSnap = await getDoc(memberRef);
@@ -320,7 +327,9 @@ function AlertDialogSlide({ id, fullname, suspended }) {
               ปลดระงับสมาชิก
             </Dropdown.Item>
           ) : (
-            <Dropdown.Item onClick={handleShowDel}>ระงับสมาชิก</Dropdown.Item>
+            <Dropdown.Item onClick={handleShowSuspended}>
+              ระงับสมาชิก
+            </Dropdown.Item>
           )}
         </Dropdown.Menu>
       </Dropdown>

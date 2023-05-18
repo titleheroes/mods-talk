@@ -95,6 +95,32 @@ function Rmodal() {
       ) {
         data = { ...data, status: 0 };
       }
+
+      // Hard Code
+      // ทำไม : เพื่อกันไม่ให้มีอย่างปลอดภัยแน่นอน
+      const badWords = [
+        "ควย",
+        "เหี้ย",
+        "เย็ด",
+        "สัส",
+        "ไอสัตว์",
+        "หี",
+        "หำ",
+        "มึง",
+        "มุง",
+        "กู",
+        "กุ",
+      ];
+      for (let i = 0; i < badWords.length; i++) {
+        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
+
+        if (badWordRegex.test(content)) {
+          data = { ...data, status: 0 };
+          break; // Exit the function if a bad word is found
+        }
+      }
+      // End of Hard Code
+      //
     } catch (error) {
       console.error(error);
     } finally {
@@ -451,13 +477,71 @@ const Review_Tag = () => {
   }
   //-----------
 
-  //Sorting
+  // Sorting
   const [selectedOption, setSelectedOption] = useState("ล่าสุด");
 
   const handleOptionSelect = (optionName) => {
     setSelectedOption(optionName);
   };
-  //-----------
+
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    if (selectedOption === "ยอดนิยม") {
+      const sortedData = [...all].sort((a, b) => b.like - a.like);
+      setSortedData(sortedData);
+    } else {
+      const sortedData = [...all].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+
+        if (dateA > dateB) {
+          return -1; // sort dateA before dateB
+        } else if (dateA < dateB) {
+          return 1; // sort dateA after dateB
+        } else {
+          const timeA = new Date(`1970-01-01T${a.time}`);
+          const timeB = new Date(`1970-01-01T${b.time}`);
+
+          if (timeA > timeB) {
+            return -1; // sort timeA before timeB
+          } else if (timeA < timeB) {
+            return 1; // sort timeA after timeB
+          } else {
+            return 0; // same date and time
+          }
+        }
+      });
+
+      // Group data by date
+      const groupedData = {};
+      sortedData.forEach((item) => {
+        const date = item.date;
+        if (!groupedData[date]) {
+          groupedData[date] = [];
+        }
+        groupedData[date].push(item);
+      });
+
+      // Sort each group by time ascending
+      for (const date in groupedData) {
+        groupedData[date] = groupedData[date].sort((a, b) => {
+          const timeA = new Date(`1970-01-01T${a.time}`);
+          const timeB = new Date(`1970-01-01T${b.time}`);
+          return timeA - timeB; // sort timeA before timeB for ascending order
+        });
+      }
+
+      // Merge and flatten the groups
+      const mergedData = Object.values(groupedData).flat();
+
+      // Reverse the final sorted result
+      const reversedData = mergedData.reverse();
+
+      setSortedData(reversedData);
+    }
+  }, [selectedOption, all]);
+  // End of Sorting
 
   useEffect(() => {
     const q = query(collection(db, "review"), where("tag", "==", keyword));
@@ -548,7 +632,7 @@ const Review_Tag = () => {
                 <div className="pt-4">
                   {all ? (
                     <div>
-                      {all.map((item) => (
+                      {sortedData.map((item) => (
                         <div key={item.id}>
                           <div className="row flex-wrap">
                             <div className="col-sm-9">
@@ -603,24 +687,23 @@ const Review_Tag = () => {
                                   }}
                                 ></div>
                                 <div
+                                  className="row"
                                   style={{
                                     paddingTop: "1rem",
                                     width: "100%",
                                   }}
                                 >
-                                  <a href={`/review/tag/${item.tag}`}>
-                                    <Button className="hit-tag">
-                                      {item.tag}
-                                    </Button>
-                                  </a>
-                                  <div className="box float-end">
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                      }}
-                                    >
-                                      <div style={{ flex: 1 }}>
+                                  <div className="col">
+                                    <a href={`/review/tag/${item.tag}`}>
+                                      <Button className="hit-tag">
+                                        {item.tag}
+                                      </Button>
+                                    </a>
+                                  </div>
+
+                                  <div className="col">
+                                    <div className="row float-end pt-2 cmnt-like">
+                                      <div className="col">
                                         <Link
                                           to={"/review/post/" + item.id}
                                           style={{ paddingRight: "0.5rem" }}
@@ -633,10 +716,9 @@ const Review_Tag = () => {
                                             alt="chat svg"
                                           />
                                         </Link>
-                                        <span style={{ paddingRight: "1rem" }}>
-                                          {item.comment}
-                                        </span>
-
+                                        <span>{item.comment}</span>
+                                      </div>
+                                      <div className="col">
                                         <LikeCheck
                                           postID={item.id}
                                           users={item.users}
@@ -649,23 +731,22 @@ const Review_Tag = () => {
                               </div>
                             </div>
 
-                            <div className="col-sm-3 pt-3">
-                              <div
+                            <div
+                              className="col-sm-3 pt-3"
+                              style={{
+                                display: "flex",
+                                justifyContent: "center", // Horizontally center the image
+                                alignItems: "center", // Vertically center the image
+                              }}
+                            >
+                              <img
+                                src={item.picture}
                                 style={{
                                   width: "200px",
                                   height: "200px",
-                                  overflow: "hidden",
+                                  objectFit: "cover",
                                 }}
-                              >
-                                <img
-                                  src={item.picture}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                              </div>
+                              />
                             </div>
                             <div style={{ paddingTop: "1rem" }}>
                               <hr />

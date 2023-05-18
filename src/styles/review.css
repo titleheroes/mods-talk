@@ -210,10 +210,18 @@
 .cmnt-like {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 120%;
 }
 
 @media (min-width: 1024px) {
+  .cmnt-like {
+    display: flex;
+    align-items: center;
+    width: 75%;
+  }
+}
+
+@media (min-width: 1280px) {
   .cmnt-like {
     display: flex;
     align-items: center;

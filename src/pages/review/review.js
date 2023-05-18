@@ -95,6 +95,32 @@ function Rmodal() {
       ) {
         data = { ...data, status: 0 };
       }
+
+      // Hard Code
+      // ทำไม : เพื่อกันไม่ให้มีอย่างปลอดภัยแน่นอน
+      const badWords = [
+        "ควย",
+        "เหี้ย",
+        "เย็ด",
+        "สัส",
+        "ไอสัตว์",
+        "หี",
+        "หำ",
+        "มึง",
+        "มุง",
+        "กู",
+        "กุ",
+      ];
+      for (let i = 0; i < badWords.length; i++) {
+        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
+
+        if (badWordRegex.test(content)) {
+          data = { ...data, status: 0 };
+          break; // Exit the function if a bad word is found
+        }
+      }
+      // End of Hard Code
+      //
     } catch (error) {
       console.error(error);
     } finally {
@@ -635,23 +661,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3 pt-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -727,24 +752,23 @@ const Review = () => {
                                       }}
                                     ></div>
                                     <div
+                                      className="row"
                                       style={{
                                         paddingTop: "1rem",
                                         width: "100%",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
+                                      <div className="col">
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                      </div>
+
+                                      <div className="col">
+                                        <div className="row float-end pt-2 cmnt-like">
+                                          <div className="col">
                                             <Link
                                               to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
@@ -757,12 +781,9 @@ const Review = () => {
                                                 alt="chat svg"
                                               />
                                             </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
-
+                                            <span>{item.comment}</span>
+                                          </div>
+                                          <div className="col">
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -775,23 +796,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3 pt-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -867,24 +887,23 @@ const Review = () => {
                                       }}
                                     ></div>
                                     <div
+                                      className="row"
                                       style={{
                                         paddingTop: "1rem",
                                         width: "100%",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
+                                      <div className="col">
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                      </div>
+
+                                      <div className="col">
+                                        <div className="row float-end pt-2 cmnt-like">
+                                          <div className="col">
                                             <Link
                                               to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
@@ -897,12 +916,9 @@ const Review = () => {
                                                 alt="chat svg"
                                               />
                                             </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
-
+                                            <span>{item.comment}</span>
+                                          </div>
+                                          <div className="col">
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -915,23 +931,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3 pt-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -1007,24 +1022,23 @@ const Review = () => {
                                       }}
                                     ></div>
                                     <div
+                                      className="row"
                                       style={{
                                         paddingTop: "1rem",
                                         width: "100%",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
+                                      <div className="col">
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                      </div>
+
+                                      <div className="col">
+                                        <div className="row float-end pt-2 cmnt-like">
+                                          <div className="col">
                                             <Link
                                               to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
@@ -1037,12 +1051,9 @@ const Review = () => {
                                                 alt="chat svg"
                                               />
                                             </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
-
+                                            <span>{item.comment}</span>
+                                          </div>
+                                          <div className="col">
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -1055,23 +1066,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3 pt-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -1147,24 +1157,23 @@ const Review = () => {
                                       }}
                                     ></div>
                                     <div
+                                      className="row"
                                       style={{
                                         paddingTop: "1rem",
                                         width: "100%",
                                       }}
                                     >
-                                      <a href={`/review/tag/${item.tag}`}>
-                                        <Button className="hit-tag">
-                                          {item.tag}
-                                        </Button>
-                                      </a>
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
+                                      <div className="col">
+                                        <a href={`/review/tag/${item.tag}`}>
+                                          <Button className="hit-tag">
+                                            {item.tag}
+                                          </Button>
+                                        </a>
+                                      </div>
+
+                                      <div className="col">
+                                        <div className="row float-end pt-2 cmnt-like">
+                                          <div className="col">
                                             <Link
                                               to={"/review/post/" + item.id}
                                               style={{ paddingRight: "0.5rem" }}
@@ -1177,12 +1186,9 @@ const Review = () => {
                                                 alt="chat svg"
                                               />
                                             </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
-
+                                            <span>{item.comment}</span>
+                                          </div>
+                                          <div className="col">
                                             <LikeCheck
                                               postID={item.id}
                                               users={item.users}
@@ -1195,23 +1201,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />
@@ -1299,35 +1304,47 @@ const Review = () => {
                                       </a>
                                       <div className="box float-end">
                                         <div
+                                          className="row"
                                           style={{
-                                            display: "flex",
-                                            alignItems: "center",
+                                            paddingTop: "1rem",
+                                            width: "100%",
                                           }}
                                         >
-                                          <div style={{ flex: 1 }}>
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
-                                              <img
-                                                src={
-                                                  require("../../images/icon/chat.svg")
-                                                    .default
-                                                }
-                                                alt="chat svg"
-                                              />
-                                            </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
-                                            </span>
+                                          <div className="col">
+                                            <a href={`/review/tag/${item.tag}`}>
+                                              <Button className="hit-tag">
+                                                {item.tag}
+                                              </Button>
+                                            </a>
+                                          </div>
 
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
-                                            />
+                                          <div className="col">
+                                            <div className="row float-end pt-2 cmnt-like">
+                                              <div className="col">
+                                                <Link
+                                                  to={"/review/post/" + item.id}
+                                                  style={{
+                                                    paddingRight: "0.5rem",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={
+                                                      require("../../images/icon/chat.svg")
+                                                        .default
+                                                    }
+                                                    alt="chat svg"
+                                                  />
+                                                </Link>
+                                                <span>{item.comment}</span>
+                                              </div>
+                                              <div className="col">
+                                                <LikeCheck
+                                                  postID={item.id}
+                                                  users={item.users}
+                                                  like_count={item.like}
+                                                />
+                                              </div>
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
@@ -1335,23 +1352,22 @@ const Review = () => {
                                   </div>
                                 </div>
 
-                                <div className="col-sm-3 pt-3">
-                                  <div
+                                <div
+                                  className="col-sm-3 pt-3"
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center", // Horizontally center the image
+                                    alignItems: "center", // Vertically center the image
+                                  }}
+                                >
+                                  <img
+                                    src={item.picture}
                                     style={{
                                       width: "200px",
                                       height: "200px",
-                                      overflow: "hidden",
+                                      objectFit: "cover",
                                     }}
-                                  >
-                                    <img
-                                      src={item.picture}
-                                      style={{
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                      }}
-                                    />
-                                  </div>
+                                  />
                                 </div>
                                 <div style={{ paddingTop: "1rem" }}>
                                   <hr />

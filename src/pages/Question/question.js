@@ -70,6 +70,32 @@ function Qmodal() {
       ) {
         data = { ...data, status: 0 };
       }
+
+      // Hard Code
+      // ทำไม : เพื่อกันไม่ให้มีอย่างปลอดภัยแน่นอน
+      const badWords = [
+        "ควย",
+        "เหี้ย",
+        "เย็ด",
+        "สัส",
+        "ไอสัตว์",
+        "หี",
+        "หำ",
+        "มึง",
+        "มุง",
+        "กู",
+        "กุ",
+      ];
+      for (let i = 0; i < badWords.length; i++) {
+        const badWordRegex = new RegExp(`\\b(${badWords[i]})\\b`, "i");
+
+        if (badWordRegex.test(content)) {
+          data = { ...data, status: 0 };
+          break; // Exit the function if a bad word is found
+        }
+      }
+      // End of Hard Code
+      //
     } catch (error) {
       console.error(error);
     } finally {
