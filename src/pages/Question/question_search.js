@@ -199,7 +199,7 @@ function Qmodal() {
         </button>
       ) : (
         <button type="button" className="postButton" onClick={handleShow}>
-          เริ่มต้นการเขียนโพสต์
+          เริ่มต้นถามคำถาม
         </button>
       )}
 
@@ -277,7 +277,7 @@ function Qmodal() {
               className="btn post-question-btn mx-auto mt-0 "
               onClick={finishClose}
             >
-              เริ่มต้นการเขียนโพสต์
+              โพสต์
             </button>
           </div>
         </form>
@@ -503,10 +503,8 @@ const Question_Search = () => {
                 </div>
 
                 <p className="tipsContent">
-                  {" "}
-                  คุณสามารถเริ่มถามคำถามจากปุ่มด้านบนนี้ หรือ
-                  ถ้าสงสัยเกี่ยวกับรายวิชา หอพัก สิ่งต่างๆ
-                  สามารถค้นหาสิ่งที่คุณอยากรู้ได้ที่แถบด้านล่างนี้เลย
+                  คุณสามารถเริ่มถามคำถามจากปุ่มด้านบนนี้
+                  เพื่อถามสิ่งที่สงสัยได้เกี่ยวกับมหาวิทยาลัยเทคโนโลยีพระจอมเกล้าธนบุรี
                 </p>
               </div>
               <div className="searchBar pt-3">

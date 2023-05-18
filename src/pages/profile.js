@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/profile.css";
 import "../styles/notification.css";
 import "../styles/review.css";
-import { Tabs, Tab, Dropdown, Modal } from "react-bootstrap";
+import { Tabs, Tab, Dropdown, Modal, Button } from "react-bootstrap";
 import { useMediaQuery } from "@mui/material";
 import { Typography } from "@mui/material";
 import { ListItemText } from "@mui/material";
@@ -22,9 +22,10 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { auth, db, storage } from "../config";
+import { api_address, auth, db, storage } from "../config";
 import { Link, useNavigate } from "react-router-dom";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import axios from "axios";
 
 function Rmodal() {
   const navigate = useNavigate();
@@ -39,10 +40,11 @@ function Rmodal() {
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  const formattedTime = `${currentDate.getHours()}:${currentDate
-    .getMinutes()
+
+  const formattedTime = `${currentDate
+    .getHours()
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
   function handleClose(event) {
     setShow(false);
@@ -69,50 +71,120 @@ function Rmodal() {
     try {
       setCurrentUserId(currentUser.uid);
     } catch (e) {
-      navigate("/");
+      navigate("/review");
     }
     checkInfo();
   }, [selectedOption]);
+
+  // Text Sentiment
+  const [loadingPost, setLoadingPost] = useState(false);
+
+  async function SendDataToFlask(data, tag) {
+    setLoadingPost(true);
+    try {
+      const responseHeader = await axios.post(api_address, {
+        text: header,
+      });
+
+      const responseContent = await axios.post(api_address, {
+        text: content,
+      });
+
+      console.log("name => " + responseHeader.data.result);
+      console.log("content => " + responseContent.data.result);
+
+      if (
+        responseHeader.data.result === "NEG" ||
+        responseContent.data.result === "NEG"
+      ) {
+        data = { ...data, status: 0 };
+      }
+
+      // Hard Code
+      // ทำไม : เพื่อกันไม่ให้มีอย่างปลอดภัยแน่นอน
+      const badWords = [
+        "ควย",
+        "เหี้ย",
+        "เย็ด",
+        "สัส",
+        "ไอสัตว์",
+        "หี",
+        "หำ",
+        "มึง",
+        "มุง",
+        "กู",
+        "กุ",
+      ];
+
+      const concatenatedBadWordRegex = new RegExp(
+        `(${badWords.join("|")})`,
+        "i"
+      );
+
+      // Check for bad words in the content
+      if (concatenatedBadWordRegex.test(content)) {
+        data = { ...data, status: 0 };
+      }
+      // End of Hard Code
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await createData(data, tag);
+      setLoadingPost(false);
+      if (data.status === undefined) {
+        alert("สร้างโพสต์สำเร็จ");
+      } else {
+        alert("โพสต์ของคุณต้องได้รับการตรวจสอบ");
+      }
+    }
+  }
+  // End of Text Sentiment
 
   async function createData(postData, tagName) {
     try {
       const docRef = await addDoc(collection(db, "review"), postData);
       const tagDocRef = doc(db, "tag_ranked", tagName);
-      getDoc(tagDocRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const tagCount = docSnap.data().count;
-          updateDoc(tagDocRef, {
-            count: tagCount + 1,
-          })
-            .then(() => {
-              console.log("Document updated with new count value");
+      if (postData.status === undefined) {
+        getDoc(tagDocRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const tagCount = docSnap.data().count;
+            updateDoc(tagDocRef, {
+              count: tagCount + 1,
             })
-            .catch((error) => {
-              console.error("Error updating document: ", error);
-            });
-        } else {
-          const reviewsCollectionRef = collection(db, "tag_ranked");
-          const newReviewDocRef = doc(reviewsCollectionRef, tagName);
+              .then(() => {
+                console.log("Document updated with new count value");
+              })
+              .catch((error) => {
+                console.error("Error updating document: ", error);
+              });
+          } else {
+            const reviewsCollectionRef = collection(db, "tag_ranked");
+            const newReviewDocRef = doc(reviewsCollectionRef, tagName);
 
-          const newReview = {
-            count: 1,
-          };
+            const newReview = {
+              count: 1,
+            };
 
-          setDoc(newReviewDocRef, newReview)
-            .then(() => {
-              console.log("Document written with ID: ", newReviewDocRef.id);
-            })
-            .catch((error) => {
-              console.error("Error adding document: ", error);
-            });
-        }
-      });
+            setDoc(newReviewDocRef, newReview)
+              .then(() => {
+                console.log("Document written with ID: ", newReviewDocRef.id);
+              })
+              .catch((error) => {
+                console.error("Error adding document: ", error);
+              });
+          }
+        });
+      }
 
       console.log("This Post has been created", docRef.id);
       return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
+    } finally {
+      setHeader("");
+      setContent("");
+      setTag("");
     }
   }
 
@@ -140,7 +212,7 @@ function Rmodal() {
     } else {
       event.preventDefault();
       if (file === null) {
-        const data = {
+        let data = {
           like: 0,
           report: 0,
           comment: 0,
@@ -151,10 +223,8 @@ function Rmodal() {
           member_id: currentUserId,
           date: formattedDate,
           time: formattedTime,
-          picture:
-            "https://cdn.discordapp.com/attachments/718002735475064874/1091698626033619094/no-camera.png",
         };
-        createData(data, tag);
+        SendDataToFlask(data, tag);
       } else {
         const storageRef = ref(
           storage,
@@ -165,7 +235,7 @@ function Rmodal() {
           console.log("File uploaded successfully");
           getDownloadURL(storageRef).then((url) => {
             console.log("Download URL:", url);
-            const data = {
+            let data = {
               like: 0,
               report: 0,
               comment: 0,
@@ -178,7 +248,7 @@ function Rmodal() {
               time: formattedTime,
               picture: url,
             };
-            createData(data, tag);
+            SendDataToFlask(data, tag);
           });
         });
       }
@@ -189,14 +259,33 @@ function Rmodal() {
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
-        onClick={handleShow}
-        style={{ width: "100%" }}
-      >
-        เริ่มต้นการเขียนโพสต์
-      </button>
+      {loadingPost ? (
+        <button
+          disabled
+          type="button"
+          className="button"
+          onClick={handleShow}
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="px-3">กำลังโพสต์</span>
+            <div
+              className="spinner-border"
+              style={{ width: "1rem", height: "1rem" }}
+            />
+          </div>
+        </button>
+      ) : (
+        <button type="button" className="postButton" onClick={handleShow}>
+          เริ่มต้นการเขียนโพสต์
+        </button>
+      )}
 
       <Modal
         show={show}
@@ -222,54 +311,10 @@ function Rmodal() {
             ></button>
           </div>
 
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">เนื้อหาโพสต์</text>
-            <input
-              type="text"
-              className="form-control mt-2 mb-3"
-              id="header"
-              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
-              onChange={(e) => {
-                setHeader(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <textarea
-              class="form-control mt-2 mb-3 question-modal-input"
-              id="content"
-              placeholder="เขียนคำบรรยายเพิ่มเติม..."
-              rows="6"
-              onChange={(e) => {
-                setContent(e.target.value);
-                checkInfo();
-              }}
-            />
-
-            <text className="modal-topic">รูปภาพประกอบ :</text>
-            <input
-              type="file"
-              className="form-control mt-2 mb-3"
-              id="picture"
-              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
-              onChange={handleUpload}
-            />
-
-            <text className="modal-topic">แฮชแท็ก</text>
-            <input
-              type="text"
-              className="form-control mt-2"
-              id="tag"
-              placeholder="#แฮชแท็ก"
-              onChange={(e) => {
-                setTag(e.target.value);
-                checkInfo();
-              }}
-            />
-          </div>
-
-          <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">หมวดหมู่</text>
+          <div className="modal-body question-modal-body px-4">
+            <text className="modal-topic ">
+              หมวดหมู่ <span style={{ color: "red", fontSize: "12px" }}>*</span>
+            </text>
             <div className="form-control mt-2 mb-3">
               <Dropdown>
                 <Dropdown.Toggle
@@ -328,6 +373,54 @@ function Rmodal() {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
+            <text className="modal-topic ">
+              เนื้อหาโพสต์
+              <span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2 mb-3"
+              id="header"
+              placeholder="เขียนหัวข้อเรื่อง เพื่อให้โพสต์น่าสนใจมากขึ้น..."
+              onChange={(e) => {
+                setHeader(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <textarea
+              class="form-control mt-2 mb-3 question-modal-input"
+              id="content"
+              placeholder="เขียนคำบรรยายเพิ่มเติม..."
+              rows="6"
+              onChange={(e) => {
+                setContent(e.target.value);
+                checkInfo();
+              }}
+            />
+
+            <text className="modal-topic">รูปภาพประกอบ :</text>
+            <input
+              type="file"
+              className="form-control mt-2 mb-3"
+              id="picture"
+              placeholder="ไฟล์รูปภาพสกุล JPG, PNG"
+              onChange={handleUpload}
+            />
+
+            <text className="modal-topic">
+              แฮชแท็ก<span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
+            <input
+              type="text"
+              className="form-control mt-2"
+              id="tag"
+              placeholder="#แฮชแท็ก"
+              onChange={(e) => {
+                setTag(e.target.value);
+                checkInfo();
+              }}
+            />
           </div>
 
           <div className="modal-footer question-modal-footer flex-center pt-1 pb-4">
@@ -337,7 +430,7 @@ function Rmodal() {
               className="btn post-question-btn mx-auto mt-0 "
               onClick={finishClose}
             >
-              เริ่มต้นการเขียนโพสต์
+              โพสต์
             </button>
           </div>
         </form>
@@ -345,7 +438,6 @@ function Rmodal() {
     </>
   );
 }
-
 function EditProfile({ userData }) {
   const [show, setShow] = useState(false);
   const [file, setFile] = useState(null);
@@ -657,6 +749,8 @@ function EditProfile({ userData }) {
 }
 
 const Profile = ({ userData }) => {
+  const navigate = useNavigate();
+
   const matches = useMediaQuery("(min-width:1024px)");
 
   const [all, setAll] = useState([]);
@@ -715,6 +809,10 @@ const Profile = ({ userData }) => {
     }
   }, []);
 
+  const handlePropagation = (event) => {
+    event.stopPropagation();
+  };
+
   return (
     <div>
       <div className="pagePadding">
@@ -740,116 +838,148 @@ const Profile = ({ userData }) => {
                         <div>
                           {all.map((item) => (
                             <div key={item.id}>
-                              <div className="row flex-wrap">
-                                <div className="col-sm-9">
-                                  <MemberInfo
-                                    memberID={item.member_id}
-                                    time={item.time}
-                                    date={item.date}
-                                  />
-                                  <div>
-                                    <div className="homeHeader2">
-                                      {item.header}
-                                    </div>
-                                    <div
-                                      className="text-limit posttext"
-                                      dangerouslySetInnerHTML={{
-                                        __html: item.content,
-                                      }}
-                                    ></div>
-                                    <div
-                                      style={{
-                                        paddingTop: "1rem",
-                                        width: "100%",
-                                      }}
-                                    >
-                                      <a to={`/review/tag/${item.tag}`}>
-                                        <button
-                                          className="hit-tag"
-                                          style={{ padding: "0.5rem" }}
+                              {item.status === undefined ? (
+                                <div
+                                  onClick={() =>
+                                    navigate("/review/post/" + item.id)
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    paddingRight: "0.5rem",
+                                  }}
+                                >
+                                  <div className="row flex-wrap">
+                                    <div className="col-sm-9">
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "space-between",
+                                        }}
+                                      >
+                                        <MemberInfo
+                                          memberID={item.member_id}
+                                          time={item.time}
+                                          date={item.date}
+                                        />
+                                        <Dropdown
+                                          onClick={handlePropagation}
+                                          drop="down"
                                         >
-                                          {item.tag}
-                                        </button>
-                                      </a>
-
-                                      <div className="box float-end">
-                                        <div
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
-                                        >
-                                          <div style={{ flex: 1 }}>
-                                            <Link
-                                              to={"/review/post/" + item.id}
-                                              style={{ paddingRight: "0.5rem" }}
-                                            >
+                                          <Dropdown.Toggle
+                                            variant="link"
+                                            id="dropdown-basic"
+                                            style={{
+                                              border: "none",
+                                              boxShadow: "none",
+                                              color: "transparent",
+                                            }}
+                                          >
+                                            <span style={{ color: "black" }}>
                                               <img
+                                                className="menu-dropdown"
                                                 src={
-                                                  require("../images/icon/chat.svg")
+                                                  require("../images/question/three_dots.svg")
                                                     .default
                                                 }
-                                                alt="chat svg"
+                                                alt=""
                                               />
-                                            </Link>
-                                            <span
-                                              style={{ paddingRight: "1rem" }}
-                                            >
-                                              {item.comment}
                                             </span>
-
-                                            <LikeCheck
-                                              postID={item.id}
-                                              users={item.users}
-                                              like_count={item.like}
-                                            />
+                                          </Dropdown.Toggle>
+                                          <Rep_Del_Click
+                                            postID={item.id}
+                                            rep_users={item.rep_users}
+                                            rep_count={item.report}
+                                            tagName={item.tag}
+                                            member_id={item.member_id}
+                                          />
+                                        </Dropdown>
+                                      </div>
+                                      <div>
+                                        <div className="homeHeader2">
+                                          {item.header}
+                                        </div>
+                                        <div
+                                          className="text-limit body"
+                                          dangerouslySetInnerHTML={{
+                                            __html: item.content,
+                                          }}
+                                        ></div>
+                                        <div
+                                          className="row"
+                                          style={{
+                                            paddingTop: "1rem",
+                                            width: "100%",
+                                          }}
+                                        >
+                                          <div
+                                            className="col"
+                                            onClick={handlePropagation}
+                                          >
+                                            <a href={`/review/tag/${item.tag}`}>
+                                              <Button className="hit-tag">
+                                                {item.tag}
+                                              </Button>
+                                            </a>
                                           </div>
-                                          <Dropdown drop="down">
-                                            <Dropdown.Toggle
-                                              variant="link"
-                                              id="dropdown-basic"
-                                              style={{
-                                                border: "none",
-                                                boxShadow: "none",
-                                                color: "transparent",
-                                              }}
-                                            >
-                                              <span style={{ color: "black" }}>
-                                                <img
-                                                  className="menu-dropdown"
-                                                  src={
-                                                    require("../images/question/three_dots.svg")
-                                                      .default
-                                                  }
-                                                  alt=""
+
+                                          <div className="col">
+                                            <div className="row float-end pt-2 cmnt-like">
+                                              <div className="col">
+                                                <Link
+                                                  to={"/review/post/" + item.id}
+                                                  style={{
+                                                    paddingRight: "0.5rem",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={
+                                                      require("../images/icon/chat.svg")
+                                                        .default
+                                                    }
+                                                    alt="chat svg"
+                                                  />
+                                                </Link>
+                                                <span>{item.comment}</span>
+                                              </div>
+                                              <div className="col">
+                                                <LikeCheck
+                                                  postID={item.id}
+                                                  users={item.users}
+                                                  like_count={item.like}
                                                 />
-                                              </span>
-                                            </Dropdown.Toggle>
-                                            <Rep_Del_Click
-                                              postID={item.id}
-                                              rep_users={item.rep_users}
-                                              rep_count={item.report}
-                                              tagName={item.tag}
-                                              member_id={item.member_id}
-                                            />
-                                          </Dropdown>
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
+
+                                    <div
+                                      className="col-sm-3 pt-3"
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "center", // Horizontally center the image
+                                        alignItems: "center", // Vertically center the image
+                                      }}
+                                    >
+                                      {item.picture === undefined ? null : (
+                                        <img
+                                          src={item.picture}
+                                          style={{
+                                            width: "200px",
+                                            height: "200px",
+                                            objectFit: "cover",
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                    <div style={{ paddingTop: "1rem" }}>
+                                      <hr />
+                                    </div>
                                   </div>
                                 </div>
-
-                                <div className="col-sm-3 pt-3">
-                                  <img
-                                    style={{ width: "100%" }}
-                                    src={item.picture}
-                                    className="img-fluid float-end"
-                                  />
-                                </div>
-                                <div style={{ paddingTop: "1rem" }}>
-                                  <hr />
-                                </div>
-                              </div>
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -1156,7 +1286,8 @@ function LikeCheck({ postID, users, like_count }) {
     }
   }, [users]);
 
-  const handleLikeClick = () => {
+  const handleLikeClick = (event) => {
+    event.stopPropagation();
     const docRef = doc(db, "review", postID);
     if (likedByCurrentUser === false) {
       updateDoc(docRef, {
@@ -1208,7 +1339,11 @@ function LikeCheck({ postID, users, like_count }) {
           <img src={likeURL} alt="like svg" style={{ fill: "transparent" }} />
         </button>
       </span>
-      <span style={{ paddingRight: "1rem" }}>{like_count}</span>
+      <span
+      // style={{ paddingRight: "1rem" }}
+      >
+        {like_count}
+      </span>
     </span>
   );
 }

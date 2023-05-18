@@ -431,7 +431,7 @@ function Rmodal() {
               className="btn post-question-btn mx-auto mt-0 "
               onClick={finishClose}
             >
-              เริ่มต้นการเขียนโพสต์
+              โพสต์
             </button>
           </div>
         </form>
@@ -940,7 +940,6 @@ const Answer = ({ userData }) => {
                 </span>{" "}
                 <span>
                   และพิมพ์เกี่ยวกับสิ่งที่คุณอยากรู้เพื่อค้นหาสิ่งที่คุณต้องการอ่าน
-                  เริ่มต้นเพลิดเพลินไปกับการรีวิวด้านบน
                 </span>
               </div>
 
