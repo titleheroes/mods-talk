@@ -466,6 +466,60 @@ const Answer = ({ userData }) => {
     }
   }, []);
 
+  // Sorting
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    const sortedData = [...comment].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (dateA > dateB) {
+        return -1; // sort dateA before dateB
+      } else if (dateA < dateB) {
+        return 1; // sort dateA after dateB
+      } else {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+
+        if (timeA > timeB) {
+          return -1; // sort timeA before timeB
+        } else if (timeA < timeB) {
+          return 1; // sort timeA after timeB
+        } else {
+          return 0; // same date and time
+        }
+      }
+    });
+
+    // Group data by date
+    const groupedData = {};
+    sortedData.forEach((item) => {
+      const date = item.date;
+      if (!groupedData[date]) {
+        groupedData[date] = [];
+      }
+      groupedData[date].push(item);
+    });
+
+    // Sort each group by time ascending
+    for (const date in groupedData) {
+      groupedData[date] = groupedData[date].sort((a, b) => {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+        return timeA - timeB; // sort timeA before timeB for ascending order
+      });
+    }
+
+    // Merge and flatten the groups
+    const mergedData = Object.values(groupedData).flat();
+
+    const reversedData = mergedData.reverse();
+
+    setSortedData(reversedData);
+  }, [comment]);
+  // End of Sorting
+
   useEffect(() => {
     checkInfo();
   }, [content]);
@@ -592,9 +646,9 @@ const Answer = ({ userData }) => {
                 {/* เขียนคอมเมนท์                           */}
 
                 <div>
-                  {comment ? (
+                  {sortedData ? (
                     <div>
-                      {comment.map((item) => (
+                      {sortedData.map((item) => (
                         <div key={item.id}>
                           {item.status === undefined ? (
                             <div className="post-border pb-3">
@@ -880,13 +934,15 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   // ดันข้อมูลคอมเมนท์
   async function createData(postData) {
     try {
+      const docRef = await addDoc(collection(db, "reply_question"), postData);
       if (postData.status === undefined) {
         const docRef2 = doc(db, "cmnt_question", cmntID);
         updateDoc(docRef2, {
           reply: replyCount + 1,
         });
       }
-      console.log("This Comment has been created");
+      console.log("This Reply has been created", docRef.id);
+      return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
@@ -937,15 +993,69 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     }
   }, []);
 
+  // Sorting
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    const sortedData = [...reply].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (dateA > dateB) {
+        return -1; // sort dateA before dateB
+      } else if (dateA < dateB) {
+        return 1; // sort dateA after dateB
+      } else {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+
+        if (timeA > timeB) {
+          return -1; // sort timeA before timeB
+        } else if (timeA < timeB) {
+          return 1; // sort timeA after timeB
+        } else {
+          return 0; // same date and time
+        }
+      }
+    });
+
+    // Group data by date
+    const groupedData = {};
+    sortedData.forEach((item) => {
+      const date = item.date;
+      if (!groupedData[date]) {
+        groupedData[date] = [];
+      }
+      groupedData[date].push(item);
+    });
+
+    // Sort each group by time ascending
+    for (const date in groupedData) {
+      groupedData[date] = groupedData[date].sort((a, b) => {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+        return timeA - timeB; // sort timeA before timeB for ascending order
+      });
+    }
+
+    // Merge and flatten the groups
+    const mergedData = Object.values(groupedData).flat();
+
+    const reversedData = mergedData.reverse();
+
+    setSortedData(reversedData);
+  }, [reply]);
+  // End of Sorting
+
   useEffect(() => {
     checkInfo();
   }, [content]);
 
   return (
     <div className="px-3">
-      {reply ? (
+      {sortedData ? (
         <div>
-          {reply.map((item) => (
+          {sortedData.map((item) => (
             <div key={item.id}>
               {item.status === undefined ? (
                 <>

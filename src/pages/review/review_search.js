@@ -419,7 +419,7 @@ function Rmodal() {
               type="text"
               className="form-control mt-2"
               id="tag"
-              placeholder="#แฮชแท็ก"
+              placeholder="เช่น GEN123 หรือ วิชานี้ดี"
               onChange={(e) => {
                 setTag(e.target.value);
                 checkInfo();

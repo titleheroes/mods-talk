@@ -416,7 +416,7 @@ function Rmodal() {
               type="text"
               className="form-control mt-2"
               id="tag"
-              placeholder="#แฮชแท็ก"
+              placeholder="เช่น GEN123 หรือ วิชานี้ดี"
               onChange={(e) => {
                 setTag(e.target.value);
                 checkInfo();
@@ -439,7 +439,6 @@ function Rmodal() {
     </>
   );
 }
-
 const Answer = ({ userData }) => {
   const navigate = useNavigate();
 
@@ -621,6 +620,60 @@ const Answer = ({ userData }) => {
     }
   }, []);
 
+  // Sorting
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    const sortedData = [...comment].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (dateA > dateB) {
+        return -1; // sort dateA before dateB
+      } else if (dateA < dateB) {
+        return 1; // sort dateA after dateB
+      } else {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+
+        if (timeA > timeB) {
+          return -1; // sort timeA before timeB
+        } else if (timeA < timeB) {
+          return 1; // sort timeA after timeB
+        } else {
+          return 0; // same date and time
+        }
+      }
+    });
+
+    // Group data by date
+    const groupedData = {};
+    sortedData.forEach((item) => {
+      const date = item.date;
+      if (!groupedData[date]) {
+        groupedData[date] = [];
+      }
+      groupedData[date].push(item);
+    });
+
+    // Sort each group by time ascending
+    for (const date in groupedData) {
+      groupedData[date] = groupedData[date].sort((a, b) => {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+        return timeA - timeB; // sort timeA before timeB for ascending order
+      });
+    }
+
+    // Merge and flatten the groups
+    const mergedData = Object.values(groupedData).flat();
+
+    const reversedData = mergedData.reverse();
+
+    setSortedData(reversedData);
+  }, [comment]);
+  // End of Sorting
+
   useEffect(() => {
     checkInfo();
   }, [content]);
@@ -787,9 +840,9 @@ const Answer = ({ userData }) => {
 
                 {/* ดึง map comment                           */}
                 <div>
-                  {comment ? (
+                  {sortedData ? (
                     <div>
-                      {comment.map((item) => (
+                      {sortedData.map((item) => (
                         <div className="post-border" key={item.id}>
                           {item.status === undefined ? (
                             <>
@@ -1182,12 +1235,16 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
   // ดันข้อมูลคอมเมนท์
   async function createData(postData) {
     try {
+      const docRef = await addDoc(collection(db, "reply_review"), postData);
       if (postData.status === undefined) {
         const docRef2 = doc(db, "cmnt_review", cmntID);
         updateDoc(docRef2, {
           reply: replyCount + 1,
         });
       }
+
+      console.log("This Reply has been created", docRef.id);
+      return docRef.id;
     } catch (error) {
       console.error("Error adding document: ", error);
       return null;
@@ -1226,7 +1283,8 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
           replies.push({ id: doc.id, ...doc.data() });
         });
         setReply(replies);
-        console.log("Comment has been pulled");
+        console.log("Reply has been pulled");
+        console.log(cmntID);
       });
 
       return () => {
@@ -1237,15 +1295,69 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
     }
   }, []);
 
+  // Sorting
+  const [sortedData, setSortedData] = useState([]);
+
+  useEffect(() => {
+    const sortedData = [...reply].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (dateA > dateB) {
+        return -1; // sort dateA before dateB
+      } else if (dateA < dateB) {
+        return 1; // sort dateA after dateB
+      } else {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+
+        if (timeA > timeB) {
+          return -1; // sort timeA before timeB
+        } else if (timeA < timeB) {
+          return 1; // sort timeA after timeB
+        } else {
+          return 0; // same date and time
+        }
+      }
+    });
+
+    // Group data by date
+    const groupedData = {};
+    sortedData.forEach((item) => {
+      const date = item.date;
+      if (!groupedData[date]) {
+        groupedData[date] = [];
+      }
+      groupedData[date].push(item);
+    });
+
+    // Sort each group by time ascending
+    for (const date in groupedData) {
+      groupedData[date] = groupedData[date].sort((a, b) => {
+        const timeA = new Date(`1970-01-01T${a.time}`);
+        const timeB = new Date(`1970-01-01T${b.time}`);
+        return timeA - timeB; // sort timeA before timeB for ascending order
+      });
+    }
+
+    // Merge and flatten the groups
+    const mergedData = Object.values(groupedData).flat();
+
+    const reversedData = mergedData.reverse();
+
+    setSortedData(reversedData);
+  }, [reply]);
+  // End of Sorting
+
   useEffect(() => {
     checkInfo();
   }, [content]);
 
   return (
     <div className="px-3">
-      {reply ? (
+      {sortedData ? (
         <div>
-          {reply.map((item) => (
+          {sortedData.map((item) => (
             <div key={item.id}>
               {item.status === undefined ? (
                 <>
@@ -1319,50 +1431,65 @@ function ReplyLoad({ userData, postID, cmntID, replyCount }) {
         <div>data not available</div>
       )}
       {/* เขียนคอมเมนท์                           */}
-      <form className="pt-3 pb-1" onSubmit={replySubmit}>
-        <div className="flex-container comment" id="comment-2">
-          <div
-            className="box-reply-profile-image"
-            style={{ marginRight: "1rem" }}
-          >
-            <div className="reply-profile-image">
-              <img src={userData.profile} className="img-fluid" />
+      {currentUser ? (
+        <form className="pt-3 pb-1" onSubmit={replySubmit}>
+          <div className="flex-container comment" id="comment-2">
+            <div
+              className="box-reply-profile-image"
+              style={{ marginRight: "1rem" }}
+            >
+              <div className="reply-profile-image">
+                <img src={userData.profile} className="img-fluid" />
+              </div>
+            </div>
+
+            <textarea
+              className="form-control"
+              id="content"
+              placeholder="เขียนความคิดเห็น..."
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
+              rows={1}
+            />
+
+            <div className="flex-1-right">
+              {loadingPost ? (
+                <div className="px-4">
+                  <div
+                    className="spinner-border"
+                    style={{ width: "1.8rem", height: "1.8rem" }}
+                  />
+                </div>
+              ) : (
+                <button
+                  className="sent-comment px-3"
+                  disabled={buttonStatus}
+                  type="submit"
+                >
+                  <img
+                    className="menu-pic pe-3"
+                    src={require("../../images/question/sent_1.svg").default}
+                    alt=""
+                  />
+                </button>
+              )}
             </div>
           </div>
+        </form>
+      ) : (
+        <div></div>
+      )}
 
-          <textarea
-            className="form-control"
-            id="content"
-            placeholder="เขียนความคิดเห็น..."
-            value={content}
-            onChange={(e) => {
-              setContent(e.target.value);
-              checkInfo();
-            }}
-            rows={1}
-          />
-
-          <div className="flex-1-right">
-            <button
-              className="sent-comment px-3"
-              disabled={buttonStatus}
-              type="submit"
-            >
-              <img
-                className="menu-pic pe-3"
-                src={require("../../images/question/sent_1.svg").default}
-                alt=""
-              />
-            </button>
-          </div>
-        </div>
-      </form>
       {/* เขียนคอมเมนท์                           */}
     </div>
   );
 }
 
 function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
+  const navigate = useNavigate();
+
   const currentUser = auth.currentUser;
   const currentUserId = currentUser.uid;
 
@@ -1420,65 +1547,70 @@ function Rep_Del_Click({ postID, rep_users, rep_count, tagName, member_id }) {
     );
 
     if (confirmed) {
-      // Create a reference to the post document
-      const docRef = doc(db, "review", postID);
+      try {
+        // Create a reference to the post document
+        const docRef = doc(db, "review", postID);
 
-      // Create a query to get all comments for the post
-      const commentQuery = query(
-        collection(db, "cmnt_review"),
-        where("post_id", "==", postID)
-      );
+        // Delete the post document
+        await deleteDoc(docRef);
 
-      // Create a query to get all replies for the post
-      const replyQuery = query(
-        collection(db, "reply_review"),
-        where("post_id", "==", postID)
-      );
+        // Create a query to get all comments for the post
+        const commentQuery = query(
+          collection(db, "cmnt_review"),
+          where("post_id", "==", postID)
+        );
 
-      // Use Promise.all() to execute both queries in parallel
-      const [commentSnapshot, replySnapshot] = await Promise.all([
-        getDocs(commentQuery),
-        getDocs(replyQuery),
-      ]);
+        // Create a query to get all replies for the post
+        const replyQuery = query(
+          collection(db, "reply_review"),
+          where("post_id", "==", postID)
+        );
 
-      // Delete the post document
-      await deleteDoc(docRef);
+        // Use Promise.all() to execute both queries in parallel
+        const [commentSnapshot, replySnapshot] = await Promise.all([
+          getDocs(commentQuery),
+          getDocs(replyQuery),
+        ]);
 
-      // Delete all comment documents
-      commentSnapshot.forEach(async (commentDoc) => {
-        const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
-        await deleteDoc(commentDocRef);
-      });
+        // Delete all comment documents
+        commentSnapshot.forEach(async (commentDoc) => {
+          const commentDocRef = doc(db, "cmnt_review", commentDoc.id);
+          await deleteDoc(commentDocRef);
+        });
 
-      // Delete all reply documents
-      replySnapshot.forEach(async (replyDoc) => {
-        const replyDocRef = doc(db, "reply_review", replyDoc.id);
-        await deleteDoc(replyDocRef);
-      });
+        // Delete all reply documents
+        replySnapshot.forEach(async (replyDoc) => {
+          const replyDocRef = doc(db, "reply_review", replyDoc.id);
+          await deleteDoc(replyDocRef);
+        });
 
-      // Clear Tag
-      const tagDocRef = doc(db, "tag_ranked", tagName);
-      getDoc(tagDocRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const tagCount = docSnap.data().count;
-          if (tagCount - 1 === 0) {
-            deleteDoc(tagDocRef);
-          } else {
-            updateDoc(tagDocRef, {
-              count: tagCount - 1,
-            })
-              .then(() => {
-                console.log("Document updated with new count value");
+        // Clear Tag
+        const tagDocRef = doc(db, "tag_ranked", tagName);
+        getDoc(tagDocRef).then((docSnap) => {
+          if (docSnap.exists()) {
+            const tagCount = docSnap.data().count;
+            if (tagCount - 1 === 0) {
+              deleteDoc(tagDocRef);
+            } else {
+              updateDoc(tagDocRef, {
+                count: tagCount - 1,
               })
-              .catch((error) => {
-                console.error("Error updating document: ", error);
-              });
+                .then(() => {
+                  console.log("Document updated with new count value");
+                })
+                .catch((error) => {
+                  console.error("Error updating document: ", error);
+                });
+            }
           }
-        }
-      });
-
-      console.log("Post, comments, and replies deleted successfully.");
-      alert("ลบโพสต์สำเร็จ");
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        console.log("Post, comments, and replies deleted successfully.");
+        alert("ลบโพสต์สำเร็จ");
+        navigate("/");
+      }
     }
   };
 
