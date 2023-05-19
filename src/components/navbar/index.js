@@ -69,14 +69,13 @@ const Navbar = ({ userData }) => {
   useEffect(() => {
     console.log(userData);
     if (currentUser) {
-      if (location.pathname !== "/datauser") {
-        if (userData === "Login But no Data") {
-          window.location.href = "/datauser";
-        }
-      } else if (
-        location.pathname === "/signup" ||
-        location.pathname === "/authenticate"
+      if (
+        location.pathname !== "/datauser" &&
+        location.pathname !== "/signup" &&
+        location.pathname !== "/authenticate" &&
+        userData === "Login But no Data"
       ) {
+        window.location.href = "/datauser";
       }
     }
   }, [location.pathname, userData]);
