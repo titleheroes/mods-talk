@@ -122,7 +122,7 @@ function Qmodal() {
     const trimmedName = name.trim();
     const trimmedContent = content.trim();
 
-    const hasValidLength = trimmedName.length > 0 && trimmedContent.length >= 8;
+    const hasValidLength = trimmedName.length > 0 && trimmedContent.length >= 4;
 
     if (hasValidLength && switchOn === true) {
       setButtonStatus(false);
@@ -228,7 +228,10 @@ function Qmodal() {
           </div>
 
           <div className="modal-body question-modal-body px-4 pt-2">
-            <text className="modal-topic ">ชื่อ-นามสกุล</text>
+            <text className="modal-topic ">
+              ชื่อ-นามสกุล{" "}
+              <span style={{ color: "red", fontSize: "12px" }}> *</span>
+            </text>
             <input
               type="text"
               disabled={switchOn}
@@ -241,7 +244,13 @@ function Qmodal() {
               }}
             />
 
-            <text className="modal-topic ">คำถามที่ต้องการจะถาม</text>
+            <text className="modal-topic ">
+              คำถามที่ต้องการจะถาม{" "}
+              <span style={{ color: "red", fontSize: "12px" }}>
+                {" "}
+                * ขั้นต่ำ 4 ตัวอักษร
+              </span>
+            </text>
             <textarea
               class="form-control mt-2 question-modal-input"
               id="modal-input-box"

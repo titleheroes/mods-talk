@@ -198,8 +198,8 @@ function Rmodal() {
     const trimmedTag = tag.trim();
 
     const hasValidLength =
-      trimmedHeader.length >= 6 &&
-      trimmedContent.length >= 8 &&
+      trimmedHeader.length >= 4 &&
+      trimmedContent.length >= 4 &&
       trimmedTag.length > 0 &&
       selectedOption !== "เลือก";
 
@@ -377,9 +377,12 @@ function Rmodal() {
                 </Dropdown.Menu>
               </Dropdown>
             </div>
-            <text className="modal-topic ">
+            <text className="modal-topic">
               เนื้อหาโพสต์
-              <span style={{ color: "red", fontSize: "12px" }}> *</span>
+              <span style={{ color: "red", fontSize: "12px" }}>
+                {" "}
+                * ขั้นต่ำ 4 ตัวอักษร
+              </span>
             </text>
             <input
               type="text"
@@ -442,7 +445,6 @@ function Rmodal() {
     </>
   );
 }
-
 const Review_Search = () => {
   const navigate = useNavigate();
 
