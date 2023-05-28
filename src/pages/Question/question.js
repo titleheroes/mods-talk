@@ -372,6 +372,10 @@ const Question = () => {
     }
   }, []);
 
+  const handlePropagation = (event) => {
+    event.stopPropagation();
+  };
+
   return (
     <div>
       <div className="pagePadding">
@@ -406,6 +410,111 @@ const Question = () => {
                           {all.map((item) => (
                             <div key={item.id}>
                               {item.status === undefined ? (
+                                <div
+                                  onClick={() =>
+                                    navigate("/question/post/" + item.id)
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <div className="post-border">
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p className="poster-name pb-3">
+                                        {item.name}
+                                      </p>
+                                      <Dropdown onClick={handlePropagation}>
+                                        <Dropdown.Toggle
+                                          variant="link"
+                                          id="question-dropdown"
+                                        >
+                                          <img
+                                            className="menu-dropdown"
+                                            src={
+                                              require("../../images/question/three_dots.svg")
+                                                .default
+                                            }
+                                            alt=""
+                                          />
+                                        </Dropdown.Toggle>
+
+                                        <Rep_Click
+                                          postID={item.id}
+                                          rep_count={item.report}
+                                        />
+                                      </Dropdown>
+                                    </div>
+
+                                    <p
+                                      className="pb-2 text"
+                                      dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                      }}
+                                    ></p>
+
+                                    <div className="flex-container comment">
+                                      <div className="flex-1-comment">
+                                        <span className="post-date">
+                                          {formattedDate === item.date
+                                            ? item.time
+                                            : item.date}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex-2-comment pb-3">
+                                        <Link
+                                          to={"/question/post/" + item.id}
+                                          style={{ paddingRight: "0.5rem" }}
+                                        >
+                                          <img
+                                            src={
+                                              require("../../images/icon/chat.svg")
+                                                .default
+                                            }
+                                            alt="chat svg"
+                                          />
+                                        </Link>
+                                        <span style={{ paddingRight: "1rem" }}>
+                                          {item.comment}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div>data not available</div>
+                      )}
+                    </div>
+                  </Tab>
+
+                  <Tab
+                    className="pt-4"
+                    eventKey="no-ans"
+                    title={`คำถามที่ไม่มีคำตอบ (${noAns.length})`}
+                  >
+                    <div>
+                      {noAns ? (
+                        <div>
+                          {noAns.map((item) => (
+                            <div key={item.id}>
+                              <div
+                                onClick={() =>
+                                  navigate("/question/post/" + item.id)
+                                }
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                              >
                                 <div className="post-border">
                                   <div
                                     style={{
@@ -417,7 +526,7 @@ const Question = () => {
                                     <p className="poster-name pb-3">
                                       {item.name}
                                     </p>
-                                    <Dropdown>
+                                    <Dropdown onClick={handlePropagation}>
                                       <Dropdown.Toggle
                                         variant="link"
                                         id="question-dropdown"
@@ -438,7 +547,6 @@ const Question = () => {
                                       />
                                     </Dropdown>
                                   </div>
-
                                   <p
                                     className="pb-2 text"
                                     dangerouslySetInnerHTML={{
@@ -472,92 +580,6 @@ const Question = () => {
                                         {item.comment}
                                       </span>
                                     </div>
-                                  </div>
-                                </div>
-                              ) : null}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div>data not available</div>
-                      )}
-                    </div>
-                  </Tab>
-
-                  <Tab
-                    className="pt-4"
-                    eventKey="no-ans"
-                    title={`คำถามที่ไม่มีคำตอบ (${noAns.length})`}
-                  >
-                    <div>
-                      {noAns ? (
-                        <div>
-                          {noAns.map((item) => (
-                            <div key={item.id}>
-                              <div className="post-border">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <p className="poster-name pb-3">
-                                    {item.name}
-                                  </p>
-                                  <Dropdown>
-                                    <Dropdown.Toggle
-                                      variant="link"
-                                      id="question-dropdown"
-                                    >
-                                      <img
-                                        className="menu-dropdown"
-                                        src={
-                                          require("../../images/question/three_dots.svg")
-                                            .default
-                                        }
-                                        alt=""
-                                      />
-                                    </Dropdown.Toggle>
-
-                                    <Rep_Click
-                                      postID={item.id}
-                                      rep_count={item.report}
-                                    />
-                                  </Dropdown>
-                                </div>
-                                <p
-                                  className="pb-2 text"
-                                  dangerouslySetInnerHTML={{
-                                    __html: item.content,
-                                  }}
-                                ></p>
-
-                                <div className="flex-container comment">
-                                  <div className="flex-1-comment">
-                                    <span className="post-date">
-                                      {formattedDate === item.date
-                                        ? item.time
-                                        : item.date}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex-2-comment pb-3">
-                                    <Link
-                                      to={"/question/post/" + item.id}
-                                      style={{ paddingRight: "0.5rem" }}
-                                    >
-                                      <img
-                                        src={
-                                          require("../../images/icon/chat.svg")
-                                            .default
-                                        }
-                                        alt="chat svg"
-                                      />
-                                    </Link>
-                                    <span style={{ paddingRight: "1rem" }}>
-                                      {item.comment}
-                                    </span>
                                   </div>
                                 </div>
                               </div>

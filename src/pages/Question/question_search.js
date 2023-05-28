@@ -18,7 +18,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const algoliaClient = algoliasearch(
@@ -296,6 +296,8 @@ function Qmodal() {
 }
 
 const Question_Search = () => {
+  const navigate = useNavigate();
+
   const [all, setAll] = useState([]);
   const [objectID, setObjectID] = useState("");
 
@@ -379,6 +381,10 @@ const Question_Search = () => {
     }
   }, [objectID]);
 
+  const handlePropagation = (event) => {
+    event.stopPropagation();
+  };
+
   return (
     <div>
       <div className="pagePadding">
@@ -412,71 +418,80 @@ const Question_Search = () => {
                         {all.map((item) => (
                           <div key={item.id}>
                             {item.status === undefined ? (
-                              <div className="post-border">
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <p className="poster-name pb-3">
-                                    {item.name}
-                                  </p>
+                              <div
+                                onClick={() =>
+                                  navigate("/question/post/" + item.id)
+                                }
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <div className="post-border">
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <p className="poster-name pb-3">
+                                      {item.name}
+                                    </p>
 
-                                  <Dropdown>
-                                    <Dropdown.Toggle
-                                      variant="link"
-                                      id="question-dropdown"
-                                    >
-                                      <img
-                                        className="menu-dropdown"
-                                        src={
-                                          require("../../images/question/three_dots.svg")
-                                            .default
-                                        }
-                                        alt=""
+                                    <Dropdown onClick={handlePropagation}>
+                                      <Dropdown.Toggle
+                                        variant="link"
+                                        id="question-dropdown"
+                                      >
+                                        <img
+                                          className="menu-dropdown"
+                                          src={
+                                            require("../../images/question/three_dots.svg")
+                                              .default
+                                          }
+                                          alt=""
+                                        />
+                                      </Dropdown.Toggle>
+
+                                      <Rep_Click
+                                        postID={item.id}
+                                        rep_count={item.report}
                                       />
-                                    </Dropdown.Toggle>
-
-                                    <Rep_Click
-                                      postID={item.id}
-                                      rep_count={item.report}
-                                    />
-                                  </Dropdown>
-                                </div>
-                                <p
-                                  className="pb-2 text"
-                                  dangerouslySetInnerHTML={{
-                                    __html: item.content,
-                                  }}
-                                ></p>
-
-                                <div className="flex-container comment">
-                                  <div className="flex-1-comment">
-                                    <span className="post-date">
-                                      {formattedDate === item.date
-                                        ? item.time
-                                        : item.date}
-                                    </span>
+                                    </Dropdown>
                                   </div>
+                                  <p
+                                    className="pb-2 text"
+                                    dangerouslySetInnerHTML={{
+                                      __html: item.content,
+                                    }}
+                                  ></p>
 
-                                  <div className="flex-2-comment pb-3">
-                                    <Link
-                                      to={"/answer/post/" + item.id}
-                                      style={{ paddingRight: "0.5rem" }}
-                                    >
-                                      <img
-                                        src={
-                                          require("../../images/icon/chat.svg")
-                                            .default
-                                        }
-                                        alt="chat svg"
-                                      />
-                                    </Link>
-                                    <span style={{ paddingRight: "1rem" }}>
-                                      {item.comment}
-                                    </span>
+                                  <div className="flex-container comment">
+                                    <div className="flex-1-comment">
+                                      <span className="post-date">
+                                        {formattedDate === item.date
+                                          ? item.time
+                                          : item.date}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex-2-comment pb-3">
+                                      <Link
+                                        to={"/answer/post/" + item.id}
+                                        style={{ paddingRight: "0.5rem" }}
+                                      >
+                                        <img
+                                          src={
+                                            require("../../images/icon/chat.svg")
+                                              .default
+                                          }
+                                          alt="chat svg"
+                                        />
+                                      </Link>
+                                      <span style={{ paddingRight: "1rem" }}>
+                                        {item.comment}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
