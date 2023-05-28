@@ -110,7 +110,7 @@ export default function SignInSide() {
             }
           })
           .catch((error) => {
-            alert("อีเมลหรือพาสเวิร์ดผิด.");
+            alert("อีเมลล์หรือพาสเวิร์ดผิด.");
             console.error(error);
           });
       } catch (error) {
@@ -118,7 +118,7 @@ export default function SignInSide() {
       }
     } else {
       alert(
-        "กรุณาล็อคอินด้วยอีเมลสกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
+        "กรุณาล็อคอินด้วยอีเมลล์สกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
       );
       console.error("Bruh");
     }
@@ -211,7 +211,7 @@ export default function SignInSide() {
                         margin="normal"
                         // required
                         id="email"
-                        label="อีเมลมหาวิทยาลัย"
+                        label="อีเมลล์มหาวิทยาลัย"
                         name="email"
                         autoComplete="email"
                         autoFocus

@@ -159,7 +159,7 @@ export default function ForgetPass() {
                     variant="subtitle1"
                     sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
                   >
-                    กรอกอีเมลมหาวิทยาลัย แล้วกด "ต่อไป" เพื่อกู้รหัสผ่าน
+                    กรอกอีเมลล์มหาวิทยาลัย แล้วกด "ต่อไป" เพื่อกู้รหัสผ่าน
                   </Typography>
                   <Box
                     component="form"
@@ -182,7 +182,7 @@ export default function ForgetPass() {
                         margin="normal"
                         // required
                         id="email"
-                        label="อีเมลมหาวิทยาลัย"
+                        label="อีเมลล์มหาวิทยาลัย"
                         name="email"
                         autoComplete="email"
                         autoFocus
