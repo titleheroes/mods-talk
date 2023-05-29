@@ -494,7 +494,7 @@ const AdminUser = ({ userData }) => {
                         <TableCell align="left">ชื่อ-นามสกุล</TableCell>
                         <TableCell align="left">คณะ</TableCell>
                         <TableCell align="left">สาขา/ตำแหน่ง</TableCell>
-                        <TableCell align="left">อีเมลล์</TableCell>
+                        <TableCell align="left">อีเมล</TableCell>
                         <TableCell align="left">วันที่สมัคร</TableCell>
                         <TableCell align="center">การจัดการ</TableCell>
                       </TableRow>
@@ -610,7 +610,7 @@ const AdminUser = ({ userData }) => {
                         <TableCell align="left">ชื่อ-นามสกุล</TableCell>
                         <TableCell align="left">คณะ</TableCell>
                         <TableCell align="left">สาขา</TableCell>
-                        <TableCell align="left">อีเมลล์</TableCell>
+                        <TableCell align="left">อีเมล</TableCell>
                         <TableCell align="left">วันที่สมัคร</TableCell>
                         <TableCell align="left">การจัดการ</TableCell>
                       </TableRow>
@@ -713,7 +713,7 @@ const AdminUser = ({ userData }) => {
                         <TableCell align="left">ชื่อ-นามสกุล</TableCell>
                         <TableCell align="left">คณะ</TableCell>
                         <TableCell align="left">ตำแหน่ง</TableCell>
-                        <TableCell align="left">อีเมลล์</TableCell>
+                        <TableCell align="left">อีเมล</TableCell>
                         <TableCell align="left">วันที่สมัคร</TableCell>
                         <TableCell align="left">การจัดการ</TableCell>
                       </TableRow>

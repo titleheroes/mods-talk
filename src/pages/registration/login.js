@@ -105,12 +105,12 @@ export default function SignInSide() {
               window.location.href = "/review";
             } else {
               signOut(auth);
-              alert("คุณยังไม่ได้ยืนยันอีเมลล์");
+              alert("คุณยังไม่ได้ยืนยันอีเมล");
               console.log("No Verified");
             }
           })
           .catch((error) => {
-            alert("อีเมลล์หรือพาสเวิร์ดผิด.");
+            alert("อีเมลหรือพาสเวิร์ดผิด.");
             console.error(error);
           });
       } catch (error) {
@@ -118,7 +118,7 @@ export default function SignInSide() {
       }
     } else {
       alert(
-        "กรุณาล็อคอินด้วยอีเมลล์สกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
+        "กรุณาล็อคอินด้วยอีเมลสกุลมหาวิทยาลัย @mail.kmutt.ac.th หรือ @kmutt.ac.th"
       );
       console.error("Bruh");
     }
@@ -179,7 +179,7 @@ export default function SignInSide() {
                         alt="icon svg"
                         style={{ width: "25%" }}
                       ></img>{" "}
-                      ยินดีต้อนรับกลับ,
+                      ยินดีต้อนรับอีกครั้ง,
                     </Typography>
                   </div>
 
@@ -211,7 +211,7 @@ export default function SignInSide() {
                         margin="normal"
                         // required
                         id="email"
-                        label="อีเมลล์มหาวิทยาลัย"
+                        label="อีเมลมหาวิทยาลัย"
                         name="email"
                         autoComplete="email"
                         autoFocus

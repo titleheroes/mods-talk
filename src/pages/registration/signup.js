@@ -139,7 +139,7 @@ export default function SignUp() {
       }
     } else {
       alert(
-        "จำกัดสิทธิ์อีเมลล์สกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th เท่านั้นที่ใช้ในการสมัคร"
+        "จำกัดสิทธิ์อีเมลสกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th เท่านั้นที่ใช้ในการสมัคร"
       );
     }
   };
@@ -207,7 +207,7 @@ export default function SignUp() {
                     className="descWidth"
                     sx={{ mt: 2, color: "#556070", fontWeight: "400" }}
                   >
-                    จำกัดสิทธิ์อีเมลล์สกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th
+                    จำกัดสิทธิ์อีเมลสกุล @mail.kmutt.ac.th หรือ @kmutt.ac.th
                     เท่านั้นที่ใช้ในการสมัคร
                   </Typography>
                   <Box
@@ -231,7 +231,7 @@ export default function SignUp() {
                         margin="normal"
                         // required
                         id="email"
-                        label="อีเมลล์มหาวิทยาลัย"
+                        label="อีเมลมหาวิทยาลัย"
                         name="email"
                         autoComplete="email"
                         autoFocus
